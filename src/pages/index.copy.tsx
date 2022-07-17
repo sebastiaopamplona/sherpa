@@ -2,12 +2,8 @@ import Head from "next/head";
 import LoginBtn from "../components/login-btn";
 import type { NextPage } from "next";
 import { trpc } from "../utils/trpc";
-import { useSession } from "next-auth/react";
 
 const Home: NextPage = () => {
-  const { data: session } = useSession();
-  console.log("session", session);
-
   const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }]);
 
   return (

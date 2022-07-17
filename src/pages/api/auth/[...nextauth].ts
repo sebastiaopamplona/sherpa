@@ -25,8 +25,6 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, profile }) {
-      console.log("jwt callback", token);
-      console.log("profile", profile);
       token.userRole = "admin";
       return token;
     },
