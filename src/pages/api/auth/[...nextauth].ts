@@ -20,6 +20,9 @@ export const authOptions: NextAuthOptions = {
       // },
     }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+  },
   theme: {
     colorScheme: "light",
   },
