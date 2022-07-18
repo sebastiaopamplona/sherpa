@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import "./styles.css";
 
 import type { AppRouter } from "../server/createRouter";
 import type { AppType } from "next/dist/shared/lib/utils";
@@ -12,7 +13,7 @@ const MyApp: AppType = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={0}>
       <Component {...pageProps} />
     </SessionProvider>
   );
