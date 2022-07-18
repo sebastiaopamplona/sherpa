@@ -62,4 +62,9 @@ export default withTRPC<AppRouter>({
    * @link https://trpc.io/docs/ssr
    */
   ssr: true,
+
+  // @ts-ignore
+  // I added this because I needed to extend MyApp to have getLayout
+  // (https://nextjs.org/docs/basic-features/layouts#with-typescript)
+  // There must be a way to keep the type, I just ignored it for now
 })(MyApp);
