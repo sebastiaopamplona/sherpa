@@ -1,0 +1,10 @@
+.main {
+  display: flex;
+  height: calc(100vh);
+}
+
+.main > section {
+  width: calc(100vw - 208px);
+  min-width: 1200px;
+  padding: 24px;
+}

@@ -1,18 +1,30 @@
 import "../styles/globals.css";
-import "./styles.css";
 
+import { ReactElement, ReactNode } from "react";
+
+import { AppProps } from "next/app";
 import type { AppRouter } from "../server/createRouter";
-import type { AppType } from "next/dist/shared/lib/utils";
+import { NextPage } from "next";
 import { SessionProvider } from "next-auth/react";
 import superjson from "superjson";
 // src/pages/_app.tsx
 import { withTRPC } from "@trpc/next";
 
-const MyApp: AppType = ({
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },
-}) => {
-  return (
+}: AppPropsWithLayout) => {
+  const getLayout = Component.getLayout || ((page) => page);
+
+  return getLayout(
     <SessionProvider session={session} refetchInterval={0}>
       <Component {...pageProps} />
     </SessionProvider>
