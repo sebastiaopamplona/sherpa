@@ -2,18 +2,20 @@ import { ChartSquareBarIcon, ClockIcon } from "@heroicons/react/outline";
 
 import Link from "next/link";
 import { classNames } from "../utils/aux";
+import { useRouter } from "next/router";
 
 const navigation = [
-  { name: "Time Keeper", icon: ClockIcon, href: "/timekeeper", current: true },
+  { name: "Time Keeper", icon: ClockIcon, href: "/timekeeper" },
   {
     name: "Dashboard",
     icon: ChartSquareBarIcon,
     href: "/dashboard",
-    current: false,
   },
 ];
 
 export default function Sidebar() {
+  const router = useRouter();
+
   return (
     <div className="flex-1 flex flex-col w-52 min-h-0 bg-gray-800">
       <div className="flex-1 flex flex-col w-52 pt-5 pb-4 overflow-y-auto">
@@ -32,7 +34,7 @@ export default function Sidebar() {
             <div
               key={item.name}
               className={classNames(
-                item.current
+                router.pathname === item.href
                   ? "bg-gray-900 text-white"
                   : "text-gray-300 hover:bg-gray-700 hover:text-white",
                 "group flex items-center min-w-fit px-2 py-2 text-sm font-medium rounded-md"
@@ -40,7 +42,7 @@ export default function Sidebar() {
             >
               <item.icon
                 className={classNames(
-                  item.current
+                  router.pathname === item.href
                     ? "text-gray-300"
                     : "text-gray-400 group-hover:text-gray-300",
                   "mr-3 flex-shrink-0 h-6 w-6"
@@ -48,12 +50,12 @@ export default function Sidebar() {
                 aria-hidden="true"
               />
               <Link href={item.href}>
-                <a>{item.name}</a>
+                <a className="w-full">{item.name}</a>
               </Link>
               {item.count ? (
                 <span
                   className={classNames(
-                    item.current
+                    router.pathname === item.href
                       ? "bg-gray-800"
                       : "bg-gray-900 group-hover:bg-gray-800",
                     "ml-3 inline-block py-0.5 px-3 text-xs font-medium rounded-full"
