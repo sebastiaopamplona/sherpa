@@ -22,11 +22,12 @@ const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) => {
-  const getLayout = Component.getLayout || ((page) => page);
+  const getLayout = Component.getLayout ?? ((page) => page);
+  const layout = getLayout(<Component {...pageProps} />);
 
-  return getLayout(
+  return (
     <SessionProvider session={session} refetchInterval={0}>
-      <Component {...pageProps} />
+      {layout}
     </SessionProvider>
   );
 };

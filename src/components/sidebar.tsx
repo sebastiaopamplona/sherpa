@@ -3,6 +3,7 @@ import { ChartSquareBarIcon, ClockIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import { classNames } from "../utils/aux";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 const navigation = [
   { name: "Time Keeper", icon: ClockIcon, href: "/timekeeper" },
@@ -15,10 +16,11 @@ const navigation = [
 
 export default function Sidebar() {
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   return (
-    <div className="flex-1 flex flex-col w-52 min-h-0 bg-gray-800">
-      <div className="flex-1 flex flex-col w-52 pt-5 pb-4 overflow-y-auto">
+    <div className="flex-1 flex flex-col w-56 min-h-0 bg-gray-800">
+      <div className="flex-1 flex flex-col w-56 pt-5 pb-4 overflow-y-auto">
         <div className="flex items-center flex-shrink-0 px-4">
           <img
             className="h-8 w-auto "
@@ -69,20 +71,24 @@ export default function Sidebar() {
         </nav>
       </div>
       <div className="flex-shrink-0 flex bg-gray-700 p-4">
-        <div href="#" className="flex-shrink-0 w-full group block">
+        <div className="flex-shrink-0 w-full group block">
           <div className="flex items-center">
             <div>
               <img
                 className="inline-block h-9 w-9 rounded-full"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
+                src={session?.user?.image}
+                alt="profile_pic"
               />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-white">Tom Cook</p>
-              <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200">
-                View profile
+              <p className="text-sm font-medium text-white">
+                {session?.user?.name}
               </p>
+              <Link href="/profile">
+                <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200 cursor-pointer">
+                  View profile
+                </p>
+              </Link>
             </div>
           </div>
         </div>

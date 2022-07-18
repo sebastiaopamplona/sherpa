@@ -3,7 +3,7 @@ import Sidebar from "../components/sidebar";
 import { trpc } from "../utils/trpc";
 import { useSession } from "next-auth/react";
 
-export default function Dashboard() {
+export default function Profile() {
   const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }]);
 
   console.log(hello);
@@ -12,12 +12,12 @@ export default function Dashboard() {
 
   return (
     <section>
-      <h2>Dashboard</h2>
+      <h2>Profile</h2>
     </section>
   );
 }
 
-Dashboard.getLayout = function getLayout(page: React.ReactNode) {
+Profile.getLayout = function getLayout(page: React.ReactNode) {
   return (
     <Layout>
       <Sidebar />
