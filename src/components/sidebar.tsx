@@ -81,6 +81,22 @@ export default function Sidebar() {
       </div>
       <div className="flex-shrink-0 flex bg-gray-700 p-4">
         <div className="flex-shrink-0 w-full group block">
+          <div className="flex items-center justify-center flex-shrink-0 px-4">
+            <select
+              id="location"
+              name="location"
+              className="block w-full py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              defaultValue="Canada"
+              onChange={(e) => {
+                console.log(e.target.value);
+              }}
+            >
+              <option>Project 1</option>
+              <option>Project 2</option>
+              <option>Project 3</option>
+            </select>
+          </div>
+          <div className="p-2" />
           <div className="flex items-center">
             <div>
               <img
