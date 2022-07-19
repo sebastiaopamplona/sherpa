@@ -6,11 +6,11 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 const navigation = [
-  { name: "Time Keeper", icon: ClockIcon, href: "/timekeeper" },
+  { name: "Time Keeper", icon: ClockIcon, href: "/app/timekeeper" },
   {
     name: "Dashboard",
     icon: ChartSquareBarIcon,
-    href: "/dashboard",
+    href: "/app/dashboard",
   },
 ];
 
@@ -84,7 +84,7 @@ export default function Sidebar() {
               <p className="text-sm font-medium text-white">
                 {session?.user?.name}
               </p>
-              <Link href="/profile">
+              <Link href="/app/profile">
                 <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200 cursor-pointer">
                   View profile
                 </p>

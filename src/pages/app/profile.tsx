@@ -1,8 +1,8 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import Layout from "../components/layout";
-import Sidebar from "../components/sidebar";
-import { trpc } from "../utils/trpc";
+import Layout from "../../components/layout";
+import Sidebar from "../../components/sidebar";
+import { trpc } from "../../utils/trpc";
 
 export default function Profile() {
   const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }]);
@@ -47,7 +47,7 @@ export default function Profile() {
                 href={`/api/auth/signout`}
                 onClick={(e) => {
                   e.preventDefault();
-                  signOut();
+                  signOut({ callbackUrl: "/auth/signin" });
                 }}
               >
                 Sign out

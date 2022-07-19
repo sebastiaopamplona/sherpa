@@ -1,6 +1,6 @@
-import Layout from "../components/layout";
-import Sidebar from "../components/sidebar";
-import { trpc } from "../utils/trpc";
+import Layout from "../../components/layout";
+import Sidebar from "../../components/sidebar";
+import { trpc } from "../../utils/trpc";
 import { useSession } from "next-auth/react";
 
 export default function Dashboard() {
