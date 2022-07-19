@@ -1,4 +1,8 @@
-import { ChartSquareBarIcon, ClockIcon } from "@heroicons/react/outline";
+import {
+  ChartSquareBarIcon,
+  ClockIcon,
+  FolderIcon,
+} from "@heroicons/react/outline";
 
 import Link from "next/link";
 import { classNames } from "../utils/aux";
@@ -11,6 +15,11 @@ const navigation = [
     name: "Dashboard",
     icon: ChartSquareBarIcon,
     href: "/app/dashboard",
+  },
+  {
+    name: "Backlog",
+    icon: FolderIcon,
+    href: "/app/backlog",
   },
 ];
 
