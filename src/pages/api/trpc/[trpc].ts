@@ -7,4 +7,10 @@ import { createNextApiHandler } from "@trpc/server/adapters/next";
 export default createNextApiHandler({
   router: appRouter,
   createContext: createContext,
+  onError({ error, type, path, input, ctx, req }) {
+    console.error("Error:", error);
+    if (error.code === "INTERNAL_SERVER_ERROR") {
+      // send to bug reporting
+    }
+  },
 });
