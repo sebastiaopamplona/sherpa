@@ -8,8 +8,165 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  name  String?
-  email String? @unique
-  image String?
+  id String @id @default(cuid())
+
+  name  String
+  email String @unique
+  image String
+
+  createdSprints  Sprint[]
+  roleInProjects  UserRolesInProjects[]
+  assignedStories Story[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @updatedAt
+}
+
+model Role {
+  id String @id @default(cuid())
+
+  name String @unique
+
+  permissions     RoleToPermissions[]
+  usersInProjects UserRolesInProjects[] // TODO(SP): find a better name
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id String @id @default(cuid())
+
+  name String @unique
+
+  roles RoleToPermissions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RoleToPermissions {
+  id String @id @default(cuid())
+
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id String @id @default(cuid())
+
+  name        String  @unique
+  description String?
+
+  githubUrl String
+  jiraUrl   String?
+
+  users   UserRolesInProjects[]
+  stories Story[]
+  sprints Sprint[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @updatedAt
+}
+
+model UserRolesInProjects {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sprint {
+  id String @id @default(cuid())
+
+  title       String
+  description String?
+  startAt     DateTime
+  endAt       DateTime
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id])
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  stories Story[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Story {
+  id String @id @default(cuid())
+
+  title       String
+  description String
+  estimate    Int
+  state       StoryState @default(NEW)
+  type        StoryType  @default(DEVELOPMENT)
+  github_id   String
+  jira_id     String?
+
+  assigneeId String
+  assignee   User   @relation(fields: [assigneeId], references: [id])
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  sprintId String
+  sprint   Sprint @relation(fields: [sprintId], references: [id])
+
+  worklogs Worklog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime @updatedAt
+}
+
+model Worklog {
+  id String @id @default(cuid())
+
+  description String
+  duration    Int
+
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum StoryState {
+  NEW
+  READY
+  IN_PROGRESS
+  DELIVERED
+  IN_REVIEW
+  DONE
+  DELETED
+}
+
+enum StoryType {
+  DEVELOPMENT
+  DOCUMENTATION
+  BUG_FIXING
+  MAINTENANCE
+  SUPPORT
 }
