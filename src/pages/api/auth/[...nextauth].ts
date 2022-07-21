@@ -13,35 +13,55 @@ export const authOptions: NextAuthOptions = {
           scope: "user",
         },
       },
+      profile: async (profile) => {
+        // Return all the profile information you need.
+        // The only truly required field is `id`
+        // to be able identify the account when added to a database
+
+        // TODO(SP): abstract logic to be reused in other providers
+
+        let dbUser = await prisma.user.findUnique({
+          where: {
+            email: profile.email,
+          },
+        })
+
+        if (dbUser) {
+          console.log("user exists, with id: ", dbUser.id)
+        } else {
+          console.log("user does not exist, creating...")
+          dbUser = await prisma.user.create({
+            data: {
+              name: profile.name,
+              email: profile.email,
+              image: profile.avatar_url,
+            },
+          })
+        }
+
+        return {
+          id: dbUser.id,
+          name: profile.name,
+          email: profile.email,
+          image: profile.avatar_url,
+        }
+      },
     }),
   ],
   pages: {
     signIn: "/auth/signin",
   },
   callbacks: {
-    async signIn({ user }) {
-      const userCount = await prisma.user.count({
-        where: {
-          email: user.email,
-        },
-      })
-
-      if (userCount === 0) {
-        await prisma.user.create({
-          data: {
-            name: user.name,
-            email: user.email,
-            image: user.image,
-          },
-        })
+    async jwt({ token, user, account, profile, isNewUser }) {
+      if (user) {
+        token.userid = user.id
       }
 
-      return true
-    },
-    async jwt({ token }) {
       return token
     },
-    async session({ session }) {
+    async session({ session, user, token }) {
+      session.userid = token.userid
+
       return session
     },
   },
