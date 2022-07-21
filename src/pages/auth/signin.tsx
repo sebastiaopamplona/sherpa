@@ -132,16 +132,13 @@ export default function SignIn({
                           return (
                             <button
                               key={i}
-                              className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                              className="w-full inline-flex justify-center py-2 px-4 mb-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                               onClick={() =>
                                 signIn(provider.id, {
                                   callbackUrl: `${window.location.origin}/app/timekeeper`,
                                 })
                               }
                             >
-                              <span className="sr-only">
-                                Sign in with GitHub
-                              </span>
                               <svg
                                 className="w-7 h-7"
                                 aria-hidden="true"
