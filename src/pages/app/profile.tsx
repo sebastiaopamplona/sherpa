@@ -1,16 +1,16 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react"
 
-import Layout from "../../components/layout";
-import Sidebar from "../../components/sidebar";
-import { trpc } from "../../utils/trpc";
+import Layout from "../../components/layout"
+import Sidebar from "../../components/sidebar"
+import { trpc } from "../../utils/trpc"
 
 export default function Profile() {
-  const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }]);
+  const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }])
 
-  console.log(hello);
+  console.log(hello)
 
-  const { data: session, status } = useSession();
-  const loading = status === "loading";
+  const { data: session, status } = useSession()
+  const loading = status === "loading"
 
   return (
     <section>
@@ -23,8 +23,8 @@ export default function Profile() {
               <a
                 href={`/api/auth/signin`}
                 onClick={(e) => {
-                  e.preventDefault();
-                  signIn();
+                  e.preventDefault()
+                  signIn()
                 }}
               >
                 Sign in
@@ -46,8 +46,8 @@ export default function Profile() {
               <a
                 href={`/api/auth/signout`}
                 onClick={(e) => {
-                  e.preventDefault();
-                  signOut({ callbackUrl: "/auth/signin" });
+                  e.preventDefault()
+                  signOut({ callbackUrl: "/auth/signin" })
                 }}
               >
                 Sign out
@@ -57,7 +57,7 @@ export default function Profile() {
         </p>
       </div>
     </section>
-  );
+  )
 }
 
 Profile.getLayout = function getLayout(page: React.ReactNode) {
@@ -66,5 +66,5 @@ Profile.getLayout = function getLayout(page: React.ReactNode) {
       <Sidebar />
       {page}
     </Layout>
-  );
-};
+  )
+}

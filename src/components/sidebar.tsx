@@ -2,12 +2,12 @@ import {
   ChartSquareBarIcon,
   ClockIcon,
   FolderIcon,
-} from "@heroicons/react/outline";
+} from "@heroicons/react/outline"
 
-import Link from "next/link";
-import { classNames } from "../utils/aux";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import Link from "next/link"
+import { classNames } from "../utils/aux"
+import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 
 const navigation = [
   { name: "Time Keeper", icon: ClockIcon, href: "/app/timekeeper" },
@@ -21,11 +21,11 @@ const navigation = [
     icon: FolderIcon,
     href: "/app/backlog",
   },
-];
+]
 
 export default function Sidebar() {
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  const router = useRouter()
+  const { data: session, status } = useSession()
 
   return (
     <div className="flex-1 flex flex-col w-56 min-h-0 bg-gray-800">
@@ -88,7 +88,7 @@ export default function Sidebar() {
               className="block w-full py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
               defaultValue="Canada"
               onChange={(e) => {
-                console.log(e.target.value);
+                console.log(e.target.value)
               }}
             >
               <option>Project 1</option>
@@ -119,5 +119,5 @@ export default function Sidebar() {
         </div>
       </div>
     </div>
-  );
+  )
 }

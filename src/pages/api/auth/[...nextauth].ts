@@ -1,7 +1,7 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import NextAuth, { type NextAuthOptions } from "next-auth"
+import GithubProvider from "next-auth/providers/github"
 
-import { prisma } from "../../../server/db/client";
+import { prisma } from "../../../server/db/client"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
         where: {
           email: user.email,
         },
-      });
+      })
 
       if (userCount === 0) {
         await prisma.user.create({
@@ -33,18 +33,18 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             image: user.image,
           },
-        });
+        })
       }
 
-      return true;
+      return true
     },
     async jwt({ token }) {
-      return token;
+      return token
     },
     async session({ session }) {
-      return session;
+      return session
     },
   },
-};
+}
 
-export default NextAuth(authOptions);
+export default NextAuth(authOptions)

@@ -1,5 +1,5 @@
-import Layout from "../../components/layout";
-import Sidebar from "../../components/sidebar";
+import Layout from "../../components/layout"
+import Sidebar from "../../components/sidebar"
 
 export default function TimeKeeper() {
   return (
@@ -8,7 +8,7 @@ export default function TimeKeeper() {
         <h2>Time Keeper</h2>
       </div>
     </section>
-  );
+  )
 }
 
 TimeKeeper.getLayout = function getLayout(page: React.ReactNode) {
@@ -17,5 +17,5 @@ TimeKeeper.getLayout = function getLayout(page: React.ReactNode) {
       <Sidebar />
       {page}
     </Layout>
-  );
-};
+  )
+}

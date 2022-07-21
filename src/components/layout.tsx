@@ -1,8 +1,8 @@
-import Head from "next/head";
-import styles from "./layout.module.css";
+import Head from "next/head"
+import styles from "./layout.module.css"
 
 interface Props {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export default function Layout({ children }: Props) {
@@ -14,5 +14,5 @@ export default function Layout({ children }: Props) {
 
       <main className={styles.main}>{children}</main>
     </>
-  );
+  )
 }
