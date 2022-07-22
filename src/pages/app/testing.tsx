@@ -1,12 +1,20 @@
+import { useEffect, useState } from "react"
+
+import Button from "../../components/button/button"
 import { CreateProjectInput } from "../../schemas/project"
+import Input from "../../components/input/input"
 import Layout from "../../components/layout"
+import Modal from "../../components/modal/modal"
 import Sidebar from "../../components/sidebar"
+import Textarea from "../../components/textarea/textarea"
 import { trpc } from "../../utils/trpc"
 import { useForm } from "react-hook-form"
 import { useSession } from "next-auth/react"
 
 export default function Backlog() {
   const session = useSession()
+
+  const [open, setOpen] = useState<boolean>(false)
 
   const getStoryById = trpc.useQuery([
     "story.getById",
@@ -42,6 +50,10 @@ export default function Backlog() {
 
   const { handleSubmit, register } = useForm<CreateProjectInput>()
 
+  useEffect(() => {
+    console.log("typeof register, ", typeof register)
+  })
+
   const { mutate, error } = trpc.useMutation(["project.create"], {
     onSuccess: (data) => {
       console.log("project created, data: ", data)
@@ -75,189 +87,23 @@ export default function Backlog() {
         <pre>{JSON.stringify(getStoryById.data, null, 2)}</pre>
       </div>
 
-      <div className="px-[500px]">
-        <div className="pt-8">
-          <div>
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Create Story
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">
-              (Extra info can go here)
-            </p>
-          </div>
-          <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-            <div className="sm:col-span-5">
-              <label
-                htmlFor="first-name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Title
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="first-name"
-                  id="first-name"
-                  autoComplete="given-name"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-1">
-              <label
-                htmlFor="first-name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Estimate
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="first-name"
-                  id="first-name"
-                  autoComplete="given-name"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-6">
-              <label
-                htmlFor="about"
-                className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-              >
-                Description
-              </label>
-              <div className="mt-1">
-                <textarea
-                  id="about"
-                  name="about"
-                  rows={3}
-                  className="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                  defaultValue={""}
-                />
-                <p className="mt-2 text-sm text-gray-500">
-                  Write a few sentences about yourself.
-                </p>
-              </div>
-            </div>
-
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-3">
-              <label
-                htmlFor="country"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Country
-              </label>
-              <div className="mt-1">
-                <select
-                  id="country"
-                  name="country"
-                  autoComplete="country-name"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                >
-                  <option>United States</option>
-                  <option>Canada</option>
-                  <option>Mexico</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="sm:col-span-6">
-              <label
-                htmlFor="street-address"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Street address
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="street-address"
-                  id="street-address"
-                  autoComplete="street-address"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="city"
-                className="block text-sm font-medium text-gray-700"
-              >
-                City
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  autoComplete="address-level2"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="region"
-                className="block text-sm font-medium text-gray-700"
-              >
-                State / Province
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="region"
-                  id="region"
-                  autoComplete="address-level1"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="postal-code"
-                className="block text-sm font-medium text-gray-700"
-              >
-                ZIP / Postal code
-              </label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  name="postal-code"
-                  id="postal-code"
-                  autoComplete="postal-code"
-                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <div className="px-[500px]"></div>
+      <button
+        className="w-full inline-flex items-center justify-center px-2.5 py-1.5 border border-transparent text-md font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        onClick={() => {
+          setOpen(true)
+        }}
+      >
+        Open modal
+      </button>
+      <Modal
+        isOpen={open}
+        onClose={() => {
+          setOpen(false)
+        }}
+      >
         <form onSubmit={handleSubmit(handleCreateProject)}>
-          <div className="pt-8">
+          <div className="p-2">
             <div>
               <h3 className="text-lg leading-6 font-medium text-gray-900">
                 Create Project
@@ -268,84 +114,34 @@ export default function Backlog() {
             </div>
             <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
               <div className="sm:col-span-6">
-                <label
-                  htmlFor="first-name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Name
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    {...register("name")}
-                  />
-                </div>
-              </div>
-
-              <div className="sm:col-span-6">
-                <label
-                  htmlFor="about"
-                  className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
-                >
-                  Description
-                </label>
-                <div className="mt-1">
-                  <textarea
-                    {...register("description")}
-                    rows={3}
-                    className="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                    defaultValue={""}
-                  />
-                  <p className="mt-2 text-sm text-gray-500">
-                    Write a few sentences about yourself.
-                  </p>
-                </div>
-              </div>
-
-              <div className="sm:col-span-6">
-                <label
-                  htmlFor="first-name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  GitHub URL
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    {...register("githubUrl")}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  />
-                </div>
-                <p className="mt-2 text-sm text-gray-500">(Optional)</p>
-              </div>
-
-              <div className="sm:col-span-6">
-                <label
-                  htmlFor="first-name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Jira URL
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    {...register("jiraUrl")}
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  />
-                </div>
-                <p className="mt-2 text-sm text-gray-500">(Optional)</p>
+                <Input label="Name" register={register("name")} />
               </div>
               <div className="sm:col-span-6">
-                <button className="w-full inline-flex items-center justify-center px-2.5 py-1.5 border border-transparent text-md font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                  Create project
-                </button>
+                <Textarea
+                  label="Description"
+                  register={register("description")}
+                />
+              </div>
+              <div className="sm:col-span-6">
+                <Input
+                  label="GitHub Repo URL"
+                  register={register("githubUrl")}
+                />
+              </div>
+              <div className="sm:col-span-6">
+                <Input
+                  label="Jira Project URL"
+                  register={register("jiraUrl")}
+                />
+              </div>
+              <div className="sm:col-span-6">
+                <Button label="Create project" onClick={() => {}} />
                 <p> {error && error.message}</p>
               </div>
             </div>
           </div>
         </form>
-      </div>
+      </Modal>
     </section>
   )
 }
