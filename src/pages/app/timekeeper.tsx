@@ -4,9 +4,7 @@ import Sidebar from "../../components/sidebar"
 export default function TimeKeeper() {
   return (
     <section>
-      <div className="w-full h-full bg-red-200">
-        <h2>Time Keeper</h2>
-      </div>
+      <h2>Time Keeper</h2>
     </section>
   )
 }
