@@ -10,20 +10,6 @@ export const storyInputSchema = z.object({
   githubId: z.string().nullish(),
   jiraId: z.string().nullish(),
 
-  projectId: z.string(),
-  // project: z.nullish(),
-
-  creatorId: z.string(),
-  // creator: z.nullish(),
-
-  assigneeId: z.string().nullish(),
-  // assignee: z.nullish(),
-
-  sprintId: z.string().nullish(),
-  // sprint: z.nullish(),
-
-  // worklogs: z.nullish(),
-
   state: z.enum([
     "NEW",
     "READY",
@@ -40,9 +26,11 @@ export const storyInputSchema = z.object({
     "MAINTENANCE",
     "SUPPORT",
   ]),
-  createdAt: z.date().nullish(),
-  updatedAt: z.date().nullish(),
-  deletedAt: z.date().nullish(),
+
+  projectId: z.string(),
+  creatorId: z.string(),
+  assigneeId: z.string().nullish(),
+  sprintId: z.string().nullish(),
 })
 
 // Uncomment for usage in useForm() react hook
