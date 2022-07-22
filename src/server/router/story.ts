@@ -106,7 +106,7 @@ export const storyRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const story = await prisma.story.delete({
+      await prisma.story.delete({
         where: {
           id: input.id,
         },
