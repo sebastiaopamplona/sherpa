@@ -1,4 +1,5 @@
 import {
+  BeakerIcon,
   ChartSquareBarIcon,
   ClockIcon,
   FolderIcon,
@@ -20,6 +21,11 @@ const navigation = [
     name: "Backlog",
     icon: FolderIcon,
     href: "/app/backlog",
+  },
+  {
+    name: "Testing (dev only)",
+    icon: BeakerIcon,
+    href: "/app/testing",
   },
 ]
 
