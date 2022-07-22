@@ -53,8 +53,9 @@ CREATE TABLE "Project" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "githubUrl" TEXT NOT NULL,
+    "githubUrl" TEXT,
     "jiraUrl" TEXT,
+    "creatorId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
@@ -139,6 +140,9 @@ ALTER TABLE "RoleToPermissions" ADD CONSTRAINT "RoleToPermissions_roleId_fkey" F
 
 -- AddForeignKey
 ALTER TABLE "RoleToPermissions" ADD CONSTRAINT "RoleToPermissions_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Project" ADD CONSTRAINT "Project_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserRolesInProjects" ADD CONSTRAINT "UserRolesInProjects_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

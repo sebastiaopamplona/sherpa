@@ -6,6 +6,10 @@ generator zod {
   provider = "prisma-zod-generator"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -22,6 +26,8 @@ model User {
   roleInProjects  UserRolesInProjects[]
   createdStories  Story[]               @relation(name: "creator")
   assignedStories Story[]               @relation(name: "assignee")
+  createdProjects Project[]
+  worklogs        Worklog[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -70,8 +76,11 @@ model Project {
   name        String  @unique
   description String?
 
-  githubUrl String
+  githubUrl String?
   jiraUrl   String?
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id])
 
   users   UserRolesInProjects[]
   stories Story[]
@@ -156,6 +165,9 @@ model Worklog {
 
   storyId String
   story   Story  @relation(fields: [storyId], references: [id])
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
