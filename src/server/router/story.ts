@@ -1,12 +1,13 @@
+import { Stories, Story } from "../schemas/schemas"
+
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
-import { storyInputSchema } from "../../schemas/story"
 import { z } from "zod"
 
 export const storyRouter = createRouter()
   // CREATE
   .mutation("create", {
-    input: storyInputSchema,
+    input: Story,
     output: z.object({
       id: z.string(),
     }),
@@ -41,33 +42,46 @@ export const storyRouter = createRouter()
     input: z.object({
       id: z.string(),
     }),
+    output: Story,
     async resolve({ ctx, input }) {
       const story = await prisma.story.findUnique({
         where: {
           id: input.id,
         },
+        include: {
+          assignee: true,
+          creator: true,
+          project: true,
+          sprint: true,
+          worklogs: true,
+        },
       })
 
-      return {
-        ...story,
-      }
+      return { ...story }
     },
   })
   .query("getAll", {
+    output: Stories,
     async resolve({ ctx, input }) {
       // TODO(SP): implement paging + filtering
 
-      const stories = await prisma.story.findMany()
+      const stories = await prisma.story.findMany({
+        include: {
+          assignee: true,
+          creator: true,
+          project: true,
+          sprint: true,
+          worklogs: true,
+        },
+      })
 
-      return {
-        ...stories,
-      }
+      return stories
     },
   })
 
   // UPDATE
   .mutation("update", {
-    input: storyInputSchema,
+    input: Story,
     output: z.object({
       id: z.string(),
     }),
