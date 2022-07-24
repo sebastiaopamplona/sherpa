@@ -1,12 +1,13 @@
+import { Project, Projects } from "../schemas/schemas"
+
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
-import { projectInputSchema } from "../../schemas/project"
 import { z } from "zod"
 
 export const projectRouter = createRouter()
   // CREATE
   .mutation("create", {
-    input: projectInputSchema,
+    input: Project,
     output: z.object({
       id: z.string(),
     }),
@@ -34,6 +35,7 @@ export const projectRouter = createRouter()
     input: z.object({
       id: z.string(),
     }),
+    output: Project,
     async resolve({ ctx, input }) {
       const project = await prisma.project.findUnique({
         where: {
@@ -47,20 +49,19 @@ export const projectRouter = createRouter()
     },
   })
   .query("getAll", {
+    output: Projects,
     async resolve({ ctx, input }) {
       // TODO(SP): implement paging + filtering
 
       const projects = await prisma.project.findMany()
 
-      return {
-        ...projects,
-      }
+      return projects
     },
   })
 
   // UPDATE
   .mutation("update", {
-    input: projectInputSchema,
+    input: Project,
     output: z.object({
       id: z.string(),
     }),
