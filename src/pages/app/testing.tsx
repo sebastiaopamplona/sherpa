@@ -85,7 +85,7 @@ export default function Backlog() {
           setOpen(true)
         }}
       >
-        Open modal
+        Create project
       </button>
       <Modal
         isOpen={open}
