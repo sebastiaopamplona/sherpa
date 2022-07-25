@@ -86,6 +86,7 @@ CREATE TABLE "Sprint" (
     "projectId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Sprint_pkey" PRIMARY KEY ("id")
 );
@@ -116,7 +117,9 @@ CREATE TABLE "Worklog" (
     "id" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "duration" INTEGER NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "storyId" TEXT NOT NULL,
+    "creatorId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -170,6 +173,9 @@ ALTER TABLE "Story" ADD CONSTRAINT "Story_projectId_fkey" FOREIGN KEY ("projectI
 
 -- AddForeignKey
 ALTER TABLE "Story" ADD CONSTRAINT "Story_sprintId_fkey" FOREIGN KEY ("sprintId") REFERENCES "Sprint"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Worklog" ADD CONSTRAINT "Worklog_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Worklog" ADD CONSTRAINT "Worklog_storyId_fkey" FOREIGN KEY ("storyId") REFERENCES "Story"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
