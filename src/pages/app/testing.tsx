@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import Button from "../../components/button/button"
-import { CreateProjectInput } from "../../schemas/project"
+import { CreateProjectInput } from "../../server/schemas/project"
 import Input from "../../components/input/input"
 import Layout from "../../components/layout"
 import Modal from "../../components/modal/modal"
@@ -15,11 +15,6 @@ export default function Backlog() {
   const session = useSession()
 
   const [open, setOpen] = useState<boolean>(false)
-
-  const getStoryById = trpc.useQuery([
-    "story.getById",
-    { id: "cl5vl6kgo0047trt3unlp98st" },
-  ])
 
   const createStoryMutation = trpc.useMutation(["story.create"], {
     onSuccess: () => {
@@ -82,10 +77,6 @@ export default function Backlog() {
       {createStoryMutation.error && (
         <p>Something went wrong! {createStoryMutation.error.message}</p>
       )}
-      <div>
-        getStoryById ({getStoryById.status}):{" "}
-        <pre>{JSON.stringify(getStoryById.data, null, 2)}</pre>
-      </div>
 
       <div className="px-[500px]"></div>
       <button
@@ -142,6 +133,8 @@ export default function Backlog() {
           </div>
         </form>
       </Modal>
+
+      <div className="py-2" />
     </section>
   )
 }
