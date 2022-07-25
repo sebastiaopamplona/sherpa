@@ -11,11 +11,9 @@ export default function Backlog() {
     <section>
       <h2>Backlog</h2>
 
-      <div className="py-4" />
-
       <div className="px-[300px]">
         <div className="bg-white grid grid-cols-3 gap-y-6 overflow-hidden ">
-          <div className="col-span-1 col-start-2">
+          <div className="mt-1 col-span-1 col-start-2">
             <Button label="Create story" onClick={() => {}} />
           </div>
           <div className="col-span-3 border rounded-md shadow">
