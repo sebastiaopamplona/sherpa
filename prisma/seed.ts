@@ -38,17 +38,18 @@ async function seedUsers() {
         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
   ]
-  users.map(async (u) => {
-    await prisma.user.upsert({
-      where: { email: u.email },
-      update: {},
-      create: {
+  const seed = users.map(async (u) => {
+    await prisma.user.create({
+      data: {
         email: u.email,
         name: u.name,
         image: u.image,
       },
     })
   })
+  await Promise.all(seed)
+
+  console.log("Users seeded")
 }
 
 async function seedProjects() {
@@ -57,46 +58,50 @@ async function seedProjects() {
   })
 
   const projects = ["project-01", "project-02", "project-03"]
-  projects.map(async (p) => {
-    await prisma.project.upsert({
-      where: { name: p },
-      update: {},
-      create: {
+  const seed = projects.map(async (p) => {
+    await prisma.project.create({
+      data: {
         name: p,
         creatorId: seb!.id,
       },
     })
   })
+  await Promise.all(seed)
+
+  console.log("Projects seeded")
 }
 
 async function seedRoles() {
   const roles = ["admin", "editor", "browser"]
-  roles.map(async (r) => {
-    await prisma.role.upsert({
-      where: { name: r },
-      update: {},
-      create: {
+  const seed = roles.map(async (r) => {
+    await prisma.role.create({
+      data: {
         name: r,
       },
     })
   })
+  await Promise.all(seed)
+
+  console.log("Roles seeded")
 }
 
 async function seedPermissions() {
   const services = ["project", "story", "user", "workflow", "role"]
   const permissions = ["create", "read", "update", "delete"]
-  services.map(async (s) => {
-    permissions.map(async (p) => {
+  const seed1 = services.map(async (s) => {
+    const seed2 = permissions.map(async (p) => {
       const permissionFqdn = `${s}.${p}`
-      await prisma.permission.upsert({
-        where: { name: permissionFqdn },
-        update: {},
-        create: {
+      await prisma.permission.create({
+        data: {
           name: permissionFqdn,
         },
       })
     })
+    await Promise.all(seed2)
   })
+  await Promise.all(seed1)
+
+  console.log("Permissions seeded")
 }
 
 async function seedRoleToPermissions() {
@@ -154,14 +159,15 @@ async function seedRoleToPermissions() {
       permissions: ["project.read", "story.read", "user.read", "workflow.read"],
     },
   ]
-  rolesHavePermissions.map(async (rhp) => {
+
+  const seed1 = rolesHavePermissions.map(async (rhp) => {
     const role = await prisma.role.findUnique({
       where: {
         name: rhp.role,
       },
     })
 
-    rhp.permissions.map(async (p) => {
+    const seed2 = rhp.permissions.map(async (p) => {
       const permission = await prisma.permission.findUnique({
         where: {
           name: p,
@@ -175,16 +181,120 @@ async function seedRoleToPermissions() {
         },
       })
     })
+    await Promise.all(seed2)
   })
+  await Promise.all(seed1)
+
+  console.log("Role to permissions seeded")
+}
+
+async function seedUsersInProjects() {
+  type roleInProject = {
+    role: string
+    project: string
+  }
+  type userInProject = {
+    email: string
+    rolesInProjects: roleInProject[]
+  }
+
+  const usersInProjects: userInProject[] = [
+    {
+      email: "sebastiaodsrp@gmail.com",
+      rolesInProjects: [
+        {
+          role: "admin",
+          project: "project-01",
+        },
+        {
+          role: "admin",
+          project: "project-02",
+        },
+        {
+          role: "admin",
+          project: "project-03",
+        },
+      ],
+    },
+    {
+      email: "dummyuser01@journdev.io",
+      rolesInProjects: [
+        {
+          role: "editor",
+          project: "project-01",
+        },
+        {
+          role: "browser",
+          project: "project-02",
+        },
+      ],
+    },
+    {
+      email: "dummyuser02@journdev.io",
+      rolesInProjects: [
+        {
+          role: "browser",
+          project: "project-03",
+        },
+      ],
+    },
+    {
+      email: "dummyuser04@journdev.io",
+      rolesInProjects: [
+        {
+          role: "editor",
+          project: "project-01",
+        },
+        {
+          role: "editor",
+          project: "project-03",
+        },
+      ],
+    },
+  ]
+
+  const seed1 = usersInProjects.map(async (uip) => {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: uip.email,
+      },
+    })
+
+    const seed2 = uip.rolesInProjects.map(async (roleInProject) => {
+      const role = await prisma.role.findUnique({
+        where: {
+          name: roleInProject.role,
+        },
+      })
+      const project = await prisma.project.findUnique({
+        where: {
+          name: roleInProject.project,
+        },
+      })
+
+      await prisma.userRolesInProjects.create({
+        data: {
+          userId: user!.id,
+          roleId: role!.id,
+          projectId: project!.id,
+        },
+      })
+    })
+    await Promise.all(seed2)
+  })
+  await Promise.all(seed1)
+
+  console.log("Users in projects seeded")
 }
 
 async function main() {
-  seedUsers()
-  seedProjects()
-  seedRoles()
-  seedPermissions()
+  await seedUsers()
+  await seedProjects()
+  await seedRoles()
+  await seedPermissions()
 
-  //   seedRoleToPermissions()
+  await seedRoleToPermissions()
+  await seedUsersInProjects()
 }
 
 main()

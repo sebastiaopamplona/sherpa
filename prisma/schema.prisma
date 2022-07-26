@@ -2,10 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator zod {
-  provider = "prisma-zod-generator"
-}
-
 generator erd {
   provider = "prisma-erd-generator"
 }
