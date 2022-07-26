@@ -2,8 +2,9 @@ import { UseFormRegisterReturn } from "react-hook-form"
 
 interface Props {
   label: string
-  note?: string
   register: UseFormRegisterReturn<string>
+  note?: string
+  nRows?: number
 }
 
 export default function Textarea(props: Props) {
@@ -14,13 +15,13 @@ export default function Textarea(props: Props) {
       </label>
       <div className="mt-1">
         <textarea
-          rows={3}
-          className="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+          rows={props.nRows ? props.nRows : 3}
+          className="shadow-sm block w-full min-h-[200px] focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
           defaultValue={""}
           {...props.register}
         />
       </div>
-      <p className="mt-2 text-sm text-gray-500"> {props.note && props.note}</p>
+      <p className="mt-2 text-xs text-gray-500"> {props.note && props.note}</p>
     </>
   )
 }

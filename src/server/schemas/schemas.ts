@@ -4,7 +4,7 @@ export const Project: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
 
   name: z.string(),
-  description: z.string(),
+  description: z.string().nullish(),
 
   githubUrl: z.string().nullish(),
   jiraUrl: z.string().nullish(),

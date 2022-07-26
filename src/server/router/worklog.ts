@@ -1,0 +1,126 @@
+import { Worklog } from "../schemas/schemas"
+import { createRouter } from "../context"
+import { prisma } from "../db/client"
+import { z } from "zod"
+
+export const worklogRouter = createRouter()
+  // CREATE
+  .mutation("create", {
+    input: Worklog,
+    output: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const worklog = await prisma.worklog.create({
+        data: {
+          description: input.description,
+          duration: input.duration,
+
+          creatorId: input.creatorId,
+          storyId: input.storyId,
+        },
+      })
+
+      return {
+        id: worklog.id,
+      }
+    },
+  })
+
+  // READ
+  .query("getById", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const worklog = await prisma.worklog.findUnique({
+        where: {
+          id: input.id,
+        },
+      })
+
+      return {
+        ...worklog,
+      }
+    },
+  })
+  .query("getByStoryId", {
+    input: z.object({
+      storyId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const worklogs = await prisma.worklog.findMany({
+        where: {
+          storyId: input.storyId,
+        },
+      })
+
+      return {
+        ...worklogs,
+      }
+    },
+  })
+  .query("getByCreatorId", {
+    input: z.object({
+      creatorId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const worklogs = await prisma.worklog.findMany({
+        where: {
+          creatorId: input.creatorId,
+        },
+      })
+
+      return {
+        ...worklogs,
+      }
+    },
+  })
+  .query("getAll", {
+    async resolve({ ctx, input }) {
+      // TODO(SP): implement paging + filtering
+
+      const worklogs = await prisma.worklog.findMany()
+
+      return {
+        ...worklogs,
+      }
+    },
+  })
+
+  // UPDATE
+  .mutation("update", {
+    input: Worklog,
+    output: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const worklog = await prisma.worklog.update({
+        where: {
+          id: input.id as string,
+        },
+        data: {
+          description: input.description,
+          duration: input.duration,
+        },
+      })
+
+      return {
+        id: worklog.id,
+      }
+    },
+  })
+
+  // DELETE
+  .mutation("deleteById", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      await prisma.worklog.delete({
+        where: {
+          id: input.id,
+        },
+      })
+    },
+  })

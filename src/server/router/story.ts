@@ -75,6 +75,8 @@ export const storyRouter = createRouter()
         },
       })
 
+      console.log("stories, ", stories)
+
       return stories
     },
   })

@@ -3,8 +3,8 @@ import { createRouter } from "./context"
 import { projectRouter } from "./router/project"
 import { storyRouter } from "./router/story"
 import superjson from "superjson"
+import { userRouter } from "./router/user"
 import { worklogRouter } from "./router/worklog"
-// src/server/router/index.ts
 
 export const appRouter = createRouter()
   .transformer(superjson)
@@ -23,6 +23,7 @@ export const appRouter = createRouter()
   .merge("project.", projectRouter)
   .merge("story.", storyRouter)
   .merge("worklog.", worklogRouter)
+  .merge("user.", userRouter)
   .merge("auth.", authRouter)
 
 // export type definition of API

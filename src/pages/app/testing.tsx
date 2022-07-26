@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react"
+import Select, { SelectEntry } from "../../components/select/select"
 
 import Button from "../../components/button/button"
-import { CreateProjectInput } from "../../server/schemas/project"
 import Input from "../../components/input/input"
 import Layout from "../../components/layout"
 import Modal from "../../components/modal/modal"
+import { ProjectType } from "../../server/schemas/schemas"
 import Sidebar from "../../components/sidebar"
 import Textarea from "../../components/textarea/textarea"
 import { trpc } from "../../utils/trpc"
 import { useForm } from "react-hook-form"
 import { useSession } from "next-auth/react"
+import { useState } from "react"
 
 export default function Backlog() {
   const session = useSession()
@@ -43,11 +44,7 @@ export default function Backlog() {
     })
   }
 
-  const { handleSubmit, register } = useForm<CreateProjectInput>()
-
-  useEffect(() => {
-    console.log("typeof register, ", typeof register)
-  })
+  const { handleSubmit, register } = useForm<ProjectType>()
 
   const { mutate, error } = trpc.useMutation(["project.create"], {
     onSuccess: (data) => {
@@ -58,10 +55,37 @@ export default function Backlog() {
     },
   })
 
-  const handleCreateProject = (values: CreateProjectInput) => {
+  const handleCreateProject = (values: ProjectType) => {
     console.log("handleCreateProject")
     values.creatorId = session?.data?.userid as string
     mutate(values)
+  }
+
+  const [selectableUsers, setSelectableUsers] = useState<SelectEntry[]>()
+  const users = trpc.useQuery(
+    [
+      "user.getByProjectName",
+      {
+        projectName: "project-01",
+      },
+    ],
+    {
+      onSuccess: (data) => {
+        console.log(data)
+        let tmp: SelectEntry[] = []
+        data.map((u) => {
+          tmp.push({
+            id: u.id,
+            text: u.name,
+            image: u.image,
+          })
+        })
+        setSelectableUsers(tmp)
+      },
+    }
+  )
+  if (users.isLoading) {
+    return null
   }
 
   return (
@@ -78,15 +102,23 @@ export default function Backlog() {
         <p>Something went wrong! {createStoryMutation.error.message}</p>
       )}
 
-      <div className="px-[500px]"></div>
-      <button
-        className="w-full inline-flex items-center justify-center px-2.5 py-1.5 border border-transparent text-md font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        onClick={() => {
-          setOpen(true)
-        }}
-      >
-        Create project
-      </button>
+      <div className="px-[500px] grid-cols-6 gap-2">
+        <div className="col-span-1">
+          <button
+            className="w-full inline-flex items-center justify-center px-2.5 py-1.5 border border-transparent text-md font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={() => {
+              setOpen(true)
+            }}
+          >
+            Create project
+          </button>
+        </div>
+        <div className="col-span-1">
+          {selectableUsers && (
+            <Select label="Assigned to" entries={selectableUsers} />
+          )}
+        </div>
+      </div>
       <Modal
         isOpen={open}
         onClose={() => {
