@@ -23,7 +23,7 @@ docker run -p 5432:5432 \
 ```
 
 - (Optional) Open Beekeper and connect to DB using the `journdev` as the DB name
-- Apply the latest prisma migration
+- Apply the latest prisma migration (this will also seed the database)
 
 ```sh
 npx prisma migrate deploy
