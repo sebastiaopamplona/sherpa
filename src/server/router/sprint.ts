@@ -1,17 +1,18 @@
+import { Sprint } from "../schemas/schemas"
 import { TRPCError } from "@trpc/server"
-import { User } from "../schemas/schemas"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
 
-export const userRouter = createRouter()
+export const sprintRouter = createRouter()
   // CREATE
   .mutation("create", {
-    input: User,
+    input: Sprint,
     output: z.object({
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      // TODO:
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
@@ -22,6 +23,7 @@ export const userRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      // TODO:
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
@@ -32,37 +34,37 @@ export const userRouter = createRouter()
     output: z.array(
       z.object({
         id: z.string(),
-        name: z.string(),
-        image: z.string(),
+        title: z.string(),
       })
     ),
     async resolve({ ctx, input }) {
-      const users = await prisma.user.findMany({
+      const sprints = prisma.sprint.findMany({
+        orderBy: {
+          createdAt: "asc",
+        },
         where: {
-          roleInProjects: {
-            some: {
-              projectId: input.projectId,
-            },
-          },
+          projectId: input.projectId,
         },
       })
 
-      return users
+      return sprints
     },
   })
   .query("getAll", {
     async resolve({ ctx, input }) {
+      // TODO:
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
 
   // UPDATE
   .mutation("update", {
-    input: User,
+    input: Sprint,
     output: z.object({
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      // TODO:
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
@@ -73,6 +75,7 @@ export const userRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      // TODO:
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })

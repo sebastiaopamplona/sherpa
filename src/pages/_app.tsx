@@ -1,13 +1,13 @@
 import "../styles/globals.css"
 
-import { ReactElement, ReactNode } from "react"
+import { ReactElement, ReactNode, useState } from "react"
 
 import { AppProps } from "next/app"
 import type { AppRouter } from "../server/createRouter"
+import { JourndevContext } from "../utils/reactContext"
 import { NextPage } from "next"
 import { SessionProvider } from "next-auth/react"
 import superjson from "superjson"
-// src/pages/_app.tsx
 import { withTRPC } from "@trpc/next"
 
 export type NextPageWithLayout = NextPage & {
@@ -18,17 +18,23 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-const MyApp = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppPropsWithLayout) => {
+const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppPropsWithLayout) => {
+  const [theme, setTheme] = useState<string>("")
+
   const getLayout = Component.getLayout ?? ((page) => page)
   const layout = getLayout(<Component {...pageProps} />)
 
   return (
-    <SessionProvider session={session} refetchInterval={0}>
-      {layout}
-    </SessionProvider>
+    <JourndevContext.Provider
+      value={{
+        theme: theme,
+        setTheme: setTheme,
+      }}
+    >
+      <SessionProvider session={session} refetchInterval={0}>
+        {layout}
+      </SessionProvider>
+    </JourndevContext.Provider>
   )
 }
 

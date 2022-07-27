@@ -1,14 +1,9 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 
-import Layout from "../../components/layout"
-import Sidebar from "../../components/sidebar"
-import { trpc } from "../../utils/trpc"
+import Layout from "../../../components/layout/layout"
+import Sidebar from "../../../components/sidebar/sidebar"
 
 export default function Profile() {
-  const hello = trpc.useQuery(["example.hello", { text: "from tRPC" }])
-
-  console.log(hello)
-
   const { data: session, status } = useSession()
   const loading = status === "loading"
 
@@ -33,11 +28,7 @@ export default function Profile() {
           )}
           {session?.user && (
             <>
-              {session.user.image && (
-                <span
-                  style={{ backgroundImage: `url('${session.user.image}')` }}
-                />
-              )}
+              {session.user.image && <span style={{ backgroundImage: `url('${session.user.image}')` }} />}
               <span>
                 <small>Signed in as</small>
                 <br />

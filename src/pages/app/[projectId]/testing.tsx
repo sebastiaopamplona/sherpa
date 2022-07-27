@@ -1,13 +1,12 @@
-import Select, { SelectEntry } from "../../components/select/select"
-
-import Button from "../../components/button/button"
-import Input from "../../components/input/input"
-import Layout from "../../components/layout"
-import Modal from "../../components/modal/modal"
-import { ProjectType } from "../../server/schemas/schemas"
-import Sidebar from "../../components/sidebar"
-import Textarea from "../../components/textarea/textarea"
-import { trpc } from "../../utils/trpc"
+import Button from "../../../components/button/button"
+import Input from "../../../components/input/input"
+import Layout from "../../../components/layout/layout"
+import Modal from "../../../components/modal/modal"
+import { ProjectType } from "../../../server/schemas/schemas"
+import { SelectEntry } from "../../../components/select/select"
+import Sidebar from "../../../components/sidebar/sidebar"
+import Textarea from "../../../components/textarea/textarea"
+import { trpc } from "../../../utils/trpc"
 import { useForm } from "react-hook-form"
 import { useSession } from "next-auth/react"
 import { useState } from "react"
@@ -18,12 +17,8 @@ export default function Backlog() {
   const [open, setOpen] = useState<boolean>(false)
 
   const createStoryMutation = trpc.useMutation(["story.create"], {
-    onSuccess: () => {
-      console.log("story created successfully")
-    },
-    onError: (data) => {
-      console.log("failed to create story, ", data.message)
-    },
+    onSuccess: () => {},
+    onError: (data) => {},
   })
 
   const handlecreateStoryMutation = async () => {
@@ -47,16 +42,11 @@ export default function Backlog() {
   const { handleSubmit, register } = useForm<ProjectType>()
 
   const { mutate, error } = trpc.useMutation(["project.create"], {
-    onSuccess: (data) => {
-      console.log("project created, data: ", data)
-    },
-    onError: (error) => {
-      console.log("project creation failed, error: ", error)
-    },
+    onSuccess: (data) => {},
+    onError: (error) => {},
   })
 
   const handleCreateProject = (values: ProjectType) => {
-    console.log("handleCreateProject")
     values.creatorId = session?.data?.userid as string
     mutate(values)
   }
@@ -71,7 +61,6 @@ export default function Backlog() {
     ],
     {
       onSuccess: (data) => {
-        console.log(data)
         let tmp: SelectEntry[] = []
         data.map((u) => {
           tmp.push({
@@ -91,16 +80,11 @@ export default function Backlog() {
   return (
     <section>
       <h2>Testing</h2>
-      <button
-        onClick={handlecreateStoryMutation}
-        disabled={createStoryMutation.isLoading}
-      >
+      <button onClick={handlecreateStoryMutation} disabled={createStoryMutation.isLoading}>
         Create Dummy Story
       </button>
 
-      {createStoryMutation.error && (
-        <p>Something went wrong! {createStoryMutation.error.message}</p>
-      )}
+      {createStoryMutation.error && <p>Something went wrong! {createStoryMutation.error.message}</p>}
 
       <div className="px-[500px] grid-cols-6 gap-2">
         <div className="col-span-1">
@@ -113,11 +97,6 @@ export default function Backlog() {
             Create project
           </button>
         </div>
-        <div className="col-span-1">
-          {selectableUsers && (
-            <Select label="Assigned to" entries={selectableUsers} />
-          )}
-        </div>
       </div>
       <Modal
         isOpen={open}
@@ -128,34 +107,21 @@ export default function Backlog() {
         <form onSubmit={handleSubmit(handleCreateProject)}>
           <div className="p-2">
             <div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Create Project
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                (Extra info can go here)
-              </p>
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Create Project</h3>
+              <p className="mt-1 text-sm text-gray-500">(Extra info can go here)</p>
             </div>
             <div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
               <div className="sm:col-span-6">
                 <Input label="Name" register={register("name")} />
               </div>
               <div className="sm:col-span-6">
-                <Textarea
-                  label="Description"
-                  register={register("description")}
-                />
+                <Textarea label="Description" register={register("description")} />
               </div>
               <div className="sm:col-span-6">
-                <Input
-                  label="GitHub Repo URL"
-                  register={register("githubUrl")}
-                />
+                <Input label="GitHub Repo URL" register={register("githubUrl")} />
               </div>
               <div className="sm:col-span-6">
-                <Input
-                  label="Jira Project URL"
-                  register={register("jiraUrl")}
-                />
+                <Input label="Jira Project URL" register={register("jiraUrl")} />
               </div>
               <div className="sm:col-span-6">
                 <Button label="Create project" onClick={() => {}} />

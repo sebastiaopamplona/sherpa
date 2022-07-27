@@ -61,11 +61,17 @@ export const storyRouter = createRouter()
     },
   })
   .query("getAll", {
+    input: z.object({
+      projectId: z.string(),
+    }),
     output: Stories,
     async resolve({ ctx, input }) {
       // TODO(SP): implement paging + filtering
 
       const stories = await prisma.story.findMany({
+        where: {
+          projectId: input.projectId,
+        },
         include: {
           assignee: true,
           creator: true,
@@ -74,8 +80,6 @@ export const storyRouter = createRouter()
           worklogs: true,
         },
       })
-
-      console.log("stories, ", stories)
 
       return stories
     },

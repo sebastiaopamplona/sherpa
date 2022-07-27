@@ -1,24 +1,22 @@
-import Button from "../../components/button/button"
-import Layout from "../../components/layout"
-import Modal from "../../components/modal/modal"
-import Sidebar from "../../components/sidebar"
-import StoryEntry from "../../components/storyEntry/storyEntry"
-import StoryForm from "../../components/storyForm/storyForm"
-import { trpc } from "../../utils/trpc"
-import { useSession } from "next-auth/react"
+import Button from "../../../components/button/button"
+import Layout from "../../../components/layout/layout"
+import Modal from "../../../components/modal/modal"
+import Sidebar from "../../../components/sidebar/sidebar"
+import StoryEntry from "../../../components/storyEntry/storyEntry"
+import StoryForm from "../../../components/storyForm/storyForm"
+import { trpc } from "../../../utils/trpc"
+import { useRouter } from "next/router"
 import { useState } from "react"
 
 export default function Backlog() {
-  const session = useSession()
-  const stories = trpc.useQuery(["story.getAll"])
-
-  const [isCreateStoryModalOpen, setIsCreateStoryModalOpen] =
-    useState<boolean>(false)
+  const router = useRouter()
+  const { projectId } = router.query
+  const stories = trpc.useQuery(["story.getAll", { projectId: projectId as string }])
+  const [isCreateStoryModalOpen, setIsCreateStoryModalOpen] = useState<boolean>(false)
 
   return (
     <section>
       <h2>Backlog</h2>
-
       <div className="px-[300px]">
         <div className="bg-white grid grid-cols-3 gap-y-6 overflow-hidden ">
           <div className="mt-1 col-span-1 col-start-2">

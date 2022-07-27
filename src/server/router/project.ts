@@ -48,6 +48,33 @@ export const projectRouter = createRouter()
       }
     },
   })
+  .query("getByUserId", {
+    input: z.object({
+      userId: z.string(),
+    }),
+    output: z.array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+      })
+    ),
+    async resolve({ ctx, input }) {
+      const projects = prisma.project.findMany({
+        orderBy: {
+          name: "asc",
+        },
+        include: {
+          users: {
+            where: {
+              userId: input.userId,
+            },
+          },
+        },
+      })
+
+      return projects
+    },
+  })
   .query("getAll", {
     output: Projects,
     async resolve({ ctx, input }) {
