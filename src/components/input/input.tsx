@@ -16,7 +16,7 @@ export default function Input(props: Props) {
         <input
           defaultValue={props.value ? props.value : ""}
           type={props.inputType ? props.inputType : "text"}
-          className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+          className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
           {...props.register}
         />
       </div>
