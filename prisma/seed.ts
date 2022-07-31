@@ -287,6 +287,57 @@ async function seedUsersInProjects() {
   console.log("Users in projects seeded")
 }
 
+async function seedSprints() {
+  type sprintInProject = {
+    sprint: string
+    project: string
+  }
+  const sprintsInProjects: sprintInProject[] = [
+    {
+      sprint: "Sprint 01",
+      project: "project-01",
+    },
+    {
+      sprint: "Sprint 02",
+      project: "project-01",
+    },
+    {
+      sprint: "Sprint 03",
+      project: "project-01",
+    },
+    {
+      sprint: "Sprint 01",
+      project: "project-02",
+    },
+  ]
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: "sebastiaodsrp@gmail.com",
+    },
+  })
+  const seed = sprintsInProjects.map(async (sip) => {
+    const project = await prisma.project.findUnique({
+      where: {
+        name: sip.project,
+      },
+    })
+
+    await prisma.sprint.create({
+      data: {
+        title: sip.sprint,
+        projectId: project!.id,
+        creatorId: user!.id,
+        startAt: new Date(),
+        endAt: new Date(),
+      },
+    })
+  })
+  await Promise.all(seed)
+
+  console.log("Sprints seeded")
+}
+
 async function main() {
   await seedUsers()
   await seedProjects()
@@ -295,6 +346,7 @@ async function main() {
 
   await seedRoleToPermissions()
   await seedUsersInProjects()
+  await seedSprints()
 }
 
 main()

@@ -15,7 +15,15 @@
     "jsx": "preserve",
     "incremental": true,
     "noUncheckedIndexedAccess": true,
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/middleware.js", "src/pages/middleware.js", "src/components/layout.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "src/middleware.js",
+    "src/pages/middleware.js",
+    "src/components/layout.js"
+  ],
   "exclude": ["node_modules"]
 }

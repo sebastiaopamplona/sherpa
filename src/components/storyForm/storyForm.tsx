@@ -33,16 +33,16 @@ export default function StoryForm(props: Props) {
 
   useEffect(() => {
     if (props.story) {
-      TABS.push({ name: "Worklogs", icon: UserIcon })
+      setSelectableTabs((selectableTabs) => [...selectableTabs, { name: "Worklogs", icon: UserIcon }])
     }
-  })
+  }, [props.story])
 
   return (
     <div>
       <div className="hidden sm:block">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            {TABS.map((tab) => (
+            {selectableTabs.map((tab) => (
               <div
                 key={tab.name}
                 className={classNames(
@@ -69,15 +69,17 @@ export default function StoryForm(props: Props) {
           </nav>
         </div>
       </div>
-      <div className={classNames(selectedTab.name === "Details" ? "" : "hidden")}>
-        <StoryDetails
-          story={props.story}
-          onCreateOrUpdateSuccess={props.onCreateOrUpdateSuccess}
-          onCreateOrUpdateError={props.onCreateOrUpdateError}
-        />
-      </div>
-      <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
-        <StoryWorklogs story={props.story} isAddingWorklog={props.isAddingWorklog ? props.isAddingWorklog : false} />
+      <div className="overflow-y-scroll">
+        <div className={classNames(selectedTab.name === "Details" ? "" : "hidden")}>
+          <StoryDetails
+            story={props.story}
+            onCreateOrUpdateSuccess={props.onCreateOrUpdateSuccess}
+            onCreateOrUpdateError={props.onCreateOrUpdateError}
+          />
+        </div>
+        <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
+          <StoryWorklogs story={props.story} isAddingWorklog={props.isAddingWorklog ? props.isAddingWorklog : false} />
+        </div>
       </div>
     </div>
   )
@@ -136,7 +138,6 @@ const StoryDetails: React.FC<{
   })
 
   const handleCreateStory = (values: StoryType) => {
-    values.estimate = 120
     values.creatorId = session?.data?.userid as string
     if (selectedUser.id !== unassignedUser.id) {
       values.assigneeId = selectedUser.id
@@ -193,7 +194,7 @@ const StoryDetails: React.FC<{
               label="Estimate"
               value={story ? story.estimate : ""}
               inputType="number"
-              register={register("estimate")}
+              register={register("estimate", { valueAsNumber: true })}
             />
           </div>
           <div className="col-span-6">
@@ -262,13 +263,7 @@ const StoryDetails: React.FC<{
   )
 }
 
-type WorklogTypeTS = {
-  creatorId: string
-  projectId: string
-  date: Date
-}
-
-const StoryWorklogs: React.FC<{ story: StoryType; isAddingWorklog: boolean }> = ({ story, isAddingWorklog }) => {
+const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> = ({ story, isAddingWorklog }) => {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
@@ -278,12 +273,15 @@ const StoryWorklogs: React.FC<{ story: StoryType; isAddingWorklog: boolean }> = 
 
   const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog)
 
+  const worklogs = trpc.useQuery(["worklog.getByStoryId", { storyId: story ? (story.id as string) : "" }])
+
   useEffect(() => {}, [story])
 
   const createWorklogMutation = trpc.useMutation(["worklog.create"], {
     onSuccess: () => {
       // TODO(SP):
       // onCreateOrUpdateSuccess()
+      worklogs.refetch()
     },
     onError: () => {
       // TODO(SP):
@@ -304,40 +302,15 @@ const StoryWorklogs: React.FC<{ story: StoryType; isAddingWorklog: boolean }> = 
     createWorklogMutation.mutate(values)
   }
 
+  if (worklogs.isLoading) {
+    return null
+  }
+
   return (
     <form onSubmit={handleSubmit(handleCreateWorklog)}>
       <div className="p-2">
         <div>
           <h3 className="text-lg leading-6 font-medium text-gray-900">Worklogs</h3>
-        </div>
-        <div className="mt-6 max-h-[560px] px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4">
-          {story && story.worklogs.length > 0 ? (
-            <div className="col-span-6 border-2 rounded-sm shadow-sm">
-              <ul role="list" className="divide-y divide-gray-200">
-                {story.worklogs.map((worklog: WorklogType) => (
-                  <li
-                    key={worklog.id}
-                    onClick={() => {
-                      // TODO:
-                    }}
-                  >
-                    <WorklogEntry worklog={worklog} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <>
-              <div
-                className={classNames(
-                  isWrittingWorklog ? "hidden" : "",
-                  "col-span-6 inline-flex items-center justify-center text-md"
-                )}
-              >
-                This story has no worklogs yet.
-              </div>
-            </>
-          )}
         </div>
         <div className={classNames(isWrittingWorklog ? "" : "hidden", "col-span-6 grid grid-cols-6 gap-y-6 gap-x-4")}>
           <div className="col-span-2">
@@ -352,14 +325,23 @@ const StoryWorklogs: React.FC<{ story: StoryType; isAddingWorklog: boolean }> = 
             />
           </div>
           <div className="col-span-2">
-            <Input label="Worklog effort" />
+            <Input
+              label="Worklog effort"
+              register={register("effort", {
+                valueAsNumber: true,
+              })}
+            />
           </div>
           <div className="col-span-2">
-            <Input label="Remaining effort" />
+            <Input
+              label="Remaining effort"
+              register={register("remainingEffort", {
+                valueAsNumber: true,
+              })}
+            />
           </div>
           <div className="col-span-6">
             <Textarea
-              value={story ? story.description : ""}
               label="What did you do?"
               register={register("description")}
               note="(Markdown will be supported in the future)"
@@ -392,6 +374,35 @@ const StoryWorklogs: React.FC<{ story: StoryType; isAddingWorklog: boolean }> = 
               Save
             </button>
           </div>
+        </div>
+        <div className="mt-6 max-h-[560px] px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4">
+          {worklogs.data ? (
+            <div className="col-span-6 border-2 rounded-sm shadow-sm">
+              <ul role="list" className="divide-y divide-gray-200">
+                {worklogs.data.map((worklog) => (
+                  <li
+                    key={worklog.id}
+                    onClick={() => {
+                      // TODO:
+                    }}
+                  >
+                    <WorklogEntry worklog={worklog} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <>
+              <div
+                className={classNames(
+                  isWrittingWorklog ? "hidden" : "",
+                  "col-span-6 inline-flex items-center justify-center text-md"
+                )}
+              >
+                This story has no worklogs yet.
+              </div>
+            </>
+          )}
         </div>
         <div className="mt-6 grid gap-y-6 gap-x-4 grid-cols-6">
           <div className="col-span-6 inline-flex items-center justify-center">

@@ -1,9 +1,9 @@
-import Button from "../../../components/button/button"
+import { ButtonDefaultCSS } from "../../../utils/aux"
+import DatePicker from "../../../components/datepicker/datepicker"
 import Input from "../../../components/input/input"
 import Layout from "../../../components/layout/layout"
 import Modal from "../../../components/modal/modal"
 import { ProjectType } from "../../../server/schemas/schemas"
-import { SelectEntry } from "../../../components/select/select"
 import Sidebar from "../../../components/sidebar/sidebar"
 import Textarea from "../../../components/textarea/textarea"
 import { trpc } from "../../../utils/trpc"
@@ -15,32 +15,7 @@ export default function Backlog() {
   const session = useSession()
 
   const [open, setOpen] = useState<boolean>(false)
-
-  const createStoryMutation = trpc.useMutation(["story.create"], {
-    onSuccess: () => {},
-    onError: (data) => {},
-  })
-
-  const handlecreateStoryMutation = async () => {
-    createStoryMutation.mutate({
-      title: "dummy title",
-      description: "input.description",
-      estimate: 120,
-
-      projectId: "cl5vl3nij0036trt3iarsxcs3",
-      creatorId: session?.data?.userid as string,
-      // sprintId: "input.sprintId",
-
-      githubId: "input.githubId",
-      jiraId: "input.jiraId",
-
-      state: "NEW",
-      type: "DEVELOPMENT",
-    })
-  }
-
   const { handleSubmit, register } = useForm<ProjectType>()
-
   const { mutate, error } = trpc.useMutation(["project.create"], {
     onSuccess: (data) => {},
     onError: (error) => {},
@@ -51,41 +26,9 @@ export default function Backlog() {
     mutate(values)
   }
 
-  const [selectableUsers, setSelectableUsers] = useState<SelectEntry[]>()
-  const users = trpc.useQuery(
-    [
-      "user.getByProjectName",
-      {
-        projectName: "project-01",
-      },
-    ],
-    {
-      onSuccess: (data) => {
-        let tmp: SelectEntry[] = []
-        data.map((u) => {
-          tmp.push({
-            id: u.id,
-            text: u.name,
-            image: u.image,
-          })
-        })
-        setSelectableUsers(tmp)
-      },
-    }
-  )
-  if (users.isLoading) {
-    return null
-  }
-
   return (
     <section>
       <h2>Testing</h2>
-      <button onClick={handlecreateStoryMutation} disabled={createStoryMutation.isLoading}>
-        Create Dummy Story
-      </button>
-
-      {createStoryMutation.error && <p>Something went wrong! {createStoryMutation.error.message}</p>}
-
       <div className="px-[500px] grid-cols-6 gap-2">
         <div className="col-span-1">
           <button
@@ -96,6 +39,10 @@ export default function Backlog() {
           >
             Create project
           </button>
+        </div>
+        <div className="py-4" />
+        <div className="col-span-1">
+          <DatePicker />
         </div>
       </div>
       <Modal
@@ -124,7 +71,7 @@ export default function Backlog() {
                 <Input label="Jira Project URL" register={register("jiraUrl")} />
               </div>
               <div className="sm:col-span-6">
-                <Button label="Create project" onClick={() => {}} />
+                <button className={ButtonDefaultCSS}>Create project</button>
                 <p> {error && error.message}</p>
               </div>
             </div>

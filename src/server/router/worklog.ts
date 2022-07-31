@@ -54,11 +54,12 @@ export const worklogRouter = createRouter()
         where: {
           storyId: input.storyId,
         },
+        include: {
+          creator: true,
+        },
       })
 
-      return {
-        ...worklogs,
-      }
+      return worklogs
     },
   })
   .query("getByCreatorId", {

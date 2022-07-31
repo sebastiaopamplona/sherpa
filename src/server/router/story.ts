@@ -77,7 +77,7 @@ export const storyRouter = createRouter()
           creator: true,
           project: true,
           sprint: true,
-          worklogs: true,
+          worklogs: false,
         },
       })
 
