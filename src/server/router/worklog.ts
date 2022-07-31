@@ -14,7 +14,8 @@ export const worklogRouter = createRouter()
       const worklog = await prisma.worklog.create({
         data: {
           description: input.description,
-          duration: input.duration,
+          effort: input.effort,
+          remainingEffort: input.remainingEffort,
 
           creatorId: input.creatorId,
           storyId: input.storyId,

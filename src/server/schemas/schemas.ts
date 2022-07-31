@@ -24,7 +24,7 @@ export const Sprint: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
 
   title: z.string(),
-  description: z.string(),
+  description: z.string().nullish(),
   startAt: z.date(),
   endAt: z.date(),
 
@@ -36,7 +36,9 @@ export const Sprint: Zod.AnyZodObject = z.object({
 
   createdAt: z.date().nullish(),
   updatedAt: z.date().nullish(),
-  deletedAt: z.date().nullish(),
+
+  // TODO: bring this back once we support the feature
+  // deletedAt: z.date().nullish(),
 })
 export const Sprints = z.array(Sprint)
 export type SprintType = z.infer<typeof Sprint>
@@ -46,8 +48,9 @@ export const Worklog: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
 
   description: z.string(),
-  duration: z.number(),
   date: z.date(),
+  effort: z.number(),
+  remainingEffort: z.number(),
 
   creatorId: z.string(),
   creator: z.lazy(() => User).nullish(),
@@ -69,22 +72,8 @@ export const Story: Zod.AnyZodObject = z.object({
   title: z.string(),
   description: z.string(),
   estimate: z.number(),
-  state: z.enum([
-    "NEW",
-    "READY",
-    "IN_PROGRESS",
-    "DELIVERED",
-    "IN_REVIEW",
-    "DONE",
-    "DELETED",
-  ]),
-  type: z.enum([
-    "DEVELOPMENT",
-    "DOCUMENTATION",
-    "BUG_FIXING",
-    "MAINTENANCE",
-    "SUPPORT",
-  ]),
+  state: z.enum(["NEW", "READY", "IN_PROGRESS", "DELIVERED", "IN_REVIEW", "DONE", "DELETED"]),
+  type: z.enum(["DEVELOPMENT", "DOCUMENTATION", "BUG_FIXING", "MAINTENANCE", "SUPPORT"]),
 
   githubId: z.string().nullish(),
   jiraId: z.string().nullish(),
