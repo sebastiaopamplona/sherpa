@@ -6,6 +6,7 @@ import Textarea from "../../components/textarea/textarea"
 import { XCircleIcon } from "@heroicons/react/solid"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
 import { useState } from "react"
 
 type ProjectInformation = {
@@ -16,13 +17,14 @@ type ProjectInformation = {
 }
 
 export default function CreateProject() {
+  const session = useSession()
+  const router = useRouter()
+
   const { register, handleSubmit } = useForm<ProjectInformation>()
   const [errorMessage, setErrorMessage] = useState<string>("")
-  const router = useRouter()
 
   const mutation = trpc.useMutation(["project.create"], {
     onSuccess: (data) => {
-      console.log("project.create succeeded! response: ", data)
       router.push(`/app/${data.id}/timekeeper`)
     },
     onError: (error) => {
@@ -32,7 +34,7 @@ export default function CreateProject() {
 
   const handleCreateProject: SubmitHandler<ProjectInformation> = (data) => {
     // FIXME: fetch userid from session
-    data.creatorId = "cl6c6xeuc0002b5t3d3olc53d"
+    data.creatorId = session.data!.userid as string
 
     mutation.mutate(data)
   }
