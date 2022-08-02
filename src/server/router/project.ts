@@ -24,6 +24,7 @@ export const projectRouter = createRouter()
       if (projectCountByName > 0) {
         throw new TRPCError({ code: "CONFLICT", message: `Project with name '${input.name}' aleady exists.` })
       }
+
       const project = await prisma.project.create({
         data: {
           name: input.name,
@@ -33,6 +34,20 @@ export const projectRouter = createRouter()
           jiraUrl: input.jiraUrl,
 
           creatorId: input.creatorId,
+        },
+      })
+
+      const adminRole = await prisma.role.findUnique({
+        where: {
+          name: "admin",
+        },
+      })
+
+      await prisma.userRolesInProjects.create({
+        data: {
+          userId: input.creatorId,
+          roleId: adminRole!.id,
+          projectId: project!.id,
         },
       })
 
