@@ -2,7 +2,7 @@ import { UseFormRegisterReturn } from "react-hook-form"
 
 interface Props {
   label: string
-  register: UseFormRegisterReturn<string>
+  register?: UseFormRegisterReturn<string>
   value?: string
   note?: string
   nRows?: number
