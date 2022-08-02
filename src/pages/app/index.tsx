@@ -10,28 +10,29 @@ export default function Index() {
 export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getJourndevAuthSession(ctx)
 
-  const projects = await prisma.project.findMany({
-    orderBy: {
-      name: "asc",
-    },
-    include: {
-      users: {
-        where: {
-          userId: session!.userid as string,
-        },
-      },
+  // TODO: if !session -> error
+
+  const userRolesProject = await prisma.userRolesInProjects.findMany({
+    where: {
+      userId: session!.userid as string,
     },
   })
 
-  if (projects.length === 0) {
+  if (userRolesProject.length === 0) {
     return {
       redirect: { destination: "/app/createproject", permanent: false },
     }
   }
 
+  const project = await prisma.project.findFirst({
+    where: {
+      id: userRolesProject[0]!.projectId,
+    },
+  })
+
   return {
     redirect: {
-      destination: `/app/${projects[0]?.id}/timekeeper`,
+      destination: `/app/${project!.id}/timekeeper`,
       permanent: false,
     },
   }
