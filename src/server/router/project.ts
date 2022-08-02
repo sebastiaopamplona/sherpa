@@ -1,5 +1,6 @@
 import { Project, Projects } from "../schemas/schemas"
 
+import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
@@ -12,6 +13,17 @@ export const projectRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      // TODO(SP): handle project name conflict with error returned from prisma
+      // because of the unique(name) constraint
+
+      const projectCountByName = await prisma.project.count({
+        where: {
+          name: input.name,
+        },
+      })
+      if (projectCountByName > 0) {
+        throw new TRPCError({ code: "CONFLICT", message: `Project with name '${input.name}' aleady exists.` })
+      }
       const project = await prisma.project.create({
         data: {
           name: input.name,
