@@ -6,6 +6,7 @@ import { StoryStates, StoryTypes } from "../../server/data/data"
 import { StoryType, WorklogType } from "../../server/schemas/schemas"
 
 import DatePicker from "../datepicker/datepicker"
+import EmptyResources from "../emptyResources/emptyResources"
 import Input from "../input/input"
 import Textarea from "../textarea/textarea"
 import { UserIcon } from "@heroicons/react/solid"
@@ -144,7 +145,9 @@ const StoryDetails: React.FC<{
     }
     values.type = selectedType.id
     values.state = selectedState.id
-    values.sprintId = selectedSprint.id
+    if (selectedSprint.id !== noSprint.id) {
+      values.sprintId = selectedSprint.id
+    }
     values.projectId = projectId
 
     createStoryMutation.mutate(values)
@@ -297,14 +300,12 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
     values.creatorId = session?.data?.userid as string
     values.projectId = projectId
     values.date = selectedDate
-    values.storyId = story.id
+    values.storyId = story!.id
 
     createWorklogMutation.mutate(values)
   }
 
-  if (worklogs.isLoading) {
-    return null
-  }
+  if (worklogs.isLoading || createWorklogMutation.isLoading) return null
 
   return (
     <form onSubmit={handleSubmit(handleCreateWorklog)}>
@@ -375,7 +376,15 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
             </button>
           </div>
         </div>
-        <div className="mt-6 max-h-[560px] px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4">
+        <div className={classNames((worklogs.data && worklogs.data.length > 0) || isWrittingWorklog ? "hidden" : "")}>
+          <EmptyResources message="You have no worklogs in your backlog. Get started by creating one." />
+        </div>
+        <div
+          className={classNames(
+            worklogs.data && worklogs.data.length === 0 ? "hidden" : "",
+            "mt-6 max-h-[560px] px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4"
+          )}
+        >
           {worklogs.data ? (
             <div className="col-span-6 border-2 rounded-sm shadow-sm">
               <ul role="list" className="divide-y divide-gray-200">
