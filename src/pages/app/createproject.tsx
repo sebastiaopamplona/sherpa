@@ -41,7 +41,9 @@ export default function CreateProject() {
     <div className="grid grid-cols-5 content-start ">
       <form className="col-span-3 col-start-2" onSubmit={handleSubmit(handleCreateProject)}>
         <div className="col-span-3 col-start-2 grid grid-cols-2 gap-4 p-4">
-          <h1 className="col-span-2 flex items-center justify-center font-bold text-2xl underline">Create a project</h1>
+          <h1 className="col-span-2 flex items-center justify-center font-bold text-2xl underline">
+            Get started by creating a project
+          </h1>
           <div className="col-span-1">
             <Input label="Project name" register={register("name")} />
           </div>
