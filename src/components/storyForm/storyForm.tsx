@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react"
 type Tab = {
   name: string
   icon: (props: SVGProps<SVGSVGElement>) => JSX.Element
+  enabled: boolean
 }
 
 interface Props {
@@ -29,24 +30,33 @@ interface Props {
 }
 
 export default function StoryForm(props: Props) {
-  const [selectableTabs, setSelectableTabs] = useState<Tab[]>([{ name: "Details", icon: UserIcon }])
-  const [selectedTab, setSelectedTab] = useState<Tab>(selectableTabs[0]!)
+  const TABS: Tab[] = [
+    { name: "Details", icon: UserIcon, enabled: true },
+    { name: "Worklogs", icon: UserIcon, enabled: typeof props.story !== "undefined" },
+  ]
+
+  const [selectedTab, setSelectedTab] = useState<Tab>(TABS[0]!)
 
   useEffect(() => {
     if (props.story) {
-      setSelectableTabs((selectableTabs) => [...selectableTabs, { name: "Worklogs", icon: UserIcon }])
+      TABS[1]!.enabled = true
+
+      if (props.isAddingWorklog) {
+        setSelectedTab(TABS[1]!)
+      }
     }
-  }, [props.story])
+  }, [props.story, props.isAddingWorklog])
 
   return (
     <div>
       <div className="hidden sm:block">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            {selectableTabs.map((tab) => (
+            {TABS.map((tab) => (
               <div
                 key={tab.name}
                 className={classNames(
+                  tab.enabled ? "" : "hidden",
                   tab.name === selectedTab.name
                     ? "border-indigo-500 text-indigo-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
@@ -307,6 +317,8 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
 
   if (worklogs.isLoading || createWorklogMutation.isLoading) return null
 
+  // console.log(worklogs)
+
   return (
     <form onSubmit={handleSubmit(handleCreateWorklog)}>
       <div className="p-2">
@@ -392,6 +404,7 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
                   <li
                     key={worklog.id}
                     onClick={() => {
+                      console.log(worklog.id)
                       // TODO:
                     }}
                   >

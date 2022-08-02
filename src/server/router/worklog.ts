@@ -51,6 +51,9 @@ export const worklogRouter = createRouter()
     }),
     async resolve({ ctx, input }) {
       const worklogs = await prisma.worklog.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
         where: {
           storyId: input.storyId,
         },

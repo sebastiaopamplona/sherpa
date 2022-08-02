@@ -18,6 +18,10 @@ export default function TimeKeeper() {
 
   const [currentStory, setCurrentStory] = useState<StoryType>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
+  const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
+
+  // TODO(SP):
+  //  - add timeframe to go to prev / next week
 
   return (
     <section>
@@ -52,6 +56,11 @@ export default function TimeKeeper() {
                     setCurrentStory(story)
                     setIsStoryDetailsOpen(true)
                   }}
+                  onWorklogCellClick={(story: StoryType) => {
+                    setCurrentStory(story)
+                    setIsAddingWorklog(true)
+                    setIsStoryDetailsOpen(true)
+                  }}
                 />
               ))}
             </>
@@ -62,10 +71,12 @@ export default function TimeKeeper() {
         isOpen={isStoryDetailsOpen}
         onClose={() => {
           setIsStoryDetailsOpen(false)
+          setIsAddingWorklog(false)
         }}
       >
         <StoryForm
           story={currentStory}
+          isAddingWorklog={isAddingWorklog}
           onCreateOrUpdateSuccess={() => {
             setIsStoryDetailsOpen(false)
             alert("story updated")
@@ -79,10 +90,11 @@ export default function TimeKeeper() {
   )
 }
 
-const TimeKeeperEntry: React.FC<{ story: StoryType; onStoryClick: (story: StoryType) => void }> = ({
-  story,
-  onStoryClick,
-}) => {
+const TimeKeeperEntry: React.FC<{
+  story: StoryType
+  onStoryClick: (story: StoryType) => void
+  onWorklogCellClick: (story: StoryType) => void
+}> = ({ story, onStoryClick, onWorklogCellClick }) => {
   return (
     <>
       <div
@@ -93,14 +105,29 @@ const TimeKeeperEntry: React.FC<{ story: StoryType; onStoryClick: (story: StoryT
       >
         <StoryEntry story={story} showAssignee={false} />
       </div>
-      <div className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}></div>
-      <div className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}></div>
-      <div className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}></div>
-      <div className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}></div>
-      <div className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}></div>
+      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
+      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
+      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
+      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
+      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
     </>
   )
 }
+
+const TimeKeeperWorklogCell: React.FC<{ story: StoryType; onWorklogCellClick: (story: StoryType) => void }> = ({
+  story,
+  onWorklogCellClick,
+}) => {
+  return (
+    <div
+      className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}
+      onClick={() => {
+        onWorklogCellClick(story)
+      }}
+    ></div>
+  )
+}
+
 TimeKeeper.getLayout = function getLayout(page: React.ReactNode) {
   return (
     <Layout>
