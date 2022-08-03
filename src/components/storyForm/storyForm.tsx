@@ -1,5 +1,5 @@
 import { ButtonDefaultCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
-import { SVGProps, useEffect, useState } from "react"
+import { SVGProps, useEffect, useMemo, useState } from "react"
 import Select, { SelectEntry } from "../../components/select/select"
 import { StoryState as StoryStateEnum, StoryType as StoryTypeEnum } from "@prisma/client"
 import { StoryStates, StoryTypes } from "../../server/data/data"
@@ -30,29 +30,32 @@ interface Props {
 }
 
 export default function StoryForm(props: Props) {
-  const TABS: Tab[] = [
-    { name: "Details", icon: UserIcon, enabled: true },
-    { name: "Worklogs", icon: UserIcon, enabled: typeof props.story !== "undefined" },
-  ]
+  const tabs = useMemo(
+    () => [
+      { name: "Details", icon: UserIcon, enabled: true },
+      { name: "Worklogs", icon: UserIcon, enabled: typeof props.story !== "undefined" },
+    ],
+    [props.story]
+  )
 
-  const [selectedTab, setSelectedTab] = useState<Tab>(TABS[0]!)
+  const [selectedTab, setSelectedTab] = useState<Tab>(tabs[0]!)
 
   useEffect(() => {
     if (props.story) {
-      TABS[1]!.enabled = true
+      tabs[1]!.enabled = true
 
       if (props.isAddingWorklog) {
-        setSelectedTab(TABS[1]!)
+        setSelectedTab(tabs[1]!)
       }
     }
-  }, [props.story, props.isAddingWorklog])
+  }, [props.story, props.isAddingWorklog, tabs])
 
   return (
     <div>
       <div className="hidden sm:block">
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-            {TABS.map((tab) => (
+            {tabs.map((tab) => (
               <div
                 key={tab.name}
                 className={classNames(
