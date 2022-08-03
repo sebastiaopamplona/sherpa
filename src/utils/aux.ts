@@ -20,3 +20,6 @@ export const ButtonDefaultCSS =
 
 export const ButtonDisabledCSS =
   "inline-flex items-center justify-center px-2.5 py-1.5 border border-transparent text-md font-medium rounded text-gray-400 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+
+// Returns the type of the elements of an array
+export type ArrElement<ArrType> = ArrType extends readonly (infer ElementType)[] ? ElementType : never

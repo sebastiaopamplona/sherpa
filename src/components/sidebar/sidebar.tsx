@@ -1,8 +1,9 @@
+import { ArrElement, classNames } from "../../utils/aux"
 import { BeakerIcon, ChartSquareBarIcon, ClockIcon, FolderIcon } from "@heroicons/react/outline"
-import Select, { SelectEntry } from "../select/select"
-import { classNames, switchProject } from "../../utils/aux"
 
 import Link from "next/link"
+import { ProjectGetByUserIdOutput } from "../../server/router/project"
+import Select from "../select/select"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
@@ -10,9 +11,14 @@ import { useState } from "react"
 
 export default function Sidebar() {
   const router = useRouter()
-
   const { data: session, status } = useSession()
   const { projectId } = router.query
+
+  const [selectedProject, setSelectedProject] = useState<ArrElement<ProjectGetByUserIdOutput>>()
+
+  const projects = trpc.useQuery(["project.getByUserId", { userId: session?.userid as string }], {
+    onSuccess: (data) => setSelectedProject(data[0]!),
+  })
 
   const navigation = [
     { name: "Time Keeper", icon: ClockIcon, href: `/app/${projectId}/timekeeper` },
@@ -32,42 +38,6 @@ export default function Sidebar() {
       href: `/app/${projectId}/testing`,
     },
   ]
-
-  const [selectedProject, setSelectedProject] = useState<SelectEntry>({
-    id: "",
-    text: "",
-  })
-  const [selectableProjects, setSelectableProjects] = useState<SelectEntry[]>([])
-
-  const projects = trpc.useQuery(
-    [
-      "project.getByUserId",
-      {
-        userId: session?.userid as string,
-      },
-    ],
-    {
-      onSuccess(data) {
-        if (!data) {
-          alert("user has no projects! TODO: redirect to Create Project page")
-          return null
-        }
-
-        let tmp: SelectEntry[] = []
-        data.map((p) => {
-          const curr = {
-            id: p.id,
-            text: p.name,
-          }
-          if (p.id === projectId) setSelectedProject(curr)
-
-          tmp.push(curr)
-        })
-
-        setSelectableProjects(tmp)
-      },
-    }
-  )
 
   if (projects.isLoading) return null
 
@@ -109,19 +79,14 @@ export default function Sidebar() {
       <div className="flex-shrink-0 flex bg-gray-700 p-4">
         <div className="flex-shrink-0 w-full group block">
           <div className="flex items-center justify-center flex-shrink-0 px-4">
-            {selectableProjects && (
-              <Select
-                upwards={true}
-                entries={selectableProjects}
-                selectedState={[
-                  selectedProject,
-                  (e: SelectEntry) => {
-                    setSelectedProject(e)
-                    switchProject(e.id, router)
-                  },
-                ]}
-              />
-            )}
+            <Select
+              label="Assigned to"
+              entries={projects.data!}
+              getId={(t) => t.id}
+              getText={(t) => t.name}
+              selectedState={[selectedProject, setSelectedProject]}
+              upwards={true}
+            />
           </div>
           <div className="p-2" />
           <div className="flex items-center">

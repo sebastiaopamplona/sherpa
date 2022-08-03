@@ -1,3 +1,5 @@
+import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+
 import { Sprint } from "../schemas/schemas"
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
@@ -18,6 +20,12 @@ export const sprintRouter = createRouter()
   })
 
   // READ
+  .query("getAll", {
+    async resolve({ ctx, input }) {
+      // TODO:
+      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
+    },
+  })
   .query("getById", {
     input: z.object({
       id: z.string(),
@@ -50,12 +58,6 @@ export const sprintRouter = createRouter()
       return sprints
     },
   })
-  .query("getAll", {
-    async resolve({ ctx, input }) {
-      // TODO:
-      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
-    },
-  })
 
   // UPDATE
   .mutation("update", {
@@ -79,3 +81,10 @@ export const sprintRouter = createRouter()
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
+
+export type SprintCreateOutput = inferMutationOutput<"sprint.create">
+export type SprintGetAllOutput = inferQueryOutput<"sprint.getAll">
+export type SprintGetByIdOutput = inferQueryOutput<"sprint.getById">
+export type SprintGetByProjectIdOutput = inferQueryOutput<"sprint.getByProjectId">
+export type SprintUpdateOutput = inferMutationOutput<"sprint.update">
+export type SprintDeleteByIdOutput = inferMutationOutput<"sprint.deleteById">

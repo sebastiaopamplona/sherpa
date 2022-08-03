@@ -1,4 +1,5 @@
 import { Project, Projects } from "../schemas/schemas"
+import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
 
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
@@ -86,15 +87,26 @@ export const projectRouter = createRouter()
       })
     ),
     async resolve({ ctx, input }) {
+      const userRolesProject = await prisma.userRolesInProjects.findMany({
+        where: {
+          userId: input.userId,
+        },
+      })
+
+      if (userRolesProject.length === 0) {
+        return []
+      }
+
+      let projectIds: string[] = []
+      userRolesProject.forEach((r) => projectIds.push(r.projectId))
+
       const projects = prisma.project.findMany({
         orderBy: {
           name: "asc",
         },
-        include: {
-          users: {
-            where: {
-              userId: input.userId,
-            },
+        where: {
+          id: {
+            in: projectIds,
           },
         },
       })
@@ -152,3 +164,10 @@ export const projectRouter = createRouter()
       })
     },
   })
+
+export type ProjectCreateOutput = inferMutationOutput<"project.create">
+export type ProjectGetAllOutput = inferQueryOutput<"project.getAll">
+export type ProjectGetByIdOutput = inferQueryOutput<"project.getById">
+export type ProjectGetByUserIdOutput = inferQueryOutput<"project.getByUserId">
+export type ProjectUpdateOutput = inferMutationOutput<"project.update">
+export type ProjectDeleteByIdOutput = inferMutationOutput<"project.deleteById">
