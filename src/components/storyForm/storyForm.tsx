@@ -1,7 +1,12 @@
 import { ButtonDefaultCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
 import { SVGProps, useEffect, useMemo, useState } from "react"
-import Select, { SelectEntry } from "../../components/select/select"
-import { StoryState as StoryStateEnum, StoryType as StoryTypeEnum } from "@prisma/client"
+import Select, {
+  NewStoryState,
+  NoSprint,
+  SelectEntry,
+  StoryDevelopmentType,
+  UnassignedUser,
+} from "../../components/select/select"
 import { StoryStates, StoryTypes } from "../../server/data/data"
 import { StoryType, WorklogType } from "../../server/schemas/schemas"
 
@@ -110,16 +115,16 @@ const StoryDetails: React.FC<{
 
   const { handleSubmit, register } = useForm<StoryType>()
 
-  const [selectedUser, setSelectedUser] = useState<SelectEntry>(unassignedUser)
+  const [selectedUser, setSelectedUser] = useState<SelectEntry>(UnassignedUser)
   const [selectableUsers, setSelectableUsers] = useState<SelectEntry[]>()
 
-  const [selectedType, setSelectedType] = useState<SelectEntry>(developmentType)
+  const [selectedType, setSelectedType] = useState<SelectEntry>(StoryDevelopmentType)
   const [selectableTypes, setSelectableTypes] = useState<SelectEntry[]>()
 
-  const [selectedState, setSelectedState] = useState<SelectEntry>(newState)
+  const [selectedState, setSelectedState] = useState<SelectEntry>(NewStoryState)
   const [selectableStates, setSelectableStates] = useState<SelectEntry[]>()
 
-  const [selectedSprint, setSelectedSprint] = useState<SelectEntry>(noSprint)
+  const [selectedSprint, setSelectedSprint] = useState<SelectEntry>(NoSprint)
   const [selectableSprints, setSelectableSprints] = useState<SelectEntry[]>()
 
   useEffect(() => {
@@ -153,12 +158,12 @@ const StoryDetails: React.FC<{
 
   const handleCreateStory = (values: StoryType) => {
     values.creatorId = session?.data?.userid as string
-    if (selectedUser.id !== unassignedUser.id) {
+    if (selectedUser.id !== UnassignedUser.id) {
       values.assigneeId = selectedUser.id
     }
     values.type = selectedType.id
     values.state = selectedState.id
-    if (selectedSprint.id !== noSprint.id) {
+    if (selectedSprint.id !== NoSprint.id) {
       values.sprintId = selectedSprint.id
     }
     values.projectId = projectId
@@ -168,7 +173,7 @@ const StoryDetails: React.FC<{
 
   const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {
     onSuccess: (data) => {
-      let tmp: SelectEntry[] = [unassignedUser]
+      let tmp: SelectEntry[] = [UnassignedUser]
       data.map((u) => {
         const curr = { id: u.id, text: u.name, image: u.image }
         tmp.push(curr)
@@ -445,25 +450,4 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
       </div>
     </form>
   )
-}
-
-const unassignedUser: SelectEntry = {
-  id: "unassigned",
-  text: "Unassigned",
-  image: "https://static.thenounproject.com/png/55168-200.png",
-}
-
-const newState: SelectEntry = {
-  id: StoryStateEnum.NEW,
-  text: StoryStates.get(StoryStateEnum.NEW)!,
-}
-
-const developmentType: SelectEntry = {
-  id: StoryTypeEnum.DEVELOPMENT,
-  text: StoryTypes.get(StoryTypeEnum.DEVELOPMENT)!,
-}
-
-const noSprint: SelectEntry = {
-  id: "noSprint",
-  text: "<No sprint>",
 }
