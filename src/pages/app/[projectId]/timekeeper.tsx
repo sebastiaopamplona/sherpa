@@ -1,3 +1,7 @@
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
+import { addDays, format, getWeek, startOfWeek, subDays } from "date-fns"
+
+import { IoTodayOutline } from "react-icons/io5"
 import Layout from "../../../components/layout/layout"
 import Modal from "../../../components/modal/modal"
 import Sidebar from "../../../components/sidebar/sidebar"
@@ -20,8 +24,8 @@ export default function TimeKeeper() {
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
   const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
 
-  // TODO(SP):
-  //  - add timeframe to go to prev / next week
+  const [currentDate, setCurrentDate] = useState<Date>(new Date())
+  const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
 
   return (
     <section>
@@ -29,12 +33,57 @@ export default function TimeKeeper() {
 
       <div className="h-full px-[100px]">
         <div className="grid grid-cols-11 gap-[2px] content-center">
+          <div className="col-span-11 flex items-end justify-end py-2">
+            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <div
+                className="relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
+                onClick={() => {
+                  const newCurrDate = new Date()
+                  setCurrentDate(newCurrDate)
+                  setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                }}
+              >
+                <span className="sr-only">Previous</span>
+                <IoTodayOutline className="h-5 w-5" />
+              </div>
+              <div className="pr-2" />
+              <div
+                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
+                onClick={() => {
+                  const newCurrDate = subDays(currentDate, 7)
+                  setCurrentDate(newCurrDate)
+                  setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                }}
+              >
+                <span className="sr-only">Previous</span>
+                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <a
+                href="#"
+                aria-current="page"
+                className="z-10 border-gray-300 relative inline-flex items-center px-3 py-2 border text-sm font-medium"
+              >
+                {`Week ${getWeek(currentDate)}`}
+              </a>
+              <div
+                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
+                onClick={() => {
+                  const newCurrDate = addDays(currentDate, 7)
+                  setCurrentDate(newCurrDate)
+                  setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                }}
+              >
+                <span className="sr-only">Next</span>
+                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+              </div>
+            </nav>
+          </div>
           <div className="col-span-6 h-6 rounded-sm"></div>
-          <div className={`text-sm font-bold ${timekeeperGridCell}`}>25/8</div>
-          <div className={`text-sm font-bold ${timekeeperGridCell}`}>26/8</div>
-          <div className={`text-sm font-bold ${timekeeperGridCell}`}>27/8</div>
-          <div className={`text-sm font-bold ${timekeeperGridCell}`}>28/8</div>
-          <div className={`text-sm font-bold ${timekeeperGridCell}`}>29/8</div>
+          {currentDayRange.map((d) => (
+            <div key={d.toUTCString()} className={`text-sm font-semibold ${timekeeperGridCell}`}>
+              {`${format(d, "eeeeee")}, ${format(d, "d/M")}`}
+            </div>
+          ))}
           {/* 
           // TODO: uncomment when we handle capacity
           <div className="col-span-6 h-6 rounded-sm"></div>
@@ -135,4 +184,14 @@ TimeKeeper.getLayout = function getLayout(page: React.ReactNode) {
       {page}
     </Layout>
   )
+}
+
+const getWeekBusinessDays = (currentDate: Date): Date[] => {
+  let curr: Date = startOfWeek(currentDate)
+  let days: Date[] = []
+  for (let i = 0; i < 5; i++) {
+    curr = addDays(curr, 1)
+    days.push(curr)
+  }
+  return days
 }
