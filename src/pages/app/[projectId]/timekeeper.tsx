@@ -1,4 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
+import Select, { NoSprint, SelectEntry } from "../../../components/select/select"
 import { addDays, format, getWeek, startOfWeek, subDays } from "date-fns"
 
 import { IoTodayOutline } from "react-icons/io5"
@@ -20,12 +21,29 @@ export default function TimeKeeper() {
   const { projectId } = router.query
   const stories = trpc.useQuery(["story.getAll", { projectId: projectId as string }])
 
+  const [selectedSprint, setSelectedSprint] = useState<SelectEntry>(NoSprint)
+  const [selectableSprints, setSelectableSprints] = useState<SelectEntry[]>()
+  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {
+    onSuccess: (data) => {
+      let tmp: SelectEntry[] = []
+      data.map((s) => {
+        const curr = { id: s.id, text: s.title }
+        tmp.push(curr)
+        // TODO(SP): add sprintId to the react context
+      })
+      if (tmp.length > 0) setSelectedSprint(tmp[0]!)
+      setSelectableSprints(tmp)
+    },
+  })
+
   const [currentStory, setCurrentStory] = useState<StoryType>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
   const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
+
+  if (stories.isLoading || sprints.isLoading) return null
 
   return (
     <section>
@@ -34,7 +52,17 @@ export default function TimeKeeper() {
       <div className="h-full px-[100px]">
         <div className="grid grid-cols-11 gap-[2px] content-center">
           <div className="col-span-11 flex items-end justify-end py-2">
-            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <nav className="relative z-0 inline-flex rounded-md -space-x-px" aria-label="Pagination">
+              {selectedSprint && selectableSprints && (
+                <div>
+                  <Select
+                    // label="Sprint"
+                    entries={selectableSprints}
+                    selectedState={[selectedSprint, setSelectedSprint]}
+                  />
+                </div>
+              )}
+              <div className="pr-2" />
               <div
                 className="relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
                 onClick={() => {
