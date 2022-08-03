@@ -1,5 +1,6 @@
 import { ArrElement, classNames } from "../../utils/aux"
 import { BeakerIcon, ChartSquareBarIcon, ClockIcon, FolderIcon } from "@heroicons/react/outline"
+import { useEffect, useState } from "react"
 
 import Link from "next/link"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
@@ -7,18 +8,21 @@ import Select from "../select/select"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
-import { useState } from "react"
 
 export default function Sidebar() {
   const router = useRouter()
   const { data: session, status } = useSession()
   const { projectId } = router.query
 
-  const [selectedProject, setSelectedProject] = useState<ArrElement<ProjectGetByUserIdOutput>>()
+  const [selectedProject, setSelectedProject] = useState<ArrElement<ProjectGetByUserIdOutput>>({ id: "", name: "" })
 
   const projects = trpc.useQuery(["project.getByUserId", { userId: session?.userid as string }], {
     onSuccess: (data) => setSelectedProject(data[0]!),
   })
+
+  useEffect(() => {
+    if (projects.data) setSelectedProject(projects.data![0]!)
+  }, [projects.data])
 
   const navigation = [
     { name: "Time Keeper", icon: ClockIcon, href: `/app/${projectId}/timekeeper` },

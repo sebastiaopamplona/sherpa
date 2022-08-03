@@ -113,7 +113,7 @@ const StoryDetails: React.FC<{
   const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {})
 
   const [selectedUser, setSelectedUser] = useState<ArrElement<UserGetByProjectIdOutput>>(
-    story ? story.Assigned : NoUser
+    story && story.assignee ? story.assignee : NoUser
   )
   const [selectedType, setSelectedType] = useState<{ id: string; text: string }>(
     story ? { id: story.type, text: StoryTypes.get(story.type) as string } : StoryTypesArray[0]!
@@ -122,7 +122,7 @@ const StoryDetails: React.FC<{
     story ? { id: story.state, text: StoryStates.get(story.state) as string } : StoryStatesArray[0]!
   )
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(
-    story ? story.sprint : NoSprint
+    story && story.sprint ? story.sprint : NoSprint
   )
 
   const { handleSubmit, register } = useForm<StoryType>()

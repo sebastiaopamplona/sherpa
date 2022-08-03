@@ -24,7 +24,6 @@ export const userRouter = createRouter()
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
-
   .query("getById", {
     input: z.object({
       id: z.string(),

@@ -14,7 +14,7 @@ type Props<T> = {
   label?: string
   upwards?: boolean
   entries: T[]
-  selectedState: [T | undefined, (entry: T) => void]
+  selectedState: [T, (entry: T) => void]
   getId: (e: T) => string
   getText: (e: T) => string
   getImage?: (e: T) => string
@@ -32,6 +32,8 @@ const Select = <T extends { id: string }>({
   const [selected, setSelected] = selectedState
 
   if (typeof entries === "undefined") return null
+
+  console.log(label, selected)
 
   return (
     <Listbox disabled={entries.length === 0} value={selected} onChange={setSelected}>
