@@ -1,8 +1,8 @@
 import { BeakerIcon, ChartSquareBarIcon, ClockIcon, FolderIcon } from "@heroicons/react/outline"
-import Select, { SelectEntry } from "../select/select"
-import { classNames, switchProject } from "../../utils/aux"
 
 import Link from "next/link"
+import { SelectEntry } from "../select/select"
+import { classNames } from "../../utils/aux"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
@@ -110,17 +110,18 @@ export default function Sidebar() {
         <div className="flex-shrink-0 w-full group block">
           <div className="flex items-center justify-center flex-shrink-0 px-4">
             {selectableProjects && (
-              <Select
-                upwards={true}
-                entries={selectableProjects}
-                selectedState={[
-                  selectedProject,
-                  (e: SelectEntry) => {
-                    setSelectedProject(e)
-                    switchProject(e.id, router)
-                  },
-                ]}
-              />
+              // <Select
+              //   upwards={true}
+              //   entries={selectableProjects}
+              //   selectedState={[
+              //     selectedProject,
+              //     (e: SelectEntry) => {
+              //       setSelectedProject(e)
+              //       switchProject(e.id, router)
+              //     },
+              //   ]}
+              // />
+              <></>
             )}
           </div>
           <div className="p-2" />

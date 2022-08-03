@@ -81,6 +81,43 @@ export const worklogRouter = createRouter()
       }
     },
   })
+  .query("getForTimekeeper", {
+    input: z.object({
+      storyIds: z.array(z.string()),
+      startDate: z.date(),
+      endDate: z.date(),
+    }),
+    output: z.object({
+      data: z.array(
+        z.object({
+          storyId: z.string(),
+          worklogs: z.array(
+            z.object({
+              date: z.date(),
+              sum: z.number(),
+            })
+          ),
+        })
+      ),
+    }),
+    async resolve({ ctx, input }) {
+      const worklogs = await prisma.worklog.findMany({
+        where: {
+          storyId: {
+            in: input.storyIds,
+          },
+          createdAt: {
+            gte: input.startDate,
+            lte: input.endDate,
+          },
+        },
+      })
+
+      console.log(worklogs)
+
+      return {}
+    },
+  })
   .query("getAll", {
     async resolve({ ctx, input }) {
       // TODO(SP): implement paging + filtering

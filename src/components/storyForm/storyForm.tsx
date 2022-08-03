@@ -1,19 +1,15 @@
-import { ButtonDefaultCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
+import { ArrElement, ButtonDefaultCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
+import { NoSprint, NoUser, StoryStates, StoryStatesArray, StoryTypes, StoryTypesArray } from "../../server/data/data"
 import { SVGProps, useEffect, useMemo, useState } from "react"
-import Select, {
-  NewStoryState,
-  NoSprint,
-  SelectEntry,
-  StoryDevelopmentType,
-  UnassignedUser,
-} from "../../components/select/select"
-import { StoryStates, StoryTypes } from "../../server/data/data"
 import { StoryType, WorklogType } from "../../server/schemas/schemas"
 
 import DatePicker from "../datepicker/datepicker"
 import EmptyResources from "../emptyResources/emptyResources"
 import Input from "../input/input"
+import Select from "../../components/select/select"
+import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
 import Textarea from "../textarea/textarea"
+import { UserGetByProjectIdOutput } from "../../server/router/user"
 import { UserIcon } from "@heroicons/react/solid"
 import WorklogEntry from "../worklogEntry/worklogEntry"
 import { trpc } from "../../utils/trpc"
@@ -113,40 +109,23 @@ const StoryDetails: React.FC<{
   const router = useRouter()
   const { projectId } = router.query
 
+  const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {})
+  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {})
+
+  const [selectedUser, setSelectedUser] = useState<ArrElement<UserGetByProjectIdOutput>>(
+    story ? story.Assigned : NoUser
+  )
+  const [selectedType, setSelectedType] = useState<{ id: string; text: string }>(
+    story ? { id: story.type, text: StoryTypes.get(story.type) as string } : StoryTypesArray[0]!
+  )
+  const [selectedState, setSelectedState] = useState<{ id: string; text: string }>(
+    story ? { id: story.state, text: StoryStates.get(story.state) as string } : StoryStatesArray[0]!
+  )
+  const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(
+    story ? story.sprint : NoSprint
+  )
+
   const { handleSubmit, register } = useForm<StoryType>()
-
-  const [selectedUser, setSelectedUser] = useState<SelectEntry>(UnassignedUser)
-  const [selectableUsers, setSelectableUsers] = useState<SelectEntry[]>()
-
-  const [selectedType, setSelectedType] = useState<SelectEntry>(StoryDevelopmentType)
-  const [selectableTypes, setSelectableTypes] = useState<SelectEntry[]>()
-
-  const [selectedState, setSelectedState] = useState<SelectEntry>(NewStoryState)
-  const [selectableStates, setSelectableStates] = useState<SelectEntry[]>()
-
-  const [selectedSprint, setSelectedSprint] = useState<SelectEntry>(NoSprint)
-  const [selectableSprints, setSelectableSprints] = useState<SelectEntry[]>()
-
-  useEffect(() => {
-    let statesTmp: SelectEntry[] = []
-    let typesTmp: SelectEntry[] = []
-
-    StoryStates.forEach((v, k) => {
-      statesTmp.push({ id: k, text: v })
-    })
-    StoryTypes.forEach((v, k) => {
-      typesTmp.push({ id: k, text: v })
-    })
-
-    setSelectableStates(statesTmp)
-    setSelectableTypes(typesTmp)
-
-    if (story) {
-      setSelectedType({ id: story.type, text: StoryTypes.get(story.type) as string })
-      setSelectedState({ id: story.state, text: StoryStates.get(story.state) as string })
-    }
-  }, [story])
-
   const createStoryMutation = trpc.useMutation(["story.create"], {
     onSuccess: () => {
       onCreateOrUpdateSuccess()
@@ -155,10 +134,9 @@ const StoryDetails: React.FC<{
       onCreateOrUpdateError()
     },
   })
-
   const handleCreateStory = (values: StoryType) => {
     values.creatorId = session?.data?.userid as string
-    if (selectedUser.id !== UnassignedUser.id) {
+    if (selectedUser.id !== NoUser.id) {
       values.assigneeId = selectedUser.id
     }
     values.type = selectedType.id
@@ -171,33 +149,7 @@ const StoryDetails: React.FC<{
     createStoryMutation.mutate(values)
   }
 
-  const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {
-    onSuccess: (data) => {
-      let tmp: SelectEntry[] = [UnassignedUser]
-      data.map((u) => {
-        const curr = { id: u.id, text: u.name, image: u.image }
-        tmp.push(curr)
-        if (story && story.assigneeId === u.id) setSelectedUser(curr)
-      })
-      setSelectableUsers(tmp)
-    },
-  })
-
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {
-    onSuccess: (data) => {
-      let tmp: SelectEntry[] = []
-      data.map((s) => {
-        const curr = { id: s.id, text: s.title }
-        tmp.push(curr)
-        if (story && story.sprintId === s.id) setSelectedSprint(curr)
-      })
-      setSelectableSprints(tmp)
-    },
-  })
-
-  if (users.isLoading || sprints.isLoading) {
-    return null
-  }
+  if (users.isLoading || sprints.isLoading) return null
 
   return (
     <form onSubmit={handleSubmit(handleCreateStory)}>
@@ -228,24 +180,41 @@ const StoryDetails: React.FC<{
             />
           </div>
           <div className="col-span-2">
-            {selectedUser && selectableUsers && (
-              <Select label="Assigned to" entries={selectableUsers} selectedState={[selectedUser, setSelectedUser]} />
-            )}
+            <Select
+              label="Assigned to"
+              entries={users.data!}
+              getId={(t) => t.id}
+              getText={(t) => t.name}
+              getImage={(t) => t.image}
+              selectedState={[selectedUser, setSelectedUser]}
+            />
           </div>
           <div className="col-span-2">
-            {selectedType && selectableTypes && (
-              <Select label="Type" entries={selectableTypes} selectedState={[selectedType, setSelectedType]} />
-            )}
+            <Select
+              label="Type"
+              entries={StoryTypesArray}
+              getId={(t) => t.id}
+              getText={(t) => t.text}
+              selectedState={[selectedType, setSelectedType]}
+            />
           </div>
           <div className="col-span-2">
-            {selectedState && selectableStates && (
-              <Select label="State" entries={selectableStates} selectedState={[selectedState, setSelectedState]} />
-            )}
+            <Select
+              label="State"
+              entries={StoryStatesArray}
+              getId={(t) => t.id}
+              getText={(t) => t.text}
+              selectedState={[selectedState, setSelectedState]}
+            />
           </div>
           <div className="col-span-2">
-            {selectedSprint && selectableSprints && (
-              <Select label="Sprint" entries={selectableSprints} selectedState={[selectedSprint, setSelectedSprint]} />
-            )}
+            <Select
+              label="Sprint"
+              entries={sprints.data!}
+              getId={(t) => t.id}
+              getText={(t) => t.title}
+              selectedState={[selectedSprint, setSelectedSprint]}
+            />
           </div>
           <div className="col-span-2">
             <Input
@@ -323,9 +292,7 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
     createWorklogMutation.mutate(values)
   }
 
-  if (worklogs.isLoading || createWorklogMutation.isLoading) return null
-
-  // console.log(worklogs)
+  if (worklogs.isLoading) return null
 
   return (
     <form onSubmit={handleSubmit(handleCreateWorklog)}>

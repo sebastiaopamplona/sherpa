@@ -1,3 +1,5 @@
+import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+
 import { TRPCError } from "@trpc/server"
 import { User } from "../schemas/schemas"
 import { createRouter } from "../context"
@@ -17,6 +19,12 @@ export const userRouter = createRouter()
   })
 
   // READ
+  .query("getAll", {
+    async resolve({ ctx, input }) {
+      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
+    },
+  })
+
   .query("getById", {
     input: z.object({
       id: z.string(),
@@ -50,11 +58,6 @@ export const userRouter = createRouter()
       return users
     },
   })
-  .query("getAll", {
-    async resolve({ ctx, input }) {
-      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
-    },
-  })
 
   // UPDATE
   .mutation("update", {
@@ -76,3 +79,10 @@ export const userRouter = createRouter()
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
+
+export type UserCreateOutput = inferMutationOutput<"user.create">
+export type UserGetAllOutput = inferQueryOutput<"user.getAll">
+export type UserGetByIdOutput = inferQueryOutput<"user.getById">
+export type UserGetByProjectIdOutput = inferQueryOutput<"user.getByProjectId">
+export type UserUpdateOutput = inferMutationOutput<"user.update">
+export type UserDeleteByIdOutput = inferMutationOutput<"user.deleteById">
