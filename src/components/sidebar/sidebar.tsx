@@ -1,4 +1,4 @@
-import { ArrElement, classNames } from "../../utils/aux"
+import { ArrElement, classNames, switchProject } from "../../utils/aux"
 import { BeakerIcon, ChartSquareBarIcon, ClockIcon, FolderIcon } from "@heroicons/react/outline"
 
 import Link from "next/link"
@@ -91,7 +91,13 @@ export default function Sidebar() {
               entries={projects.data!}
               getId={(t) => t.id}
               getText={(t) => t.name}
-              selectedState={[selectedProject, setSelectedProject]}
+              selectedState={[
+                selectedProject,
+                (p) => {
+                  setSelectedProject(p)
+                  switchProject(p.id, router)
+                },
+              ]}
               upwards={true}
             />
           </div>
