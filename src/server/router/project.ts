@@ -78,7 +78,7 @@ export const projectRouter = createRouter()
   })
   .query("getByUserId", {
     input: z.object({
-      userId: z.string(),
+      userId: z.string().nullish(),
     }),
     output: z.array(
       z.object({
