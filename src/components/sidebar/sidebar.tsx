@@ -46,7 +46,7 @@ export default function Sidebar() {
   if (projects.isLoading) return null
 
   return (
-    <div className="flex-1 flex flex-col w-56 min-h-0 bg-gray-800">
+    <div className="flex flex-col w-56 min-h-0 bg-gray-800">
       <div className="flex-1 flex flex-col w-56 pt-5 pb-4 overflow-y-auto">
         <div className="flex items-center flex-shrink-0 px-4">
           <img
