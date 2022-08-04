@@ -153,7 +153,6 @@ const TimeKeeperNav: React.FC<{
   setCurrentDate: (setCurrentDayRanged: Date) => void
   setCurrentDayRange: (ds: Date[]) => void
 }> = ({ sprints, selectedSprint, setSelectedSprint, currentDate, setCurrentDate, setCurrentDayRange }) => {
-  console.log(sprints)
   return (
     <nav className="relative z-0 inline-flex rounded-md -space-x-px" aria-label="Pagination">
       <Select

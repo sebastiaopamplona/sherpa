@@ -300,8 +300,6 @@ const StoryWorklogs: React.FC<{
     values.date = selectedDate
     values.storyId = story!.id
 
-    console.log(values)
-
     createWorklogMutation.mutate(values)
   }
 

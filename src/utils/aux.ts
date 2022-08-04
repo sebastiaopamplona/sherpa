@@ -6,7 +6,7 @@ export function classNames(...classes: string[]) {
 
 export function switchProject(projectId: string, router: NextRouter) {
   const split = router.asPath.split("/")
-  router.push(`/app/${projectId}/${split[split.length - 1]}`)
+  window.location.href = `/app/${projectId}/${split[split.length - 1]}`
 }
 
 export function extractBasePathWithProjectId(router: NextRouter): string {
