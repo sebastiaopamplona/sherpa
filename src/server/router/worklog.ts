@@ -1,3 +1,5 @@
+import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+
 import { Worklog } from "../schemas/schemas"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
@@ -14,6 +16,7 @@ export const worklogRouter = createRouter()
       const worklog = await prisma.worklog.create({
         data: {
           description: input.description,
+          date: input.date,
           effort: input.effort,
           remainingEffort: input.remainingEffort,
 
@@ -29,6 +32,17 @@ export const worklogRouter = createRouter()
   })
 
   // READ
+  .query("getAll", {
+    async resolve({ ctx, input }) {
+      // TODO(SP): implement paging + filtering
+
+      const worklogs = await prisma.worklog.findMany()
+
+      return {
+        ...worklogs,
+      }
+    },
+  })
   .query("getById", {
     input: z.object({
       id: z.string(),
@@ -81,54 +95,6 @@ export const worklogRouter = createRouter()
       }
     },
   })
-  .query("getForTimekeeper", {
-    input: z.object({
-      storyIds: z.array(z.string()),
-      startDate: z.date(),
-      endDate: z.date(),
-    }),
-    output: z.object({
-      data: z.array(
-        z.object({
-          storyId: z.string(),
-          worklogs: z.array(
-            z.object({
-              date: z.date(),
-              sum: z.number(),
-            })
-          ),
-        })
-      ),
-    }),
-    async resolve({ ctx, input }) {
-      const worklogs = await prisma.worklog.findMany({
-        where: {
-          storyId: {
-            in: input.storyIds,
-          },
-          createdAt: {
-            gte: input.startDate,
-            lte: input.endDate,
-          },
-        },
-      })
-
-      console.log(worklogs)
-
-      return {}
-    },
-  })
-  .query("getAll", {
-    async resolve({ ctx, input }) {
-      // TODO(SP): implement paging + filtering
-
-      const worklogs = await prisma.worklog.findMany()
-
-      return {
-        ...worklogs,
-      }
-    },
-  })
 
   // UPDATE
   .mutation("update", {
@@ -166,3 +132,11 @@ export const worklogRouter = createRouter()
       })
     },
   })
+
+export type WorklogCreateOutput = inferMutationOutput<"worklog.create">
+export type WorklogGetAllOutput = inferQueryOutput<"worklog.getAll">
+export type WorklogGetByIdOutput = inferQueryOutput<"worklog.getById">
+export type WorklogGetByStoryIdOutput = inferQueryOutput<"worklog.getByStoryId">
+export type WorklogGetByCreatorIdOutput = inferQueryOutput<"worklog.getByCreatorId">
+export type WorklogUpdateOutput = inferMutationOutput<"worklog.update">
+export type WorklogDeleteByIdOutput = inferMutationOutput<"worklog.deleteById">

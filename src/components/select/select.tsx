@@ -33,8 +33,6 @@ const Select = <T extends { id: string }>({
 
   if (typeof entries === "undefined") return null
 
-  console.log(label, selected)
-
   return (
     <Listbox disabled={entries.length === 0} value={selected} onChange={setSelected}>
       {({ open }) => (

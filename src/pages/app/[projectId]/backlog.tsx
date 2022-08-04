@@ -75,13 +75,15 @@ export default function Backlog() {
       >
         <StoryForm
           story={currentStory}
-          onCreateOrUpdateSuccess={() => {
+          onCreateOrUpdateStorySuccess={() => {
             stories.refetch()
             setIsStoryDetailsModalOpen(false)
           }}
-          onCreateOrUpdateError={() => {
+          onCreateOrUpdateStoryError={() => {
             alert("story creation failed")
           }}
+          onCreateOrUpdateWorklogSuccess={() => {}}
+          onCreateOrUpdateWorklogError={() => {}}
         />
       </Modal>
     </section>

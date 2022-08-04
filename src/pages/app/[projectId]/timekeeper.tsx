@@ -1,17 +1,25 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
-import { NoSprint, SelectEntry } from "../../../components/select/select"
-import { addDays, format, getWeek, startOfWeek, subDays } from "date-fns"
+import { addDays, addHours, format, getWeek, isSameDay, startOfWeek, subDays } from "date-fns"
+import { useMemo, useState } from "react"
 
+import { ArrElement } from "../../../utils/aux"
+import { GetServerSidePropsContext } from "next"
 import { IoTodayOutline } from "react-icons/io5"
 import Layout from "../../../components/layout/layout"
 import Modal from "../../../components/modal/modal"
+import { NoSprint } from "../../../server/data/data"
+import Select from "../../../components/select/select"
 import Sidebar from "../../../components/sidebar/sidebar"
+import { SprintGetByProjectIdOutput } from "../../../server/router/sprint"
 import StoryEntry from "../../../components/storyEntry/storyEntry"
 import StoryForm from "../../../components/storyForm/storyForm"
+import { StoryGetForTimekeeperOutput } from "../../../server/router/story"
 import { StoryType } from "../../../server/schemas/schemas"
+import { appRouter } from "../../../server/createRouter"
+import { createSSGHelpers } from "@trpc/react/ssg"
+import superjson from "superjson"
 import { trpc } from "../../../utils/trpc"
 import { useRouter } from "next/router"
-import { useState } from "react"
 
 // TODO: move this to a module.css
 const timekeeperGridCell = "col-span-1 border-2 flex items-center justify-center"
@@ -20,44 +28,37 @@ export default function TimeKeeper() {
   const router = useRouter()
   const { projectId } = router.query
 
-  const stories = trpc.useQuery(["story.getAll", { projectId: projectId as string }])
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
+  const [currentDate, setCurrentDate] = useState<Date>(new Date())
+  const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
 
-  const [selectedSprint, setSelectedSprint] = useState<SelectEntry>(NoSprint)
-  const [selectableSprints, setSelectableSprints] = useState<SelectEntry[]>([])
-  // , {
-  //   onSuccess: (data) => {
-  //     let tmp: SelectEntry[] = []
-  //     data.map((s) => {
-  //       const curr = { id: s.id, text: s.title }
-  //       tmp.push(curr)
-  //       // TODO(SP): add sprintId to the react context
-  //     })
-  //     if (tmp.length > 0) setSelectedSprint(tmp[0]!)
-  //     setSelectableSprints(tmp)
-  //   },
-  // })
+  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
+  const stories = trpc.useQuery([
+    "story.getForTimekeeper",
+    {
+      projectId: projectId as string,
+      startDate: currentDayRange[0]!,
+      endDate: currentDayRange[currentDayRange.length - 1]!,
+    },
+  ])
+
+  const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
 
   const [currentStory, setCurrentStory] = useState<StoryType>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
   const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
+  const [worklogDay, setWorklogDay] = useState<Date>()
 
-  const [currentDate, setCurrentDate] = useState<Date>(new Date())
-  const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
-
-  if (stories.isLoading || stories.isLoading) return null
+  if (sprints.isLoading || stories.isLoading) return null
 
   return (
     <section>
-      <h2>Time Keeper</h2>
-
       <div className="h-full px-[100px]">
         <div className="grid grid-cols-11 gap-[2px] content-center">
           <div className="col-span-11 flex items-end justify-end py-2">
             <TimeKeeperNav
+              sprints={sprints.data!}
               selectedSprint={selectedSprint}
               setSelectedSprint={setSelectedSprint}
-              selectableSprints={selectableSprints}
               currentDate={currentDate}
               setCurrentDate={setCurrentDate}
               setCurrentDayRange={setCurrentDayRange}
@@ -78,17 +79,36 @@ export default function TimeKeeper() {
           <div className={timekeeperGridCell}></div>
           <div className={timekeeperGridCell}></div>
           */}
-          {stories.data?.map((story) => (
+          {/* {stories.data?.map((story) => (
             <TimeKeeperEntry
               key={story.id}
               story={story}
+              dayRange={currentDayRange}
               onStoryClick={(story: StoryType) => {
                 setCurrentStory(story)
                 setIsStoryDetailsOpen(true)
               }}
-              onWorklogCellClick={(story: StoryType) => {
+              onWorklogCellClick={(story: StoryType, date: Date) => {
                 setCurrentStory(story)
                 setIsAddingWorklog(true)
+                setWorklogDay(date)
+                setIsStoryDetailsOpen(true)
+              }}
+            />
+          ))} */}
+          {stories.data?.map((story) => (
+            <TimeKeeperEntry
+              key={story.id}
+              story={story}
+              dayRange={currentDayRange}
+              onStoryClick={(story: StoryType) => {
+                setCurrentStory(story)
+                setIsStoryDetailsOpen(true)
+              }}
+              onWorklogCellClick={(story: StoryType, date: Date) => {
+                setCurrentStory(story)
+                setIsAddingWorklog(true)
+                setWorklogDay(date)
                 setIsStoryDetailsOpen(true)
               }}
             />
@@ -105,13 +125,20 @@ export default function TimeKeeper() {
         <StoryForm
           story={currentStory}
           isAddingWorklog={isAddingWorklog}
-          onCreateOrUpdateSuccess={() => {
+          worklogDay={worklogDay}
+          onCreateOrUpdateStorySuccess={() => {
             setIsStoryDetailsOpen(false)
             alert("story updated")
           }}
-          onCreateOrUpdateError={() => {
+          onCreateOrUpdateStoryError={() => {
             alert("story update failed")
           }}
+          onCreateOrUpdateWorklogSuccess={() => {
+            // TODO(SP): optimize this, as in find a way to only fetch the single day
+            stories.refetch()
+            setIsStoryDetailsOpen(false)
+          }}
+          onCreateOrUpdateWorklogError={() => {}}
         />
       </Modal>
     </section>
@@ -119,18 +146,22 @@ export default function TimeKeeper() {
 }
 
 const TimeKeeperNav: React.FC<{
-  selectedSprint: SelectEntry
-  setSelectedSprint: (e: SelectEntry) => void
-  selectableSprints: SelectEntry[]
+  sprints: SprintGetByProjectIdOutput
+  selectedSprint: ArrElement<SprintGetByProjectIdOutput>
+  setSelectedSprint: (e: ArrElement<SprintGetByProjectIdOutput>) => void
   currentDate: Date
   setCurrentDate: (setCurrentDayRanged: Date) => void
   setCurrentDayRange: (ds: Date[]) => void
-}> = ({ selectedSprint, setSelectedSprint, selectableSprints, currentDate, setCurrentDate, setCurrentDayRange }) => {
+}> = ({ sprints, selectedSprint, setSelectedSprint, currentDate, setCurrentDate, setCurrentDayRange }) => {
+  console.log(sprints)
   return (
     <nav className="relative z-0 inline-flex rounded-md -space-x-px" aria-label="Pagination">
-      {selectedSprint && selectableSprints && (
-        <div>{/* <Select entries={selectableSprints} selectedState={[selectedSprint, setSelectedSprint]} /> */}</div>
-      )}
+      <Select
+        entries={sprints}
+        getId={(t) => t.id}
+        getText={(t) => t.title}
+        selectedState={[selectedSprint, setSelectedSprint]}
+      />
       <div className="pr-2" />
       <div
         className="relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
@@ -155,13 +186,12 @@ const TimeKeeperNav: React.FC<{
         <span className="sr-only">Previous</span>
         <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
       </div>
-      <a
-        href="#"
+      <div
         aria-current="page"
         className="z-10 border-gray-300 relative inline-flex items-center px-3 py-2 border text-sm font-medium"
       >
         {`Week ${getWeek(currentDate)}`}
-      </a>
+      </div>
       <div
         className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
         onClick={() => {
@@ -178,10 +208,11 @@ const TimeKeeperNav: React.FC<{
 }
 
 const TimeKeeperEntry: React.FC<{
-  story: StoryType
+  story: ArrElement<StoryGetForTimekeeperOutput>
+  dayRange: Date[]
   onStoryClick: (story: StoryType) => void
-  onWorklogCellClick: (story: StoryType) => void
-}> = ({ story, onStoryClick, onWorklogCellClick }) => {
+  onWorklogCellClick: (story: StoryType, date: Date) => void
+}> = ({ story, dayRange, onStoryClick, onWorklogCellClick }) => {
   return (
     <>
       <div
@@ -192,19 +223,33 @@ const TimeKeeperEntry: React.FC<{
       >
         <StoryEntry story={story} showAssignee={false} />
       </div>
-      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
-      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
-      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
-      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
-      <TimeKeeperWorklogCell story={story} onWorklogCellClick={onWorklogCellClick} />
+      {dayRange.map((d) => (
+        <TimeKeeperWorklogCell
+          key={d.toISOString()}
+          story={story}
+          day={d}
+          onWorklogCellClick={() => {
+            onWorklogCellClick(story, d)
+          }}
+        />
+      ))}
     </>
   )
 }
 
-const TimeKeeperWorklogCell: React.FC<{ story: StoryType; onWorklogCellClick: (story: StoryType) => void }> = ({
-  story,
-  onWorklogCellClick,
-}) => {
+const TimeKeeperWorklogCell: React.FC<{
+  story: ArrElement<StoryGetForTimekeeperOutput>
+  day: Date
+  onWorklogCellClick: (story: StoryType) => void
+}> = ({ story, day, onWorklogCellClick }) => {
+  const dayEffort = useMemo(() => {
+    let worklogDaySum: number = 0
+    story.worklogs.forEach((w) => {
+      if (isSameDay(w.date, day)) worklogDaySum += w.effort
+    })
+    return worklogDaySum
+  }, [story, day])
+
   return (
     <div
       className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}
@@ -212,7 +257,7 @@ const TimeKeeperWorklogCell: React.FC<{ story: StoryType; onWorklogCellClick: (s
         onWorklogCellClick(story)
       }}
     >
-      1h
+      {dayEffort > 0 ? dayEffort : ""}
     </div>
   )
 }
@@ -227,47 +272,40 @@ TimeKeeper.getLayout = function getLayout(page: React.ReactNode) {
 }
 
 const getWeekBusinessDays = (currentDate: Date): Date[] => {
-  let curr: Date = startOfWeek(currentDate)
+  let curr: Date = startOfWeek(currentDate, { weekStartsOn: 1 })
   let days: Date[] = []
   for (let i = 0; i < 5; i++) {
+    // NOTE(SP): adding 23 hours is a hack to work around a serialization
+    // issue from this date format to zod format (zod was ignoring the
+    // timezone and the days were shifted 1 back)
+    days.push(addHours(curr, 23))
     curr = addDays(curr, 1)
-    days.push(curr)
   }
   return days
 }
 
-// NOTE(SP): if we want to prefetch queries and unify data fetching
-// export async function getServerSideProps(
-//   req: NextApiRequest,
-//   res: NextApiResponse,
-//   context: GetServerSidePropsContext<{ id: string }>
-// ) {
-//   console.log("timekeeper get server side props")
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { projectId } = ctx.query
 
-//   const session = await getJourndevAuthSession(context)
+  const ssg = await createSSGHelpers({
+    router: appRouter,
+    // @ts-ignore TODO(SP): this might be a real issue, so far it's not
+    ctx: ctx,
+    transformer: superjson,
+  })
 
-//   const ssg = await createSSGHelpers({
-//     router: appRouter,
-//     ctx: {
-//       req: req,
-//       res: res,
-//       session: session,
-//       prisma: prisma,
-//     },
-//     transformer: superjson,
-//   })
-//   const id = context.params?.id as string
+  const businessDays: Date[] = getWeekBusinessDays(new Date())
 
-//   // Prefetch `post.byId`
-//   // await ssg.fetchQuery("post.byId", {
-//   //   id,
-//   // })
+  // Prefetching
+  await ssg.fetchQuery("story.getForTimekeeper", {
+    projectId: projectId as string,
+    startDate: businessDays[0]!,
+    endDate: businessDays[businessDays.length - 1]!,
+  })
 
-//   // Make sure to return { props: { trpcState: ssg.dehydrate() } }
-//   return {
-//     props: {
-//       trpcState: ssg.dehydrate(),
-//       id,
-//     },
-//   }
-// }
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+  }
+}

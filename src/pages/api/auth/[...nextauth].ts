@@ -18,11 +18,7 @@ export const authOptions: NextAuthOptions = {
         // The only truly required field is `id`
         // to be able identify the account when added to a database
 
-        const userId = await firstOrCreateUser(
-          profile.name,
-          profile.email,
-          profile.avatar_url
-        )
+        const userId = await firstOrCreateUser(profile.name, profile.email, profile.avatar_url)
 
         return {
           id: userId,
@@ -37,14 +33,14 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
   },
   callbacks: {
-    async jwt({ token, user, account, profile, isNewUser }) {
+    jwt({ token, user, account, profile, isNewUser }) {
       if (user) {
         token.userid = user.id
       }
 
       return token
     },
-    async session({ session, user, token }) {
+    session({ session, user, token }) {
       session.userid = token.userid
 
       return session
@@ -54,11 +50,7 @@ export const authOptions: NextAuthOptions = {
 
 export default NextAuth(authOptions)
 
-const firstOrCreateUser = async (
-  name: string,
-  email: string,
-  image: string
-): Promise<string> => {
+const firstOrCreateUser = async (name: string, email: string, image: string): Promise<string> => {
   let user = await prisma.user.findUnique({
     where: {
       email: email,

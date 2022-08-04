@@ -26,8 +26,11 @@ type Tab = {
 interface Props {
   story?: StoryType
   isAddingWorklog?: boolean
-  onCreateOrUpdateSuccess: () => void
-  onCreateOrUpdateError: () => void
+  worklogDay?: Date
+  onCreateOrUpdateStorySuccess: () => void
+  onCreateOrUpdateStoryError: () => void
+  onCreateOrUpdateWorklogSuccess: () => void
+  onCreateOrUpdateWorklogError: () => void
 }
 
 export default function StoryForm(props: Props) {
@@ -88,12 +91,18 @@ export default function StoryForm(props: Props) {
         <div className={classNames(selectedTab.name === "Details" ? "" : "hidden")}>
           <StoryDetails
             story={props.story}
-            onCreateOrUpdateSuccess={props.onCreateOrUpdateSuccess}
-            onCreateOrUpdateError={props.onCreateOrUpdateError}
+            onCreateOrUpdateSuccess={props.onCreateOrUpdateStorySuccess}
+            onCreateOrUpdateError={props.onCreateOrUpdateStoryError}
           />
         </div>
         <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
-          <StoryWorklogs story={props.story} isAddingWorklog={props.isAddingWorklog ? props.isAddingWorklog : false} />
+          <StoryWorklogs
+            story={props.story}
+            isAddingWorklog={props.isAddingWorklog}
+            worklogDay={props.worklogDay}
+            onCreateOrUpdateWorklogSuccess={props.onCreateOrUpdateWorklogSuccess}
+            onCreateOrUpdateWorklogError={props.onCreateOrUpdateWorklogError}
+          />
         </div>
       </div>
     </div>
@@ -253,15 +262,21 @@ const StoryDetails: React.FC<{
   )
 }
 
-const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> = ({ story, isAddingWorklog }) => {
+const StoryWorklogs: React.FC<{
+  story?: StoryType
+  isAddingWorklog?: boolean
+  worklogDay?: Date
+  onCreateOrUpdateWorklogSuccess: () => {}
+  onCreateOrUpdateWorklogError: () => {}
+}> = ({ story, isAddingWorklog, worklogDay, onCreateOrUpdateWorklogSuccess, onCreateOrUpdateWorklogError }) => {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
 
   const { handleSubmit, register } = useForm<WorklogType>()
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(worklogDay ? worklogDay : new Date())
 
-  const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog)
+  const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog ? isAddingWorklog : false)
 
   const worklogs = trpc.useQuery(["worklog.getByStoryId", { storyId: story ? (story.id as string) : "" }])
 
@@ -269,25 +284,23 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
 
   const createWorklogMutation = trpc.useMutation(["worklog.create"], {
     onSuccess: () => {
-      // TODO(SP):
-      // onCreateOrUpdateSuccess()
       worklogs.refetch()
+      onCreateOrUpdateWorklogSuccess()
     },
     onError: () => {
-      // TODO(SP):
-      // onCreateOrUpdateError()
+      onCreateOrUpdateWorklogError()
     },
   })
 
   const handleCreateWorklog = (values: WorklogType) => {
     // TODO(SP):
 
-    console.log("create worklog")
-
     values.creatorId = session?.data?.userid as string
     values.projectId = projectId
     values.date = selectedDate
     values.storyId = story!.id
+
+    console.log(values)
 
     createWorklogMutation.mutate(values)
   }
@@ -307,7 +320,6 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
                 selectedDate,
                 (d: Date) => {
                   setSelectedDate(d)
-                  console.log(d)
                 },
               ]}
             />
@@ -379,7 +391,6 @@ const StoryWorklogs: React.FC<{ story?: StoryType; isAddingWorklog: boolean }> =
                   <li
                     key={worklog.id}
                     onClick={() => {
-                      console.log(worklog.id)
                       // TODO:
                     }}
                   >
