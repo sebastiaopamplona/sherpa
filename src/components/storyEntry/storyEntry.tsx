@@ -1,14 +1,21 @@
 import { ClockIcon, CubeIcon, FlagIcon } from "@heroicons/react/outline"
 import { StoryStates, StoryTypes } from "../../server/data/data"
 
-import { StoryType } from "../../server/schemas/schemas"
+import { Story } from "../../server/types/types"
+import { useMemo } from "react"
 
 interface Props {
-  story: StoryType
+  story: Story
   showAssignee?: boolean
 }
 
 export default function StoryEntry(props: Props) {
+  const storyEffort = useMemo(() => {
+    let worklogDaySum: number = 0
+    props.story.worklogs.forEach((w) => (worklogDaySum += w.effort))
+    return worklogDaySum
+  }, [props.story])
+
   return (
     <div className="px-4 pt-4 pb-3 sm:px-6 hover:cursor-pointer hover:bg-slate-100">
       <div className="flex items-center justify-between">
@@ -31,7 +38,7 @@ export default function StoryEntry(props: Props) {
           <div className="pr-3" />
           <p className="flex items-center text-gray-500">
             <ClockIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-            0h / {props.story.estimate / 60}h
+            {storyEffort}h / {props.story.estimate / 60}h
           </p>
 
           <>
