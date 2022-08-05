@@ -4,7 +4,7 @@ import Sidebar from "../../../components/sidebar/sidebar"
 export default function Dashboard() {
   return (
     <section>
-      <h2>Dashboard</h2>
+      <h2>Sprints</h2>
     </section>
   )
 }

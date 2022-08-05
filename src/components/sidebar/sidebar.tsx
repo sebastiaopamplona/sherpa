@@ -1,6 +1,7 @@
 import { ArrElement, classNames, switchProject } from "../../utils/aux"
-import { BeakerIcon, ChartSquareBarIcon, ClockIcon, FolderIcon } from "@heroicons/react/outline"
+import { GiBackpack, GiEmptyHourglass, GiSprint } from "react-icons/gi"
 
+import { ImLab } from "react-icons/im"
 import Link from "next/link"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import Select from "../select/select"
@@ -28,20 +29,20 @@ export default function Sidebar() {
   })
 
   const navigation = [
-    { name: "Time Keeper", icon: ClockIcon, href: `/app/${projectId}/timekeeper` },
+    { name: "Time Keeper", icon: GiEmptyHourglass, href: `/app/${projectId}/timekeeper` },
     {
-      name: "Dashboard",
-      icon: ChartSquareBarIcon,
-      href: `/app/${projectId}/dashboard`,
+      name: "Sprints",
+      icon: GiSprint,
+      href: `/app/${projectId}/sprints`,
     },
     {
       name: "Backlog",
-      icon: FolderIcon,
+      icon: GiBackpack,
       href: `/app/${projectId}/backlog`,
     },
     {
       name: "Testing (dev only)",
-      icon: BeakerIcon,
+      icon: ImLab,
       href: `/app/${projectId}/testing`,
     },
   ]
@@ -72,7 +73,7 @@ export default function Sidebar() {
               <item.icon
                 className={classNames(
                   router.asPath.includes(item.href) ? "text-gray-300" : "text-gray-400 group-hover:text-gray-300",
-                  "mr-3 h-6 w-6 flex-shrink-0"
+                  "mr-3 h-7 w-7 flex-shrink-0"
                 )}
                 aria-hidden="true"
               />
