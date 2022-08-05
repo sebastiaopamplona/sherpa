@@ -1,6 +1,6 @@
-import { Stories, Story } from "../schemas/schemas"
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
 
+import { Story } from "../schemas/schemas"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
@@ -43,7 +43,6 @@ export const storyRouter = createRouter()
     input: z.object({
       projectId: z.string(),
     }),
-    output: Stories,
     async resolve({ ctx, input }) {
       // TODO(SP): implement paging + filtering
 
@@ -56,7 +55,7 @@ export const storyRouter = createRouter()
           creator: true,
           project: true,
           sprint: true,
-          worklogs: false,
+          worklogs: true,
         },
       })
 
@@ -78,8 +77,8 @@ export const storyRouter = createRouter()
         include: {
           assignee: true,
           creator: true,
-          project: false,
-          sprint: false,
+          project: true,
+          sprint: true,
           worklogs: {
             where: {
               date: {
@@ -98,7 +97,6 @@ export const storyRouter = createRouter()
     input: z.object({
       id: z.string(),
     }),
-    output: Story,
     async resolve({ ctx, input }) {
       const story = await prisma.story.findUnique({
         where: {
@@ -113,7 +111,7 @@ export const storyRouter = createRouter()
         },
       })
 
-      return { ...story }
+      return story
     },
   })
 

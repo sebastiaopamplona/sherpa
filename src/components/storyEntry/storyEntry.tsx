@@ -1,20 +1,24 @@
 import { ClockIcon, CubeIcon, FlagIcon } from "@heroicons/react/outline"
 import { StoryStates, StoryTypes } from "../../server/data/data"
 
-import { Story } from "../../server/types/types"
+import { StoryGetByIdOutput } from "../../server/router/story"
 import { useMemo } from "react"
 
 interface Props {
-  story: Story
+  story: StoryGetByIdOutput
   showAssignee?: boolean
 }
 
 export default function StoryEntry(props: Props) {
   const storyEffort = useMemo(() => {
-    let worklogDaySum: number = 0
-    props.story.worklogs.forEach((w) => (worklogDaySum += w.effort))
-    return worklogDaySum
+    if (props.story) {
+      let worklogDaySum: number = 0
+      props.story.worklogs.forEach((w) => (worklogDaySum += w.effort))
+      return worklogDaySum
+    }
   }, [props.story])
+
+  if (!props.story) return null
 
   return (
     <div className="px-4 pt-4 pb-3 sm:px-6 hover:cursor-pointer hover:bg-slate-100">
