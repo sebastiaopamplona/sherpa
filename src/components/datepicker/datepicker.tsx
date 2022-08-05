@@ -98,12 +98,12 @@ export default function DatePicker(props: Props) {
           <input
             type="text"
             readOnly
-            className="font-semibold shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+            className="block w-full rounded-md border-gray-300 font-semibold shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             placeholder="Select date"
             value={format(selectedDate, "yyyy-MM-dd")}
             onClick={toggleDatepicker}
           />
-          <div className="cursor-pointer absolute top-0 right-0 pt-[6px] pr-[8px]" onClick={toggleDatepicker}>
+          <div className="absolute top-0 right-0 cursor-pointer pt-[6px] pr-[8px]" onClick={toggleDatepicker}>
             <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -114,16 +114,16 @@ export default function DatePicker(props: Props) {
             </svg>
           </div>
           {showDatepicker && (
-            <div className="bg-white mt-12 rounded-lg shadow p-4 absolute top-0 left-0" style={{ width: "17rem" }}>
-              <div className="flex justify-between items-center mb-2">
+            <div className="absolute top-0 left-0 mt-12 rounded-lg bg-white p-4 shadow" style={{ width: "17rem" }}>
+              <div className="mb-2 flex items-center justify-between">
                 <div>
                   <button
                     type="button"
-                    className="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full"
+                    className="inline-flex cursor-pointer rounded-full p-1 transition duration-100 ease-in-out hover:bg-gray-200"
                     onClick={decrement}
                   >
                     <svg
-                      className="h-6 w-6 text-gray-500 inline-flex"
+                      className="inline-flex h-6 w-6 text-gray-500"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -135,7 +135,7 @@ export default function DatePicker(props: Props) {
                 {type === "date" && (
                   <div
                     onClick={showMonthPicker}
-                    className="flex-grow p-1 text-lg font-bold text-gray-800 cursor-pointer hover:bg-gray-200 rounded-lg"
+                    className="flex-grow cursor-pointer rounded-lg p-1 text-lg font-bold text-gray-800 hover:bg-gray-200"
                   >
                     <p className="text-center">{format(datepickerHeaderDate, "MMMM")}</p>
                   </div>
@@ -144,7 +144,7 @@ export default function DatePicker(props: Props) {
                   onClick={showYearPicker}
                   className={classNames(
                     type === "date" ? "" : "cursor-pointer hover:bg-gray-200",
-                    "flex-grow p-1 text-lg font-bold text-gray-800  rounded-lg"
+                    "flex-grow rounded-lg p-1 text-lg font-bold  text-gray-800"
                   )}
                 >
                   <p className="text-center">{format(datepickerHeaderDate, "yyyy")}</p>
@@ -152,11 +152,11 @@ export default function DatePicker(props: Props) {
                 <div>
                   <button
                     type="button"
-                    className="transition ease-in-out duration-100 inline-flex cursor-pointer hover:bg-gray-200 p-1 rounded-full"
+                    className="inline-flex cursor-pointer rounded-full p-1 transition duration-100 ease-in-out hover:bg-gray-200"
                     onClick={increment}
                   >
                     <svg
-                      className="h-6 w-6 text-gray-500 inline-flex"
+                      className="inline-flex h-6 w-6 text-gray-500"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -168,26 +168,26 @@ export default function DatePicker(props: Props) {
               </div>
               {type === "date" && (
                 <>
-                  <div className="flex flex-wrap mb-3 -mx-1">
+                  <div className="-mx-1 mb-3 flex flex-wrap">
                     {DAYS.map((day, i) => (
                       <div key={i} style={{ width: "14.26%" }} className="px-1">
-                        <div className="text-gray-800 font-medium text-center text-xs">{day}</div>
+                        <div className="text-center text-xs font-medium text-gray-800">{day}</div>
                       </div>
                     ))}
                   </div>
-                  <div className="flex flex-wrap -mx-1">
+                  <div className="-mx-1 flex flex-wrap">
                     {blankDays.map((_, i) => (
                       <div
                         key={i}
                         style={{ width: "14.26%" }}
-                        className="text-center border p-1 border-transparent text-sm"
+                        className="border border-transparent p-1 text-center text-sm"
                       ></div>
                     ))}
                     {dayCount.map((d, i) => (
-                      <div key={i} style={{ width: "14.26%" }} className="px-1 mb-1">
+                      <div key={i} style={{ width: "14.26%" }} className="mb-1 px-1">
                         <div
                           onClick={setDateValue(d)}
-                          className={`cursor-pointer text-center text-sm leading-none rounded-full leading-loose transition ease-in-out duration-100 ${
+                          className={`cursor-pointer rounded-full text-center text-sm leading-none leading-loose transition duration-100 ease-in-out ${
                             isToday(d) ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-blue-200"
                           }`}
                         >
@@ -199,13 +199,13 @@ export default function DatePicker(props: Props) {
                 </>
               )}
               {type === "month" && (
-                <div className="flex flex-wrap -mx-1">
+                <div className="-mx-1 flex flex-wrap">
                   {Array(12)
                     .fill(null)
                     .map((_, i) => (
                       <div key={i} onClick={setMonthValue(i)} style={{ width: "25%" }}>
                         <div
-                          className={`cursor-pointer p-5 font-semibold text-center text-sm rounded-lg hover:bg-gray-200 ${
+                          className={`cursor-pointer rounded-lg p-5 text-center text-sm font-semibold hover:bg-gray-200 ${
                             isSelectedMonth(i) ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-blue-200"
                           }`}
                         >

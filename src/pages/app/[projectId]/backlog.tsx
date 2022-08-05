@@ -27,8 +27,8 @@ export default function Backlog() {
         <div className={classNames(stories.data && stories.data.length === 0 ? "" : "hidden")}>
           <EmptyResources message="You have no stories in your backlog. Get started by creating one." />
         </div>
-        <div className="bg-white grid grid-cols-3 gap-y-6 overflow-hidden pb-2">
-          <div className="mt-1 flex items-center justify-center col-span-1 col-start-2">
+        <div className="grid grid-cols-3 gap-y-6 overflow-hidden bg-white pb-2">
+          <div className="col-span-1 col-start-2 mt-1 flex items-center justify-center">
             <button
               className={ButtonDefaultCSS}
               onClick={() => {
@@ -41,7 +41,7 @@ export default function Backlog() {
           <div
             className={classNames(
               stories.data && stories.data.length === 0 ? "hidden" : "",
-              "col-span-3 border-2 rounded-sm shadow"
+              "col-span-3 rounded-sm border-2 shadow"
             )}
           >
             <ul role="list" className="divide-y divide-gray-200">

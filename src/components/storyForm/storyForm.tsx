@@ -66,8 +66,8 @@ export default function StoryForm(props: Props) {
                   tab.enabled ? "" : "hidden",
                   tab.name === selectedTab.name
                     ? "border-indigo-500 text-indigo-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                  "group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm hover:cursor-pointer"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                  "group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium hover:cursor-pointer"
                 )}
                 aria-current={tab.name === selectedTab.name ? "page" : undefined}
                 onClick={() => {
@@ -164,10 +164,10 @@ const StoryDetails: React.FC<{
     <form onSubmit={handleSubmit(handleCreateStory)}>
       <div className="p-2">
         <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Create Story</h3>
+          <h3 className="text-lg font-medium leading-6 text-gray-900">Create Story</h3>
         </div>
         {/* <div className="mt-6 max-h-[560px] px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4"> */}
-        <div className="mt-6 px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4">
+        <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4 overflow-y-scroll px-2">
           <div className="col-span-5">
             <Input value={story ? story.title : ""} label="Title" register={register("title")} />
           </div>
@@ -242,7 +242,7 @@ const StoryDetails: React.FC<{
             />
           </div>
         </div>
-        <div className="mt-6 grid gap-y-6 gap-x-4 grid-cols-6">
+        <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4">
           {story ? (
             <>
               <div className="col-span-2 col-start-2 inline-flex items-center justify-center">
@@ -309,7 +309,7 @@ const StoryWorklogs: React.FC<{
     <form onSubmit={handleSubmit(handleCreateWorklog)}>
       <div className="p-2">
         <div>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">Worklogs</h3>
+          <h3 className="text-lg font-medium leading-6 text-gray-900">Worklogs</h3>
         </div>
         <div className={classNames(isWrittingWorklog ? "" : "hidden", "col-span-6 grid grid-cols-6 gap-y-6 gap-x-4")}>
           <div className="col-span-2">
@@ -379,11 +379,11 @@ const StoryWorklogs: React.FC<{
         <div
           className={classNames(
             worklogs.data && worklogs.data.length === 0 ? "hidden" : "",
-            "mt-6 max-h-[560px] px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4"
+            "mt-6 grid max-h-[560px] grid-cols-6 gap-y-6 gap-x-4 overflow-y-scroll px-2"
           )}
         >
           {worklogs.data ? (
-            <div className="col-span-6 border-2 rounded-sm shadow-sm">
+            <div className="col-span-6 rounded-sm border-2 shadow-sm">
               <ul role="list" className="divide-y divide-gray-200">
                 {worklogs.data.map((worklog) => (
                   <li
@@ -402,7 +402,7 @@ const StoryWorklogs: React.FC<{
               <div
                 className={classNames(
                   isWrittingWorklog ? "hidden" : "",
-                  "col-span-6 inline-flex items-center justify-center text-md"
+                  "text-md col-span-6 inline-flex items-center justify-center"
                 )}
               >
                 This story has no worklogs yet.
@@ -410,7 +410,7 @@ const StoryWorklogs: React.FC<{
             </>
           )}
         </div>
-        <div className="mt-6 grid gap-y-6 gap-x-4 grid-cols-6">
+        <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4">
           <div className="col-span-6 inline-flex items-center justify-center">
             <button
               className={classNames(isWrittingWorklog ? "hidden" : "", ButtonDefaultCSS)}

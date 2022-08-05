@@ -49,16 +49,16 @@ export default function Sidebar() {
   if (projects.isLoading) return null
 
   return (
-    <div className="flex flex-col w-56 min-h-0 bg-gray-800">
-      <div className="flex-1 flex flex-col w-56 pt-5 pb-4 overflow-y-auto">
-        <div className="flex items-center flex-shrink-0 px-4">
+    <div className="flex min-h-0 w-56 flex-col bg-gray-800">
+      <div className="flex w-56 flex-1 flex-col overflow-y-auto pt-5 pb-4">
+        <div className="flex flex-shrink-0 items-center px-4">
           <img
             className="h-8 w-auto "
             src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
             alt="Workflow"
           />
         </div>
-        <nav className="mt-5 flex-1 px-2 bg-gray-800 space-y-1" aria-label="Sidebar">
+        <nav className="mt-5 flex-1 space-y-1 bg-gray-800 px-2" aria-label="Sidebar">
           {navigation.map((item) => (
             <div
               key={item.name}
@@ -66,13 +66,13 @@ export default function Sidebar() {
                 router.asPath === item.href
                   ? "bg-gray-900 text-white"
                   : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                "group flex items-center min-w-fit px-2 py-2 text-sm font-medium rounded-md"
+                "group flex min-w-fit items-center rounded-md px-2 py-2 text-sm font-medium"
               )}
             >
               <item.icon
                 className={classNames(
                   router.asPath === item.href ? "text-gray-300" : "text-gray-400 group-hover:text-gray-300",
-                  "mr-3 flex-shrink-0 h-6 w-6"
+                  "mr-3 h-6 w-6 flex-shrink-0"
                 )}
                 aria-hidden="true"
               />
@@ -83,9 +83,9 @@ export default function Sidebar() {
           ))}
         </nav>
       </div>
-      <div className="flex-shrink-0 flex bg-gray-700 p-4">
-        <div className="flex-shrink-0 w-full group block">
-          <div className="flex items-center justify-center flex-shrink-0 px-4">
+      <div className="flex flex-shrink-0 bg-gray-700 p-4">
+        <div className="group block w-full flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center justify-center px-4">
             <Select
               entries={projects.data!}
               getId={(t) => t.id}
@@ -111,7 +111,7 @@ export default function Sidebar() {
             <div className="ml-3">
               <p className="text-sm font-medium text-white">{session?.user?.name}</p>
               <Link href={`/app/${projectId}/profile`}>
-                <p className="text-xs font-medium text-gray-300 group-hover:text-gray-200 cursor-pointer">
+                <p className="cursor-pointer text-xs font-medium text-gray-300 group-hover:text-gray-200">
                   View profile
                 </p>
               </Link>

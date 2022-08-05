@@ -40,7 +40,7 @@ export default function ProjectForm() {
   return (
     <form className="col-span-3 col-start-2" onSubmit={handleSubmit(handleCreateProject)}>
       <div className="col-span-3 col-start-2 grid grid-cols-2 gap-4 p-4">
-        <h1 className="col-span-2 flex items-center justify-center font-bold text-2xl underline">
+        <h1 className="col-span-2 flex items-center justify-center text-2xl font-bold underline">
           Get started by creating a project
         </h1>
         <div className="col-span-1">

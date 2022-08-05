@@ -21,13 +21,13 @@ export default function StoryEntry(props: Props) {
   if (!props.story) return null
 
   return (
-    <div className="px-4 pt-4 pb-3 sm:px-6 hover:cursor-pointer hover:bg-slate-100">
+    <div className="px-4 pt-4 pb-3 hover:cursor-pointer hover:bg-slate-100 sm:px-6">
       <div className="flex items-center justify-between">
-        <p className="text-md font-semibold text-gray-600 hover:text-gray-500 hover:cursor-pointer truncate">
+        <p className="text-md truncate font-semibold text-gray-600 hover:cursor-pointer hover:text-gray-500">
           {props.story.title}
         </p>
-        <div className="flex-shrink-0 flex">
-          <p className="px-2 inline-flex text-xs leading-5 font-semibold rounded-sm uppercase bg-green-100 text-green-800">
+        <div className="flex flex-shrink-0">
+          <p className="inline-flex rounded-sm bg-green-100 px-2 text-xs font-semibold uppercase leading-5 text-green-800">
             {StoryStates.get(props.story.state) as string}
           </p>
         </div>
@@ -36,19 +36,19 @@ export default function StoryEntry(props: Props) {
       <div className="flex justify-between text-xs">
         <div className="flex">
           <p className="flex items-center text-gray-500">
-            <CubeIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+            <CubeIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
             {StoryTypes.get(props.story.type) as string}
           </p>
           <div className="pr-3" />
           <p className="flex items-center text-gray-500">
-            <ClockIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+            <ClockIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
             {storyEffort}h / {props.story.estimate / 60}h
           </p>
 
           <>
             <div className="pr-3" />
             <p className="flex items-center text-gray-500">
-              <FlagIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+              <FlagIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
               {props.story.sprint ? props.story.sprint.title : "Backlog"}
             </p>
           </>
@@ -56,7 +56,7 @@ export default function StoryEntry(props: Props) {
             <>
               <div className="pl-3" />
               <img
-                className="inline-block border shadow-md h-7 w-7 rounded-full"
+                className="inline-block h-7 w-7 rounded-full border shadow-md"
                 src={props.story.assignee.image}
                 alt="profile_pic"
                 title={props.story.assignee.name}

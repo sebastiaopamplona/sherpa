@@ -53,7 +53,7 @@ export default function TimeKeeper() {
   return (
     <section>
       <div className="h-full px-[100px]">
-        <div className="grid grid-cols-11 gap-[2px] content-center">
+        <div className="grid grid-cols-11 content-center gap-[2px]">
           <div className="col-span-11 flex items-end justify-end py-2">
             <TimeKeeperNav
               sprints={sprints.data!}
@@ -154,7 +154,7 @@ const TimeKeeperNav: React.FC<{
   setCurrentDayRange: (ds: Date[]) => void
 }> = ({ sprints, selectedSprint, setSelectedSprint, currentDate, setCurrentDate, setCurrentDayRange }) => {
   return (
-    <nav className="relative z-0 inline-flex rounded-md -space-x-px" aria-label="Pagination">
+    <nav className="relative z-0 inline-flex -space-x-px rounded-md" aria-label="Pagination">
       <Select
         entries={sprints}
         getId={(t) => t.id}
@@ -163,7 +163,7 @@ const TimeKeeperNav: React.FC<{
       />
       <div className="pr-2" />
       <div
-        className="relative inline-flex items-center px-2 py-2 rounded-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
+        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
         onClick={() => {
           const newCurrDate = new Date()
           setCurrentDate(newCurrDate)
@@ -175,7 +175,7 @@ const TimeKeeperNav: React.FC<{
       </div>
       <div className="pr-2" />
       <div
-        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
+        className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
         onClick={() => {
           const newCurrDate = subDays(currentDate, 7)
           setCurrentDate(newCurrDate)
@@ -187,12 +187,12 @@ const TimeKeeperNav: React.FC<{
       </div>
       <div
         aria-current="page"
-        className="z-10 border-gray-300 relative inline-flex items-center px-3 py-2 border text-sm font-medium"
+        className="relative z-10 inline-flex items-center border border-gray-300 px-3 py-2 text-sm font-medium"
       >
         {`Week ${getWeek(currentDate)}`}
       </div>
       <div
-        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 hover:cursor-pointer"
+        className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
         onClick={() => {
           const newCurrDate = addDays(currentDate, 7)
           setCurrentDate(newCurrDate)
@@ -215,7 +215,7 @@ const TimeKeeperEntry: React.FC<{
   return (
     <>
       <div
-        className="col-span-6 border-2 rounded-sm"
+        className="col-span-6 rounded-sm border-2"
         onClick={() => {
           onStoryClick(story)
         }}
