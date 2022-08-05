@@ -167,7 +167,7 @@ const StoryDetails: React.FC<{
           <h3 className="text-lg font-medium leading-6 text-gray-900">Create Story</h3>
         </div>
         {/* <div className="mt-6 max-h-[560px] px-2 overflow-y-scroll grid grid-cols-6 gap-y-6 gap-x-4"> */}
-        <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4 overflow-y-scroll px-2">
+        <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4 overflow-y-scroll px-2 pb-20">
           <div className="col-span-5">
             <Input value={story ? story.title : ""} label="Title" register={register("title")} />
           </div>
@@ -219,6 +219,7 @@ const StoryDetails: React.FC<{
           <div className="col-span-2">
             <Select
               label="Sprint"
+              note="(Optional)"
               entries={sprints.data!}
               getId={(t) => t.id}
               getText={(t) => t.title}
@@ -266,8 +267,8 @@ const StoryWorklogs: React.FC<{
   story?: StoryType
   isAddingWorklog?: boolean
   worklogDay?: Date
-  onCreateOrUpdateWorklogSuccess: () => {}
-  onCreateOrUpdateWorklogError: () => {}
+  onCreateOrUpdateWorklogSuccess: () => void
+  onCreateOrUpdateWorklogError: () => void
 }> = ({ story, isAddingWorklog, worklogDay, onCreateOrUpdateWorklogSuccess, onCreateOrUpdateWorklogError }) => {
   const session = useSession()
   const router = useRouter()
