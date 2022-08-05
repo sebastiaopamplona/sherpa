@@ -1,38 +1,51 @@
-import { StoryState, StoryType } from "@prisma/client"
+import { StoryState as StoryStateEnum, StoryType as StoryTypeEnum } from "@prisma/client"
+
+import { PencilAltIcon } from "@heroicons/react/outline"
+
+export type StoryType = {
+  id: string
+  text: string
+  icon: (props: React.ComponentProps<"svg">) => JSX.Element
+}
 
 // NOTE(SP): keep this in sync with the enums from db
 export const StoryTypes: Map<string, string> = new Map([
-  [StoryType.BUG_FIXING, "Bug Fixing"],
-  [StoryType.DEVELOPMENT, "Development"],
-  [StoryType.DOCUMENTATION, "Documentation"],
-  [StoryType.MAINTENANCE, "Maintenance"],
-  [StoryType.SUPPORT, "Support"],
+  [StoryTypeEnum.BUG_FIXING, "Bug Fixing"],
+  [StoryTypeEnum.DEVELOPMENT, "Development"],
+  [StoryTypeEnum.DOCUMENTATION, "Documentation"],
+  [StoryTypeEnum.MAINTENANCE, "Maintenance"],
+  [StoryTypeEnum.SUPPORT, "Support"],
 ])
 
-export const StoryTypesArray: { id: string; text: string }[] = [
-  { id: StoryType.BUG_FIXING, text: "Bug Fixing" },
-  { id: StoryType.DEVELOPMENT, text: "Development" },
-  { id: StoryType.DOCUMENTATION, text: "Documentation" },
-  { id: StoryType.MAINTENANCE, text: "Maintenance" },
-  { id: StoryType.SUPPORT, text: "Support" },
+export const StoryTypesArray: StoryType[] = [
+  { id: StoryTypeEnum.BUG_FIXING, text: "Bug Fixing", icon: PencilAltIcon },
+  { id: StoryTypeEnum.DEVELOPMENT, text: "Development", icon: PencilAltIcon },
+  { id: StoryTypeEnum.DOCUMENTATION, text: "Documentation", icon: PencilAltIcon },
+  { id: StoryTypeEnum.MAINTENANCE, text: "Maintenance", icon: PencilAltIcon },
+  { id: StoryTypeEnum.SUPPORT, text: "Support", icon: PencilAltIcon },
 ]
 
+export type StoryState = {
+  id: string
+  text: string
+}
+
 export const StoryStates: Map<string, string> = new Map([
-  [StoryState.NEW, "NEW"],
-  [StoryState.READY, "READY"],
-  [StoryState.IN_PROGRESS, "IN PROGRESS"],
-  [StoryState.IN_REVIEW, "IN REVIEW"],
-  [StoryState.DELIVERED, "DELIVERED"],
-  [StoryState.DELETED, "DELETED"],
+  [StoryStateEnum.NEW, "NEW"],
+  [StoryStateEnum.READY, "READY"],
+  [StoryStateEnum.IN_PROGRESS, "IN PROGRESS"],
+  [StoryStateEnum.IN_REVIEW, "IN REVIEW"],
+  [StoryStateEnum.DELIVERED, "DELIVERED"],
+  [StoryStateEnum.DELETED, "DELETED"],
 ])
 
-export const StoryStatesArray: { id: string; text: string }[] = [
-  { id: StoryState.NEW, text: "NEW" },
-  { id: StoryState.READY, text: "READY" },
-  { id: StoryState.IN_PROGRESS, text: "IN PROGRESS" },
-  { id: StoryState.IN_REVIEW, text: "IN REVIEW" },
-  { id: StoryState.DELIVERED, text: "DELIVERED" },
-  { id: StoryState.DELETED, text: "DELETED" },
+export const StoryStatesArray: StoryState[] = [
+  { id: StoryStateEnum.NEW, text: "NEW" },
+  { id: StoryStateEnum.READY, text: "READY" },
+  { id: StoryStateEnum.IN_PROGRESS, text: "IN PROGRESS" },
+  { id: StoryStateEnum.IN_REVIEW, text: "IN REVIEW" },
+  { id: StoryStateEnum.DELIVERED, text: "DELIVERED" },
+  { id: StoryStateEnum.DELETED, text: "DELETED" },
 ]
 
 export const NoUser = {

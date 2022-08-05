@@ -17,8 +17,7 @@ export const Project: Zod.AnyZodObject = z.object({
   deletedAt: z.date().nullish(),
 })
 export const Projects = z.array(Project)
-export type ProjectType = z.infer<typeof Project>
-export type ProjectsType = z.infer<typeof Projects>
+export type ProjectInput = z.infer<typeof Project>
 
 export const Sprint: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
@@ -41,8 +40,7 @@ export const Sprint: Zod.AnyZodObject = z.object({
   // deletedAt: z.date().nullish(),
 })
 export const Sprints = z.array(Sprint)
-export type SprintType = z.infer<typeof Sprint>
-export type SprintsType = z.infer<typeof Sprints>
+export type SprintInput = z.infer<typeof Sprint>
 
 export const Worklog: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
@@ -63,8 +61,7 @@ export const Worklog: Zod.AnyZodObject = z.object({
   deletedAt: z.date().nullish(),
 })
 export const Worklogs = z.array(Worklog)
-export type WorklogType = z.infer<typeof Worklog>
-export type WorklogsType = z.infer<typeof Worklogs>
+export type WorklogInput = z.infer<typeof Worklog>
 
 export const Story: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
@@ -93,8 +90,7 @@ export const Story: Zod.AnyZodObject = z.object({
   worklogs: z.array(Worklog).nullish(),
 })
 export const Stories = z.array(Story)
-export type StoryType = z.infer<typeof Story>
-export type StoriesType = z.infer<typeof Stories>
+export type StoryInput = z.infer<typeof Story>
 
 export const User: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
@@ -117,5 +113,4 @@ export const User: Zod.AnyZodObject = z.object({
   deletedAt: z.date().nullish(),
 })
 export const Users = z.array(User)
-export type UserType = z.infer<typeof User>
-export type UsersType = z.infer<typeof Users>
+export type UserInput = z.infer<typeof User>

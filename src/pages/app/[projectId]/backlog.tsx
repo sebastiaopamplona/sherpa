@@ -6,7 +6,7 @@ import Modal from "../../../components/modal/modal"
 import Sidebar from "../../../components/sidebar/sidebar"
 import StoryEntry from "../../../components/storyEntry/storyEntry"
 import StoryForm from "../../../components/storyForm/storyForm"
-import { StoryType } from "../../../server/schemas/schemas"
+import { StoryInput } from "../../../server/schemas/schemas"
 import { trpc } from "../../../utils/trpc"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -16,7 +16,7 @@ export default function Backlog() {
   const { projectId } = router.query
   const stories = trpc.useQuery(["story.getAll", { projectId: projectId as string }])
 
-  const [currentStory, setCurrentStory] = useState<StoryType>()
+  const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsModalOpen, setIsStoryDetailsModalOpen] = useState<boolean>(false)
 
   if (stories.isLoading) return null

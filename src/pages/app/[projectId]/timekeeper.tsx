@@ -14,7 +14,7 @@ import { SprintGetByProjectIdOutput } from "../../../server/router/sprint"
 import StoryEntry from "../../../components/storyEntry/storyEntry"
 import StoryForm from "../../../components/storyForm/storyForm"
 import { StoryGetForTimekeeperOutput } from "../../../server/router/story"
-import { StoryType } from "../../../server/schemas/schemas"
+import { StoryInput } from "../../../server/schemas/schemas"
 import { appRouter } from "../../../server/createRouter"
 import { createSSGHelpers } from "@trpc/react/ssg"
 import superjson from "superjson"
@@ -43,7 +43,7 @@ export default function TimeKeeper() {
 
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
 
-  const [currentStory, setCurrentStory] = useState<StoryType>()
+  const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
   const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
   const [worklogDay, setWorklogDay] = useState<Date>()
@@ -101,11 +101,11 @@ export default function TimeKeeper() {
               key={story.id}
               story={story}
               dayRange={currentDayRange}
-              onStoryClick={(story: StoryType) => {
+              onStoryClick={(story: StoryInput) => {
                 setCurrentStory(story)
                 setIsStoryDetailsOpen(true)
               }}
-              onWorklogCellClick={(story: StoryType, date: Date) => {
+              onWorklogCellClick={(story: StoryInput, date: Date) => {
                 setCurrentStory(story)
                 setIsAddingWorklog(true)
                 setWorklogDay(date)
@@ -209,8 +209,8 @@ const TimeKeeperNav: React.FC<{
 const TimeKeeperEntry: React.FC<{
   story: ArrElement<StoryGetForTimekeeperOutput>
   dayRange: Date[]
-  onStoryClick: (story: StoryType) => void
-  onWorklogCellClick: (story: StoryType, date: Date) => void
+  onStoryClick: (story: StoryInput) => void
+  onWorklogCellClick: (story: StoryInput, date: Date) => void
 }> = ({ story, dayRange, onStoryClick, onWorklogCellClick }) => {
   return (
     <>
@@ -239,7 +239,7 @@ const TimeKeeperEntry: React.FC<{
 const TimeKeeperWorklogCell: React.FC<{
   story: ArrElement<StoryGetForTimekeeperOutput>
   day: Date
-  onWorklogCellClick: (story: StoryType) => void
+  onWorklogCellClick: (story: StoryInput) => void
 }> = ({ story, day, onWorklogCellClick }) => {
   const dayEffort = useMemo(() => {
     let worklogDaySum: number = 0

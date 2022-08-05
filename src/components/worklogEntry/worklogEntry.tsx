@@ -1,9 +1,9 @@
 import { CalendarIcon, ClockIcon } from "@heroicons/react/outline"
 
-import { WorklogType } from "../../server/schemas/schemas"
+import { WorklogInput } from "../../server/schemas/schemas"
 
 interface Props {
-  worklog: WorklogType
+  worklog: WorklogInput
   showAssignee?: boolean
 }
 

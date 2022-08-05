@@ -1,7 +1,15 @@
 import { ArrElement, ButtonDefaultCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
-import { NoSprint, NoUser, StoryStates, StoryStatesArray, StoryTypes, StoryTypesArray } from "../../server/data/data"
+import {
+  NoSprint,
+  NoUser,
+  StoryStates,
+  StoryStatesArray,
+  StoryType,
+  StoryTypes,
+  StoryTypesArray,
+} from "../../server/data/data"
 import { SVGProps, useEffect, useMemo, useState } from "react"
-import { StoryType, WorklogType } from "../../server/schemas/schemas"
+import { StoryInput, WorklogInput } from "../../server/schemas/schemas"
 
 import DatePicker from "../datepicker/datepicker"
 import EmptyResources from "../emptyResources/emptyResources"
@@ -24,7 +32,7 @@ type Tab = {
 }
 
 interface Props {
-  story?: StoryType
+  story?: StoryInput
   isAddingWorklog?: boolean
   worklogDay?: Date
   onCreateOrUpdateStorySuccess: () => void
@@ -110,7 +118,7 @@ export default function StoryForm(props: Props) {
 }
 
 const StoryDetails: React.FC<{
-  story?: StoryType
+  story?: StoryInput
   onCreateOrUpdateSuccess: () => void
   onCreateOrUpdateError: () => void
 }> = ({ story, onCreateOrUpdateSuccess, onCreateOrUpdateError }) => {
@@ -124,8 +132,8 @@ const StoryDetails: React.FC<{
   const [selectedUser, setSelectedUser] = useState<ArrElement<UserGetByProjectIdOutput>>(
     story && story.assignee ? story.assignee : NoUser
   )
-  const [selectedType, setSelectedType] = useState<{ id: string; text: string }>(
-    story ? { id: story.type, text: StoryTypes.get(story.type) as string } : StoryTypesArray[0]!
+  const [selectedType, setSelectedType] = useState<StoryType>(
+    story ? { id: story.type, text: StoryTypes.get(story.type) as string, icon: undefined } : StoryTypesArray[0]!
   )
   const [selectedState, setSelectedState] = useState<{ id: string; text: string }>(
     story ? { id: story.state, text: StoryStates.get(story.state) as string } : StoryStatesArray[0]!
@@ -134,7 +142,7 @@ const StoryDetails: React.FC<{
     story && story.sprint ? story.sprint : NoSprint
   )
 
-  const { handleSubmit, register } = useForm<StoryType>()
+  const { handleSubmit, register } = useForm<StoryInput>()
   const createStoryMutation = trpc.useMutation(["story.create"], {
     onSuccess: () => {
       onCreateOrUpdateSuccess()
@@ -143,7 +151,7 @@ const StoryDetails: React.FC<{
       onCreateOrUpdateError()
     },
   })
-  const handleCreateStory = (values: StoryType) => {
+  const handleCreateStory = (values: StoryInput) => {
     values.creatorId = session?.data?.userid as string
     if (selectedUser.id !== NoUser.id) {
       values.assigneeId = selectedUser.id
@@ -204,6 +212,7 @@ const StoryDetails: React.FC<{
               entries={StoryTypesArray}
               getId={(t) => t.id}
               getText={(t) => t.text}
+              getIcon={(t) => t.icon}
               selectedState={[selectedType, setSelectedType]}
             />
           </div>
@@ -264,7 +273,7 @@ const StoryDetails: React.FC<{
 }
 
 const StoryWorklogs: React.FC<{
-  story?: StoryType
+  story?: StoryInput
   isAddingWorklog?: boolean
   worklogDay?: Date
   onCreateOrUpdateWorklogSuccess: () => void
@@ -274,7 +283,7 @@ const StoryWorklogs: React.FC<{
   const router = useRouter()
   const { projectId } = router.query
 
-  const { handleSubmit, register } = useForm<WorklogType>()
+  const { handleSubmit, register } = useForm<WorklogInput>()
   const [selectedDate, setSelectedDate] = useState(worklogDay ? worklogDay : new Date())
 
   const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog ? isAddingWorklog : false)
@@ -293,7 +302,7 @@ const StoryWorklogs: React.FC<{
     },
   })
 
-  const handleCreateWorklog = (values: WorklogType) => {
+  const handleCreateWorklog = (values: WorklogInput) => {
     // TODO(SP):
 
     values.creatorId = session?.data?.userid as string
