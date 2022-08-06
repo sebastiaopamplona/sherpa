@@ -6,6 +6,7 @@ import { classNames } from "../../utils/aux"
 type DatepickerType = "date" | "month"
 
 interface Props {
+  label?: string
   selectedDateState: [Date, (d: Date) => void]
 }
 
@@ -91,7 +92,7 @@ export default function DatePicker(props: Props) {
     <div className="antialiased">
       <div className="container">
         <label htmlFor="datepicker" className="block text-sm font-medium text-gray-700">
-          Select Date
+          {props.label ? props.label : "Select date"}
         </label>
         <div className="relative mt-1">
           <input type="hidden" name="date" />
