@@ -119,7 +119,7 @@ const Select = <T extends { id: string }>({
           </>
         )}
       </Listbox>
-      <p className="mt-2 text-xs text-gray-500"> {note && note}</p>
+      {note ? <p className="mt-2 text-xs text-gray-500"> {note}</p> : <></>}
     </>
   )
 }

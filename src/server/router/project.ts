@@ -89,7 +89,7 @@ export const projectRouter = createRouter()
     async resolve({ ctx, input }) {
       const userRolesProject = await prisma.userRolesInProjects.findMany({
         where: {
-          userId: input.userId,
+          userId: input.userId as string,
         },
       })
 

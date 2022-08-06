@@ -5,7 +5,7 @@ import { PencilAltIcon } from "@heroicons/react/outline"
 export type StoryType = {
   id: string
   text: string
-  icon: (props: React.ComponentProps<"svg">) => JSX.Element
+  icon?: (props: React.ComponentProps<"svg">) => JSX.Element
 }
 
 // NOTE(SP): keep this in sync with the enums from db

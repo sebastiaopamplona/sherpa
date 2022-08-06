@@ -212,7 +212,7 @@ const StoryDetails: React.FC<{
               entries={StoryTypesArray}
               getId={(t) => t.id}
               getText={(t) => t.text}
-              getIcon={(t) => t.icon}
+              // getIcon={(t) => t.icon}
               selectedState={[selectedType, setSelectedType]}
             />
           </div>
