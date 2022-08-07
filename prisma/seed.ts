@@ -1,4 +1,8 @@
+import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as StoryTypeEnum } from "@prisma/client"
+import { addDays, setHours, subDays } from "date-fns"
+
 import { PrismaClient } from "@prisma/client"
+
 const prisma = new PrismaClient()
 
 async function seedUsers() {
@@ -57,7 +61,7 @@ async function seedProjects() {
     where: { email: "sebastiaodsrp@gmail.com" },
   })
 
-  const projects = ["project-01", "project-02", "project-03"]
+  const projects = ["Journdev Demo", "Empty project"]
   const seed = projects.map(async (p) => {
     await prisma.project.create({
       data: {
@@ -204,15 +208,11 @@ async function seedUsersInProjects() {
       rolesInProjects: [
         {
           role: "admin",
-          project: "project-01",
+          project: "Journdev Demo",
         },
         {
           role: "admin",
-          project: "project-02",
-        },
-        {
-          role: "admin",
-          project: "project-03",
+          project: "Empty project",
         },
       ],
     },
@@ -221,33 +221,11 @@ async function seedUsersInProjects() {
       rolesInProjects: [
         {
           role: "editor",
-          project: "project-01",
+          project: "Journdev Demo",
         },
         {
           role: "browser",
-          project: "project-02",
-        },
-      ],
-    },
-    {
-      email: "dummyuser02@journdev.io",
-      rolesInProjects: [
-        {
-          role: "browser",
-          project: "project-03",
-        },
-      ],
-    },
-    {
-      email: "dummyuser04@journdev.io",
-      rolesInProjects: [
-        {
-          role: "editor",
-          project: "project-01",
-        },
-        {
-          role: "editor",
-          project: "project-03",
+          project: "Empty project",
         },
       ],
     },
@@ -291,23 +269,21 @@ async function seedSprints() {
   type sprintInProject = {
     sprint: string
     project: string
+    startAt: Date
+    endAt: Date
   }
   const sprintsInProjects: sprintInProject[] = [
     {
-      sprint: "Sprint 01",
-      project: "project-01",
+      sprint: "Sprint 01 (complete)",
+      project: "Journdev Demo",
+      startAt: subDays(new Date(), 21),
+      endAt: subDays(new Date(), 8),
     },
     {
-      sprint: "Sprint 02",
-      project: "project-01",
-    },
-    {
-      sprint: "Sprint 03",
-      project: "project-01",
-    },
-    {
-      sprint: "Sprint 01",
-      project: "project-02",
+      sprint: "Sprint 02 (ongoing)",
+      project: "Journdev Demo",
+      startAt: subDays(new Date(), 7),
+      endAt: addDays(new Date(), 7),
     },
   ]
 
@@ -328,14 +304,169 @@ async function seedSprints() {
         title: sip.sprint,
         projectId: project!.id,
         creatorId: user!.id,
-        startAt: new Date(),
-        endAt: new Date(),
+        startAt: sip.startAt,
+        endAt: sip.endAt,
       },
     })
   })
   await Promise.all(seed)
 
   console.log("Sprints seeded")
+}
+
+async function seedStories() {
+  const project = await prisma.project.findUnique({
+    where: {
+      name: "Journdev Demo",
+    },
+  })
+
+  const sprint = await prisma.sprint.findFirst({
+    where: {
+      title: "Sprint 01 (complete)",
+    },
+  })
+
+  type story = {
+    title: string
+    description: string
+    estimate: number
+
+    projectId: string
+    creatorEmail: string
+    assigneeEmail: string
+    sprintId: string
+
+    state: StoryState
+    type: StoryType
+
+    worklogs: worklog[]
+  }
+
+  type worklog = {
+    description: string
+    date: Date
+    effort: number
+    remainingEffort: number
+  }
+
+  const stories: story[] = [
+    {
+      title: "Story A",
+      description: "yada yada yada",
+      estimate: 8,
+
+      projectId: project!.id,
+      creatorEmail: "sebastiaodsrp@gmail.com",
+      assigneeEmail: "sebastiaodsrp@gmail.com",
+      sprintId: sprint!.id,
+
+      state: StoryStateEnum.DONE,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [
+        {
+          description: "yada",
+          date: setHours(subDays(new Date(), 20), 1),
+          effort: 2,
+          remainingEffort: 6,
+        },
+        {
+          description: "yada",
+          date: setHours(subDays(new Date(), 19), 1),
+          effort: 4,
+          remainingEffort: 2,
+        },
+        {
+          description: "yada",
+          date: setHours(subDays(new Date(), 18), 1),
+          effort: 2,
+          remainingEffort: 0,
+        },
+      ],
+    },
+    {
+      title: "Story B",
+      description: "yada yada yada",
+      estimate: 16,
+
+      projectId: project!.id,
+      creatorEmail: "sebastiaodsrp@gmail.com",
+      assigneeEmail: "sebastiaodsrp@gmail.com",
+      sprintId: sprint!.id,
+
+      state: StoryStateEnum.DONE,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [
+        {
+          description: "yada",
+          date: setHours(subDays(new Date(), 18), 1),
+          effort: 6,
+          remainingEffort: 10,
+        },
+        {
+          description: "yada",
+          date: setHours(subDays(new Date(), 17), 1),
+          effort: 8,
+          remainingEffort: 2,
+        },
+        {
+          description: "yada",
+          date: setHours(subDays(new Date(), 16), 1),
+          effort: 2,
+          remainingEffort: 0,
+        },
+      ],
+    },
+  ]
+
+  const seed1 = stories.map(async (s) => {
+    const creator = await prisma.user.findUnique({
+      where: {
+        email: s.creatorEmail,
+      },
+    })
+    const assignee = await prisma.user.findUnique({
+      where: {
+        email: s.assigneeEmail,
+      },
+    })
+    const story = await prisma.story.create({
+      data: {
+        title: s.title,
+        description: s.description,
+        estimate: s.estimate,
+
+        projectId: s.projectId,
+        creatorId: creator!.id,
+        assigneeId: assignee!.id,
+        sprintId: s.sprintId,
+
+        state: s.state,
+        type: s.type,
+      },
+    })
+
+    const seed2 = s.worklogs.map(async (w) => {
+      await prisma.worklog.create({
+        data: {
+          description: w.description,
+          date: w.date,
+          effort: w.effort,
+          remainingEffort: w.remainingEffort,
+
+          creatorId: creator!.id,
+          storyId: story!.id,
+        },
+      })
+    })
+
+    await Promise.all(seed2)
+  })
+
+  await Promise.all(seed1)
+  console.log("Stories seeded")
 }
 
 async function main() {
@@ -347,6 +478,7 @@ async function main() {
   await seedRoleToPermissions()
   await seedUsersInProjects()
   await seedSprints()
+  await seedStories()
 }
 
 main()

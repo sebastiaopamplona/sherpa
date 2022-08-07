@@ -70,6 +70,7 @@ export const storyRouter = createRouter()
       endDate: z.date(),
     }),
     async resolve({ ctx, input }) {
+      console.log(input)
       const stories = await prisma.story.findMany({
         where: {
           projectId: input.projectId,

@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
-import { addDays, addHours, format, getWeek, isSameDay, startOfWeek, subDays } from "date-fns"
+import { addDays, format, getWeek, isSameDay, setHours, startOfWeek, subDays } from "date-fns"
 import { useMemo, useState } from "react"
 
 import { ArrElement } from "../../../utils/aux"
@@ -32,14 +32,19 @@ export default function TimeKeeper() {
   const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
 
   const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
-  const stories = trpc.useQuery([
-    "story.getForTimekeeper",
+  const stories = trpc.useQuery(
+    [
+      "story.getForTimekeeper",
+      {
+        projectId: projectId as string,
+        startDate: currentDayRange[0]!,
+        endDate: currentDayRange[currentDayRange.length - 1]!,
+      },
+    ],
     {
-      projectId: projectId as string,
-      startDate: currentDayRange[0]!,
-      endDate: currentDayRange[currentDayRange.length - 1]!,
-    },
-  ])
+      onSuccess: (data) => console.log("stories: ", data),
+    }
+  )
 
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
 
@@ -62,6 +67,24 @@ export default function TimeKeeper() {
               currentDate={currentDate}
               setCurrentDate={setCurrentDate}
               setCurrentDayRange={setCurrentDayRange}
+              onToday={() => {
+                const newCurrDate = new Date()
+                setCurrentDate(newCurrDate)
+                setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                stories.refetch()
+              }}
+              onPrevWeek={() => {
+                const newCurrDate = subDays(currentDate, 7)
+                setCurrentDate(newCurrDate)
+                setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                stories.refetch()
+              }}
+              onNextWeek={() => {
+                const newCurrDate = addDays(currentDate, 7)
+                setCurrentDate(newCurrDate)
+                setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                stories.refetch()
+              }}
             />
           </div>
           <div className="col-span-6 h-6 rounded-sm"></div>
@@ -152,7 +175,20 @@ const TimeKeeperNav: React.FC<{
   currentDate: Date
   setCurrentDate: (setCurrentDayRanged: Date) => void
   setCurrentDayRange: (ds: Date[]) => void
-}> = ({ sprints, selectedSprint, setSelectedSprint, currentDate, setCurrentDate, setCurrentDayRange }) => {
+  onToday: () => void
+  onPrevWeek: () => void
+  onNextWeek: () => void
+}> = ({
+  sprints,
+  selectedSprint,
+  setSelectedSprint,
+  currentDate,
+  setCurrentDate,
+  setCurrentDayRange,
+  onToday,
+  onPrevWeek,
+  onNextWeek,
+}) => {
   return (
     <nav className="relative z-0 inline-flex -space-x-px rounded-md" aria-label="Pagination">
       <Select
@@ -164,11 +200,12 @@ const TimeKeeperNav: React.FC<{
       <div className="pr-2" />
       <div
         className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
-        onClick={() => {
-          const newCurrDate = subDays(currentDate, 7)
-          setCurrentDate(newCurrDate)
-          setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-        }}
+        onClick={
+          onPrevWeek
+          // const newCurrDate = subDays(currentDate, 7)
+          // setCurrentDate(newCurrDate)
+          // setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+        }
       >
         <span className="sr-only">Previous</span>
         <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -181,11 +218,12 @@ const TimeKeeperNav: React.FC<{
       </div>
       <div
         className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
-        onClick={() => {
-          const newCurrDate = addDays(currentDate, 7)
-          setCurrentDate(newCurrDate)
-          setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-        }}
+        onClick={
+          onNextWeek
+          // const newCurrDate = addDays(currentDate, 7)
+          // setCurrentDate(newCurrDate)
+          // setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+        }
       >
         <span className="sr-only">Next</span>
         <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
@@ -193,13 +231,14 @@ const TimeKeeperNav: React.FC<{
       <div className="pr-2" />
       <div
         className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
-        onClick={() => {
-          const newCurrDate = new Date()
-          setCurrentDate(newCurrDate)
-          setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-        }}
+        onClick={
+          onToday
+          // const newCurrDate = new Date()
+          // setCurrentDate(newCurrDate)
+          // setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+        }
       >
-        <span className="sr-only">Previous</span>
+        <span className="sr-only">Today</span>
         <IoTodayOutline className="h-5 w-5" />
       </div>
     </nav>
@@ -256,7 +295,7 @@ const TimeKeeperWorklogCell: React.FC<{
         onWorklogCellClick(story)
       }}
     >
-      {dayEffort > 0 ? dayEffort : ""}
+      {dayEffort > 0 ? `${dayEffort}h` : ""}
     </div>
   )
 }
@@ -277,7 +316,7 @@ const getWeekBusinessDays = (currentDate: Date): Date[] => {
     // NOTE(SP): adding 23 hours is a hack to work around a serialization
     // issue from this date format to zod format (zod was ignoring the
     // timezone and the days were shifted 1 back)
-    days.push(addHours(curr, 23))
+    days.push(setHours(curr, 1))
     curr = addDays(curr, 1)
   }
   return days
