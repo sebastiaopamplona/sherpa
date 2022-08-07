@@ -55,7 +55,14 @@ export const storyRouter = createRouter()
           creator: true,
           project: true,
           sprint: true,
-          worklogs: true,
+          worklogs: {
+            orderBy: {
+              date: "desc",
+            },
+            include: {
+              creator: true,
+            },
+          },
         },
       })
 
@@ -70,7 +77,6 @@ export const storyRouter = createRouter()
       endDate: z.date(),
     }),
     async resolve({ ctx, input }) {
-      console.log(input)
       const stories = await prisma.story.findMany({
         where: {
           projectId: input.projectId,
@@ -81,11 +87,17 @@ export const storyRouter = createRouter()
           project: true,
           sprint: true,
           worklogs: {
+            orderBy: {
+              date: "desc",
+            },
             where: {
               date: {
                 gte: input.startDate,
                 lte: input.endDate,
               },
+            },
+            include: {
+              creator: true,
             },
           },
         },

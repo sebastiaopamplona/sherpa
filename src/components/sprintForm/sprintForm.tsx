@@ -54,26 +54,10 @@ export default function SprintForm({ onCreateOrUpdateSuccess, onCreateOrUpdateEr
                 <Input label="Title" register={register("title")} />
               </div>
               <div className="col-span-2">
-                <DatePicker
-                  label="Start at"
-                  selectedDateState={[
-                    startAt,
-                    (d: Date) => {
-                      setStartAt(d)
-                    },
-                  ]}
-                />
+                <DatePicker label="Start at" selectedDateState={[startAt, setStartAt]} />
               </div>
               <div className="col-span-2">
-                <DatePicker
-                  label="End at"
-                  selectedDateState={[
-                    endAt,
-                    (d: Date) => {
-                      setEndAt(d)
-                    },
-                  ]}
-                />
+                <DatePicker label="End at" selectedDateState={[endAt, setEndAt]} />
               </div>
               <div className="col-span-6">
                 <Textarea

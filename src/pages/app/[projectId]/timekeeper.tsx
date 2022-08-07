@@ -32,19 +32,14 @@ export default function TimeKeeper() {
   const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
 
   const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
-  const stories = trpc.useQuery(
-    [
-      "story.getForTimekeeper",
-      {
-        projectId: projectId as string,
-        startDate: currentDayRange[0]!,
-        endDate: currentDayRange[currentDayRange.length - 1]!,
-      },
-    ],
+  const stories = trpc.useQuery([
+    "story.getForTimekeeper",
     {
-      onSuccess: (data) => console.log("stories: ", data),
-    }
-  )
+      projectId: projectId as string,
+      startDate: currentDayRange[0]!,
+      endDate: currentDayRange[currentDayRange.length - 1]!,
+    },
+  ])
 
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
 

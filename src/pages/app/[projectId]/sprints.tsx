@@ -13,7 +13,7 @@ import SprintForm from "../../../components/sprintForm/sprintForm"
 import { SprintGetByProjectIdOutput } from "../../../server/router/sprint"
 import { appRouter } from "../../../server/createRouter"
 import { createSSGHelpers } from "@trpc/react/ssg"
-import { superjson } from "superjson"
+import superjson from "superjson"
 import { trpc } from "../../../utils/trpc"
 import { useRouter } from "next/router"
 

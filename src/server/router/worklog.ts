@@ -36,7 +36,11 @@ export const worklogRouter = createRouter()
     async resolve({ ctx, input }) {
       // TODO(SP): implement paging + filtering
 
-      const worklogs = await prisma.worklog.findMany()
+      const worklogs = await prisma.worklog.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
 
       return {
         ...worklogs,
@@ -85,6 +89,9 @@ export const worklogRouter = createRouter()
     }),
     async resolve({ ctx, input }) {
       const worklogs = await prisma.worklog.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
         where: {
           creatorId: input.creatorId,
         },

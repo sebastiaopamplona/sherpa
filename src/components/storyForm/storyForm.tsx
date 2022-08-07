@@ -10,6 +10,7 @@ import {
 } from "../../server/data/data"
 import { SVGProps, useEffect, useMemo, useState } from "react"
 import { StoryInput, WorklogInput } from "../../server/schemas/schemas"
+import { setHours, setMinutes, setSeconds } from "date-fns"
 
 import DatePicker from "../datepicker/datepicker"
 import EmptyResources from "../emptyResources/emptyResources"
@@ -288,13 +289,10 @@ const StoryWorklogs: React.FC<{
 
   const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog ? isAddingWorklog : false)
 
-  const worklogs = trpc.useQuery(["worklog.getByStoryId", { storyId: story ? (story.id as string) : "" }])
-
   useEffect(() => {}, [story])
 
   const createWorklogMutation = trpc.useMutation(["worklog.create"], {
     onSuccess: () => {
-      worklogs.refetch()
       onCreateOrUpdateWorklogSuccess()
     },
     onError: () => {
@@ -303,17 +301,19 @@ const StoryWorklogs: React.FC<{
   })
 
   const handleCreateWorklog = (values: WorklogInput) => {
-    // TODO(SP):
+    const now = new Date()
+    const dateWithHour: Date = setHours(
+      setMinutes(setSeconds(selectedDate, now.getSeconds()), now.getMinutes()),
+      now.getHours()
+    )
 
     values.creatorId = session?.data?.userid as string
     values.projectId = projectId
-    values.date = selectedDate
+    values.date = dateWithHour
     values.storyId = story!.id
 
     createWorklogMutation.mutate(values)
   }
-
-  if (worklogs.isLoading) return null
 
   return (
     <form onSubmit={handleSubmit(handleCreateWorklog)}>
@@ -383,19 +383,19 @@ const StoryWorklogs: React.FC<{
             </button>
           </div>
         </div>
-        <div className={classNames((worklogs.data && worklogs.data.length > 0) || isWrittingWorklog ? "hidden" : "")}>
+        <div className={classNames((story && story.worklogs.length > 0) || isWrittingWorklog ? "hidden" : "")}>
           <EmptyResources message="You have no worklogs in your backlog. Get started by creating one." />
         </div>
         <div
           className={classNames(
-            worklogs.data && worklogs.data.length === 0 ? "hidden" : "",
+            story && story.worklogs.length === 0 ? "hidden" : "",
             "mt-6 grid max-h-[560px] grid-cols-6 gap-y-6 gap-x-4 overflow-y-scroll px-2"
           )}
         >
-          {worklogs.data ? (
+          {story && story.worklogs.length > 0 ? (
             <div className="col-span-6 rounded-sm border-2 shadow-sm">
               <ul role="list" className="divide-y divide-gray-200">
-                {worklogs.data.map((worklog) => (
+                {story.worklogs.map((worklog: WorklogInput) => (
                   <li
                     key={worklog.id}
                     onClick={() => {
