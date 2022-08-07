@@ -60,7 +60,7 @@ export const sprintRouter = createRouter()
     async resolve({ ctx, input }) {
       const sprints = prisma.sprint.findMany({
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
         where: {
           projectId: input.projectId,

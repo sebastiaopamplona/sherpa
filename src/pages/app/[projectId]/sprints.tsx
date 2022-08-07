@@ -1,6 +1,6 @@
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { ArrElement, ButtonDefaultCSS, classNames } from "../../../utils/aux"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 
 import EmptyResources from "../../../components/emptyResources/emptyResources"
 import { GetServerSidePropsContext } from "next"
@@ -65,10 +65,14 @@ export default function Dashboard() {
   const router = useRouter()
   const { projectId } = router.query
 
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
-
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
+
+  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {
+    onSuccess: (data) => {
+      if (data.length > 0) setSelectedSprint(data[0]!)
+    },
+  })
 
   type dummyEntry = {
     name: string
@@ -87,10 +91,6 @@ export default function Dashboard() {
     return tmp
   }, [])
 
-  useEffect(() => {
-    if (sprints.data && sprints.data.length > 0) setSelectedSprint(sprints.data[0]!)
-  }, [sprints])
-
   if (sprints.isLoading) return null
 
   return (
@@ -99,7 +99,7 @@ export default function Dashboard() {
         <div className={classNames(sprints.data && sprints.data.length === 0 ? "" : "hidden")}>
           <EmptyResources message="You have no sprints in your backlog. Get started by creating one." />
         </div>
-        <nav className="relative z-0 inline-flex w-full items-center justify-center" aria-label="Pagination">
+        <nav className="relative z-10 inline-flex w-full items-center justify-center pb-5">
           <div className={classNames(sprints.data && sprints.data.length === 0 ? "hidden" : "")}>
             <Select
               entries={sprints.data!}
@@ -121,14 +121,13 @@ export default function Dashboard() {
         {sprints.data && sprints.data.length > 0 ? (
           <div className="grid grid-cols-3 gap-y-2 overflow-hidden bg-white pb-2">
             <div className="col-span-3 flex items-center justify-center">
-              <h1>Sprint state overview</h1>
+              <h1 className="text-xl font-semibold">Sprint state overview</h1>
             </div>
             <div className="col-span-3 flex h-96 items-center justify-center py-2">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   width={500}
                   height={400}
-                  // data={data}
                   data={dummyData}
                   margin={{
                     top: 10,
@@ -141,7 +140,7 @@ export default function Dashboard() {
                   <XAxis dataKey="name" />
                   <YAxis tickCount={10 / 2} interval={0} />
                   <Tooltip />
-                  <Legend verticalAlign="top" height={36} />
+                  <Legend verticalAlign="bottom" height={36} />
                   <Area type="monotone" dataKey="delivered" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
                   <Area type="monotone" dataKey="started" stackId="1" stroke="#8884d8" fill="#8884d8" />
                   <Area type="monotone" dataKey="ready" stackId="1" stroke="#ffc658" fill="#ffc658" />
