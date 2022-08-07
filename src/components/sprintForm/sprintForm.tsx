@@ -10,9 +10,12 @@ import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { useState } from "react"
 
-interface Props {}
+interface Props {
+  onCreateOrUpdateSuccess: () => void
+  onCreateOrUpdateError: () => void
+}
 
-export default function SprintForm(props: Props) {
+export default function SprintForm({ onCreateOrUpdateSuccess, onCreateOrUpdateError }: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
@@ -23,15 +26,17 @@ export default function SprintForm(props: Props) {
   const { handleSubmit, register } = useForm<SprintInput>()
   const createSprintMutation = trpc.useMutation(["sprint.create"], {
     onSuccess: () => {
-      //   onCreateOrUpdateSuccess()
+      onCreateOrUpdateSuccess()
     },
     onError: () => {
-      //   onCreateOrUpdateError()
+      onCreateOrUpdateError()
     },
   })
   const handleCreateSprint = (values: SprintInput) => {
     values.creatorId = session?.data?.userid as string
     values.projectId = projectId
+    values.startAt = startAt
+    values.endAt = endAt
 
     createSprintMutation.mutate(values)
   }

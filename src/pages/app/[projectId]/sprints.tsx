@@ -1,7 +1,9 @@
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { ArrElement, ButtonDefaultCSS, classNames } from "../../../utils/aux"
+import { useEffect, useMemo, useState } from "react"
 
 import EmptyResources from "../../../components/emptyResources/emptyResources"
+import { GetServerSidePropsContext } from "next"
 import Layout from "../../../components/layout/layout"
 import Modal from "../../../components/modal/modal"
 import { NoSprint } from "../../../server/data/data"
@@ -9,51 +11,51 @@ import Select from "../../../components/select/select"
 import Sidebar from "../../../components/sidebar/sidebar"
 import SprintForm from "../../../components/sprintForm/sprintForm"
 import { SprintGetByProjectIdOutput } from "../../../server/router/sprint"
-import { SprintInput } from "../../../server/schemas/schemas"
+import { appRouter } from "../../../server/createRouter"
+import { createSSGHelpers } from "@trpc/react/ssg"
+import { superjson } from "superjson"
 import { trpc } from "../../../utils/trpc"
-import { useForm } from "react-hook-form"
 import { useRouter } from "next/router"
-import { useState } from "react"
 
 const data = [
   {
-    name: "Day 1",
+    name: "",
     ready: 10,
     started: 0,
     delivered: 0,
   },
   {
-    name: "Day 2",
+    name: "",
     ready: 7,
     started: 3,
     delivered: 0,
   },
   {
-    name: "Day 3",
+    name: "",
     ready: 6,
     started: 3,
     delivered: 1,
   },
   {
-    name: "Day 4",
+    name: "",
     ready: 4,
     started: 3,
     delivered: 3,
   },
   {
-    name: "Day 5",
+    name: "",
     ready: 3,
     started: 3,
     delivered: 4,
   },
   {
-    name: "Day 6",
+    name: "",
     ready: 1,
     started: 3,
     delivered: 6,
   },
   {
-    name: "Day 7",
+    name: "",
     ready: 0,
     started: 0,
     delivered: 10,
@@ -68,29 +70,26 @@ export default function Dashboard() {
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
 
-  const { handleSubmit, register } = useForm<SprintInput>()
-  const createStoryMutation = trpc.useMutation(["story.create"], {
-    onSuccess: () => {
-      setIsSprintDetailsOpen(false)
-    },
-    onError: () => {
-      // TODO(SP):
-    },
-  })
-  const handleCreateStory = (values: StoryInput) => {
-    values.creatorId = session?.data?.userid as string
-    if (selectedUser.id !== NoUser.id) {
-      values.assigneeId = selectedUser.id
-    }
-    values.type = selectedType.id
-    values.state = selectedState.id
-    if (selectedSprint.id !== NoSprint.id) {
-      values.sprintId = selectedSprint.id
-    }
-    values.projectId = projectId
-
-    createStoryMutation.mutate(values)
+  type dummyEntry = {
+    name: string
+    ready: number
+    started: number
+    delivered: number
   }
+  const dummyData = useMemo(() => {
+    let tmp: dummyEntry[] = []
+    tmp.push({ name: "Day 0", ready: 10, started: 0, delivered: 0 })
+    for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 10, started: 0, delivered: 0 })
+    for (let i = 0; i < 2 * 8; i++) tmp.push({ name: "", ready: 7, started: 3, delivered: 0 })
+    for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 5, started: 3, delivered: 2 })
+    for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 2, started: 3, delivered: 5 })
+    for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 0, started: 0, delivered: 10 })
+    return tmp
+  }, [])
+
+  useEffect(() => {
+    if (sprints.data && sprints.data.length > 0) setSelectedSprint(sprints.data[0]!)
+  }, [sprints])
 
   if (sprints.isLoading) return null
 
@@ -119,41 +118,41 @@ export default function Dashboard() {
             Create sprint
           </button>
         </nav>
-        <div
-          className={classNames(
-            sprints.data && sprints.data.length === 0 ? "hidden" : "",
-            "grid grid-cols-3 gap-y-2 overflow-hidden bg-white pb-2"
-          )}
-        >
-          <div className="col-span-3 flex items-center justify-center">
-            <h1>Story state overview</h1>
+        {sprints.data && sprints.data.length > 0 ? (
+          <div className="grid grid-cols-3 gap-y-2 overflow-hidden bg-white pb-2">
+            <div className="col-span-3 flex items-center justify-center">
+              <h1>Sprint state overview</h1>
+            </div>
+            <div className="col-span-3 flex h-96 items-center justify-center py-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  width={500}
+                  height={400}
+                  // data={data}
+                  data={dummyData}
+                  margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="1 1" />
+                  <XAxis dataKey="name" />
+                  <YAxis tickCount={10 / 2} interval={0} />
+                  <Tooltip />
+                  <Legend verticalAlign="top" height={36} />
+                  <Area type="monotone" dataKey="delivered" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+                  <Area type="monotone" dataKey="started" stackId="1" stroke="#8884d8" fill="#8884d8" />
+                  <Area type="monotone" dataKey="ready" stackId="1" stroke="#ffc658" fill="#ffc658" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="col-span-3 flex h-[1000px] items-center justify-center bg-red-200 py-2"></div>
           </div>
-          <div className="col-span-3 flex h-96 items-center justify-center py-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                width={500}
-                height={400}
-                data={data}
-                margin={{
-                  top: 10,
-                  right: 30,
-                  left: 0,
-                  bottom: 0,
-                }}
-              >
-                <CartesianGrid strokeDasharray="1 1" />
-                <XAxis dataKey="name" />
-                <YAxis tickCount={10 / 2} interval={0} />
-                <Tooltip />
-                <Legend verticalAlign="top" height={36} />
-                <Area type="monotone" dataKey="delivered" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-                <Area type="monotone" dataKey="started" stackId="1" stroke="#8884d8" fill="#8884d8" />
-                <Area type="monotone" dataKey="ready" stackId="1" stroke="#ffc658" fill="#ffc658" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="col-span-3 flex h-[1000px] items-center justify-center bg-red-200 py-2"></div>
-        </div>
+        ) : (
+          <></>
+        )}
       </div>
       <Modal
         isOpen={isSprintsDetailsOpen}
@@ -161,7 +160,14 @@ export default function Dashboard() {
           setIsSprintDetailsOpen(false)
         }}
       >
-        <SprintForm />
+        <SprintForm
+          onCreateOrUpdateSuccess={() => {
+            setIsSprintDetailsOpen(false)
+          }}
+          onCreateOrUpdateError={() => {
+            alert("failed to create sprint")
+          }}
+        />
       </Modal>
     </section>
   )
@@ -174,4 +180,24 @@ Dashboard.getLayout = function getLayout(page: React.ReactNode) {
       {page}
     </Layout>
   )
+}
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { projectId } = ctx.query
+
+  const ssg = await createSSGHelpers({
+    router: appRouter,
+    // @ts-ignore TODO(SP): this might be a real issue, so far it's not
+    ctx: ctx,
+    transformer: superjson,
+  })
+
+  // Prefetching
+  await ssg.fetchQuery("sprint.getByProjectId", { projectId: projectId as string })
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+  }
 }

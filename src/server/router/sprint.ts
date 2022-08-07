@@ -14,8 +14,20 @@ export const sprintRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
-      // TODO:
-      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
+      const sprint = await prisma.sprint.create({
+        data: {
+          title: input.title,
+          startAt: input.startAt,
+          endAt: input.endAt,
+
+          projectId: input.projectId,
+          creatorId: input.creatorId,
+        },
+      })
+
+      return {
+        id: sprint.id,
+      }
     },
   })
 
