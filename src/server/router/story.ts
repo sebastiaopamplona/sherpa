@@ -69,6 +69,8 @@ export const storyRouter = createRouter()
       return stories
     },
   })
+  // NOTE(SP): there's a separate query for the timekeeper page in order
+  // to optimize it in the future
   .query("getForTimekeeper", {
     input: z.object({
       projectId: z.string(),
@@ -90,12 +92,12 @@ export const storyRouter = createRouter()
             orderBy: {
               date: "desc",
             },
-            where: {
-              date: {
-                gte: input.startDate,
-                lte: input.endDate,
-              },
-            },
+            // where: {
+            //   date: {
+            //     gte: input.startDate,
+            //     lte: input.endDate,
+            //   },
+            // },
             include: {
               creator: true,
             },
