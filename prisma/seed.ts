@@ -1,4 +1,10 @@
-import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as StoryTypeEnum } from "@prisma/client"
+import {
+  SprintLogType,
+  StoryState,
+  StoryState as StoryStateEnum,
+  StoryType,
+  StoryType as StoryTypeEnum,
+} from "@prisma/client"
 import { addDays, setHours, subDays } from "date-fns"
 
 import { PrismaClient } from "@prisma/client"
@@ -314,7 +320,7 @@ async function seedSprints() {
   console.log("Sprints seeded")
 }
 
-async function seedStories() {
+async function seedStoriesAndSprintLogs() {
   const project = await prisma.project.findUnique({
     where: {
       name: "Journdev Demo",
@@ -326,6 +332,17 @@ async function seedStories() {
       title: "Sprint 01 (complete)",
     },
   })
+
+  type worklog = {
+    description: string
+    date: Date
+    effort: number
+    remainingEffort: number
+  }
+
+  type sprintLog = {
+    type: SprintLogType
+  }
 
   type story = {
     title: string
@@ -341,13 +358,7 @@ async function seedStories() {
     type: StoryType
 
     worklogs: worklog[]
-  }
-
-  type worklog = {
-    description: string
-    date: Date
-    effort: number
-    remainingEffort: number
+    sprintLogs: sprintLog[]
   }
 
   const stories: story[] = [
@@ -384,6 +395,8 @@ async function seedStories() {
           remainingEffort: 0,
         },
       ],
+
+      sprintLogs: [{}],
     },
     {
       title: "Story B",
@@ -418,6 +431,8 @@ async function seedStories() {
           remainingEffort: 0,
         },
       ],
+
+      sprintLogs: [],
     },
   ]
 
@@ -478,7 +493,7 @@ async function main() {
   await seedRoleToPermissions()
   await seedUsersInProjects()
   await seedSprints()
-  await seedStories()
+  await seedStoriesAndSprintLogs()
 }
 
 main()

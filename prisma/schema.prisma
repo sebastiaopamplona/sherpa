@@ -119,8 +119,9 @@ model Sprint {
 
   stories Story[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  SprintLog SprintLog[]
 }
 
 model Story {
@@ -169,6 +170,38 @@ model Worklog {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model SprintLogType {
+  // STORY_STATE_CHANGE
+  // STORY_CREATED
+  // STORY_DELETED
+  // WORKLOG_CREATED
+  // WORKLOG_DELETED
+  // SPRINT_FINISHED
+
+  id String @id @default(cuid())
+
+  name String @unique
+}
+
+model SprintLogParameter {
+  id String @id @default(cuid())
+
+  name String @unique
+}
+
+model SprintLogDetail {
+  id String @id @default(cuid())
+
+  name String @unique
+}
+
+model SprintLog {
+  id String @id @default(cuid())
+
+  sprintId String?
+  sprint   Sprint? @relation(fields: [sprintId], references: [id])
 }
 
 enum StoryState {
