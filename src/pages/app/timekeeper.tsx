@@ -1,4 +1,4 @@
-import { ArrElement, pathWithParams, switchSprint } from "../../utils/aux"
+import { ArrElement, switchSprint } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
 import { addDays, format, getWeek, isSameDay, setHours, startOfWeek, subDays } from "date-fns"
 import { useMemo, useRef, useState } from "react"
@@ -16,8 +16,9 @@ import StoryForm from "../../components/storyForm/storyForm"
 import { StoryGetForTimekeeperOutput } from "../../server/router/story"
 import { StoryInput } from "../../server/schemas/schemas"
 import { appRouter } from "../../server/createRouter"
+import { checkIfShouldRedirect } from "../../server/aux"
 import { createSSGHelpers } from "@trpc/react/ssg"
-import { prisma } from "../../server/db/client"
+import { getJourndevAuthSession } from "../../server/session"
 import superjson from "superjson"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
@@ -328,31 +329,11 @@ const getWeekBusinessDays = (currentDate: Date): Date[] => {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const session = await getJourndevAuthSession(ctx)
   const { projectId, sprintId } = ctx.query
+  const redirect = await checkIfShouldRedirect("/app/timekeeper", session!.userid as string, ctx.query)
 
-  // TODO(SP): This logic is common in every page. Find a way to abastract it in one place.
-  if (typeof sprintId === "undefined") {
-    const sprint = await prisma.sprint.findFirst({
-      where: {
-        projectId: projectId as string,
-      },
-    })
-
-    if (sprint) {
-      return {
-        redirect: {
-          destination: pathWithParams(
-            "/app/timekeeper",
-            new Map([
-              ["projectId", projectId],
-              ["sprintId", sprint.id],
-            ])
-          ),
-          permanent: false,
-        },
-      }
-    }
-  }
+  if (redirect !== null) return redirect
 
   const ssg = await createSSGHelpers({
     router: appRouter,

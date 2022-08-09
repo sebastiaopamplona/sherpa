@@ -139,7 +139,15 @@ export default function Sidebar() {
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-white">{session?.user?.name}</p>
-              <Link href={`/app/${projectId}/profile`}>
+              <Link
+                href={pathWithParams(
+                  "/app/profile",
+                  new Map([
+                    // ["projectId", projectId],
+                    // ["sprintId", sprintId],
+                  ])
+                )}
+              >
                 <p className="cursor-pointer text-xs font-medium text-gray-300 group-hover:text-gray-200">
                   View profile
                 </p>

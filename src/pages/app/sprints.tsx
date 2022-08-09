@@ -1,5 +1,5 @@
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { ArrElement, ButtonDefaultCSS, classNames, pathWithParams, switchSprint } from "../../utils/aux"
+import { ArrElement, ButtonDefaultCSS, classNames, switchSprint } from "../../utils/aux"
 import { useMemo, useRef, useState } from "react"
 
 import EmptyResources from "../../components/emptyResources/emptyResources"
@@ -12,8 +12,9 @@ import Sidebar from "../../components/sidebar/sidebar"
 import SprintForm from "../../components/sprintForm/sprintForm"
 import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
 import { appRouter } from "../../server/createRouter"
+import { checkIfShouldRedirect } from "../../server/aux"
 import { createSSGHelpers } from "@trpc/react/ssg"
-import { prisma } from "../../server/db/client"
+import { getJourndevAuthSession } from "../../server/session"
 import superjson from "superjson"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
@@ -187,31 +188,11 @@ Dashboard.getLayout = function getLayout(page: React.ReactNode) {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const session = await getJourndevAuthSession(ctx)
   const { projectId, sprintId } = ctx.query
+  const redirect = await checkIfShouldRedirect("/app/sprints", session!.userid as string, ctx.query)
 
-  // TODO(SP): This logic is common in every page. Find a way to abastract it in one place.
-  if (typeof sprintId === "undefined") {
-    const sprint = await prisma.sprint.findFirst({
-      where: {
-        projectId: projectId as string,
-      },
-    })
-
-    if (sprint) {
-      return {
-        redirect: {
-          destination: pathWithParams(
-            "/app/sprints",
-            new Map([
-              ["projectId", projectId],
-              ["sprintId", sprint.id],
-            ])
-          ),
-          permanent: false,
-        },
-      }
-    }
-  }
+  if (redirect !== null) return redirect
 
   const ssg = await createSSGHelpers({
     router: appRouter,
