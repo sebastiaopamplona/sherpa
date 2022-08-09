@@ -1,5 +1,5 @@
 import { ArrElement, classNames, pathWithParams, switchProject } from "../../utils/aux"
-import { GiBackpack, GiEmptyHourglass, GiSprint } from "react-icons/gi"
+import { GiBackpack, GiEmptyHourglass, GiOpenTreasureChest, GiSprint } from "react-icons/gi"
 
 import { ImLab } from "react-icons/im"
 import Link from "next/link"
@@ -56,6 +56,17 @@ export default function Sidebar() {
       icon: GiBackpack,
       href: pathWithParams(
         "/app/backlog",
+        new Map([
+          ["projectId", projectId],
+          ["sprintId", sprintId],
+        ])
+      ),
+    },
+    {
+      name: "Projects",
+      icon: GiOpenTreasureChest,
+      href: pathWithParams(
+        "/app/projects",
         new Map([
           ["projectId", projectId],
           ["sprintId", sprintId],
