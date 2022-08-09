@@ -74,7 +74,7 @@ export const storyRouter = createRouter()
   .query("getForTimekeeper", {
     input: z.object({
       projectId: z.string(),
-      sprintId: z.string(),
+      sprintId: z.string().nullish(),
       startDate: z.date(),
       endDate: z.date(),
     }),

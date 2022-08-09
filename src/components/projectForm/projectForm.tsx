@@ -5,7 +5,6 @@ import Input from "../input/input"
 import Textarea from "../textarea/textarea"
 import { XCircleIcon } from "@heroicons/react/solid"
 import { trpc } from "../../utils/trpc"
-import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { useState } from "react"
 
@@ -16,19 +15,24 @@ type ProjectInformation = {
   description: string
 }
 
-export default function ProjectForm() {
+interface Props {
+  onCreateOrUpdateSuccess: (projectId: string) => void
+  onCreateOrUpdateError: () => void
+}
+
+export default function ProjectForm({ onCreateOrUpdateSuccess, onCreateOrUpdateError }: Props) {
   const session = useSession()
-  const router = useRouter()
 
   const { register, handleSubmit } = useForm<ProjectInformation>()
   const [errorMessage, setErrorMessage] = useState<string>("")
 
   const mutation = trpc.useMutation(["project.create"], {
     onSuccess: (data) => {
-      router.push(`/app/${data.id}/timekeeper`)
+      onCreateOrUpdateSuccess(data.id)
     },
     onError: (error) => {
-      setErrorMessage(error.message)
+      onCreateOrUpdateError()
+      // setErrorMessage(error.message)
     },
   })
 

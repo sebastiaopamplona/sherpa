@@ -1,9 +1,17 @@
 import ProjectForm from "../../components/projectForm/projectForm"
+import { useRouter } from "next/router"
 
 export default function CreateProject() {
+  const router = useRouter()
+
   return (
     <div className="grid grid-cols-5 content-start ">
-      <ProjectForm />
+      <ProjectForm
+        onCreateOrUpdateSuccess={(projectId: string) => {
+          router.push(`/app/${projectId}/timekeeper`)
+        }}
+        onCreateOrUpdateError={() => {}}
+      />
     </div>
   )
 }

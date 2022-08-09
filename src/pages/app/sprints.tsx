@@ -19,50 +19,6 @@ import superjson from "superjson"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 
-const data = [
-  {
-    name: "",
-    ready: 10,
-    started: 0,
-    delivered: 0,
-  },
-  {
-    name: "",
-    ready: 7,
-    started: 3,
-    delivered: 0,
-  },
-  {
-    name: "",
-    ready: 6,
-    started: 3,
-    delivered: 1,
-  },
-  {
-    name: "",
-    ready: 4,
-    started: 3,
-    delivered: 3,
-  },
-  {
-    name: "",
-    ready: 3,
-    started: 3,
-    delivered: 4,
-  },
-  {
-    name: "",
-    ready: 1,
-    started: 3,
-    delivered: 6,
-  },
-  {
-    name: "",
-    ready: 0,
-    started: 0,
-    delivered: 10,
-  },
-]
 export default function Dashboard() {
   const router = useRouter()
   const { projectId, sprintId } = router.query
