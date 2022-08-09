@@ -1,20 +1,21 @@
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { ArrElement, ButtonDefaultCSS, classNames } from "../../../utils/aux"
-import { useMemo, useState } from "react"
+import { ArrElement, ButtonDefaultCSS, classNames, pathWithParams, switchSprint } from "../../utils/aux"
+import { useMemo, useRef, useState } from "react"
 
-import EmptyResources from "../../../components/emptyResources/emptyResources"
+import EmptyResources from "../../components/emptyResources/emptyResources"
 import { GetServerSidePropsContext } from "next"
-import Layout from "../../../components/layout/layout"
-import Modal from "../../../components/modal/modal"
-import { NoSprint } from "../../../server/data/data"
-import Select from "../../../components/select/select"
-import Sidebar from "../../../components/sidebar/sidebar"
-import SprintForm from "../../../components/sprintForm/sprintForm"
-import { SprintGetByProjectIdOutput } from "../../../server/router/sprint"
-import { appRouter } from "../../../server/createRouter"
+import Layout from "../../components/layout/layout"
+import Modal from "../../components/modal/modal"
+import { NoSprint } from "../../server/data/data"
+import Select from "../../components/select/select"
+import Sidebar from "../../components/sidebar/sidebar"
+import SprintForm from "../../components/sprintForm/sprintForm"
+import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
+import { appRouter } from "../../server/createRouter"
 import { createSSGHelpers } from "@trpc/react/ssg"
+import { prisma } from "../../server/db/client"
 import superjson from "superjson"
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 
 const data = [
@@ -63,16 +64,20 @@ const data = [
 ]
 export default function Dashboard() {
   const router = useRouter()
-  const { projectId } = router.query
+  const { projectId, sprintId } = router.query
 
-  const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
+  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
+
+  const selectedSprint = useRef<ArrElement<SprintGetByProjectIdOutput>>(
+    ((data) => {
+      if (!data) return NoSprint
+      for (let i = 0; i < data.length; i++) {
+        if (data[i]?.id === sprintId) return data[i]!
+      }
+      return NoSprint
+    })(sprints.data)
+  )
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
-
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {
-    onSuccess: (data) => {
-      if (data.length > 0) setSelectedSprint(data[0]!)
-    },
-  })
 
   type dummyEntry = {
     name: string
@@ -105,7 +110,7 @@ export default function Dashboard() {
               entries={sprints.data!}
               getId={(t) => t.id}
               getText={(t) => t.title}
-              selectedState={[selectedSprint, setSelectedSprint]}
+              selectedState={[selectedSprint.current, (s) => switchSprint(s.id, router)]}
             />
           </div>
           <div className="pr-2" />
@@ -182,7 +187,31 @@ Dashboard.getLayout = function getLayout(page: React.ReactNode) {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { projectId } = ctx.query
+  const { projectId, sprintId } = ctx.query
+
+  // TODO(SP): This logic is common in every page. Find a way to abastract it in one place.
+  if (typeof sprintId === "undefined") {
+    const sprint = await prisma.sprint.findFirst({
+      where: {
+        projectId: projectId as string,
+      },
+    })
+
+    if (sprint) {
+      return {
+        redirect: {
+          destination: pathWithParams(
+            "/app/sprints",
+            new Map([
+              ["projectId", projectId],
+              ["sprintId", sprint.id],
+            ])
+          ),
+          permanent: false,
+        },
+      }
+    }
+  }
 
   const ssg = await createSSGHelpers({
     router: appRouter,

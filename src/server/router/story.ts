@@ -74,7 +74,7 @@ export const storyRouter = createRouter()
   .query("getForTimekeeper", {
     input: z.object({
       projectId: z.string(),
-      // TODO(SP): sprintId: z.string()
+      sprintId: z.string(),
       startDate: z.date(),
       endDate: z.date(),
     }),
@@ -82,6 +82,7 @@ export const storyRouter = createRouter()
       const stories = await prisma.story.findMany({
         where: {
           projectId: input.projectId,
+          sprintId: input.sprintId,
         },
         include: {
           assignee: true,

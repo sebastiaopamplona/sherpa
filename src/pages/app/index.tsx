@@ -1,6 +1,7 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
 
 import { getJourndevAuthSession } from "../../server/session"
+import { pathWithParams } from "../../utils/aux"
 import { prisma } from "../../server/db/client"
 
 export default function Index() {
@@ -30,9 +31,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx: GetServerSideP
     },
   })
 
+  const sprint = await prisma.sprint.findFirst({
+    where: {
+      projectId: project!.id,
+    },
+  })
+
   return {
     redirect: {
-      destination: `/app/${project!.id}/timekeeper`,
+      destination: pathWithParams(
+        "/app/timekeeper",
+        new Map([
+          ["projectId", project?.id],
+          ["sprintId", sprint?.id],
+        ])
+      ),
       permanent: false,
     },
   }

@@ -1,13 +1,15 @@
-import { ButtonDefaultCSS, classNames } from "../../../utils/aux"
+import { ButtonDefaultCSS, classNames, pathWithParams } from "../../utils/aux"
 
-import EmptyResources from "../../../components/emptyResources/emptyResources"
-import Layout from "../../../components/layout/layout"
-import Modal from "../../../components/modal/modal"
-import Sidebar from "../../../components/sidebar/sidebar"
-import StoryEntry from "../../../components/storyEntry/storyEntry"
-import StoryForm from "../../../components/storyForm/storyForm"
-import { StoryInput } from "../../../server/schemas/schemas"
-import { trpc } from "../../../utils/trpc"
+import EmptyResources from "../../components/emptyResources/emptyResources"
+import { GetServerSidePropsContext } from "next"
+import Layout from "../../components/layout/layout"
+import Modal from "../../components/modal/modal"
+import Sidebar from "../../components/sidebar/sidebar"
+import StoryEntry from "../../components/storyEntry/storyEntry"
+import StoryForm from "../../components/storyForm/storyForm"
+import { StoryInput } from "../../server/schemas/schemas"
+import { prisma } from "../../server/db/client"
+import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
@@ -97,4 +99,36 @@ Backlog.getLayout = function getLayout(page: React.ReactNode) {
       {page}
     </Layout>
   )
+}
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { projectId, sprintId } = ctx.query
+
+  // TODO(SP): This logic is common in every page. Find a way to abastract it in one place.
+  if (typeof sprintId === "undefined") {
+    const sprint = await prisma.sprint.findFirst({
+      where: {
+        projectId: projectId as string,
+      },
+    })
+
+    if (sprint) {
+      return {
+        redirect: {
+          destination: pathWithParams(
+            "/app/backlog",
+            new Map([
+              ["projectId", projectId],
+              ["sprintId", sprint.id],
+            ])
+          ),
+          permanent: false,
+        },
+      }
+    }
+  }
+
+  return {
+    props: {},
+  }
 }

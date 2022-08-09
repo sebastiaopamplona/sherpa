@@ -5,13 +5,40 @@ export function classNames(...classes: string[]) {
 }
 
 export function switchProject(projectId: string, router: NextRouter) {
-  const split = router.asPath.split("/")
-  window.location.href = `/app/${projectId}/${split[split.length - 1]}`
+  window.location.href = pathWithParams(router.pathname, new Map([["projectId", projectId]]))
+}
+
+export function switchSprint(sprintId: string, router: NextRouter) {
+  const { projectId } = router.query
+
+  window.location.href = pathWithParams(
+    router.pathname,
+    new Map([
+      ["projectId", projectId],
+      ["sprintId", sprintId],
+    ])
+  )
 }
 
 export function extractBasePathWithProjectId(router: NextRouter): string {
   const split = router.pathname.split("/")
   return `/${split[1]}/${split[2]}`
+}
+
+export function pathWithParams(path: string, params: Map<string, string | string[] | undefined>): string {
+  let newPath: string = path
+
+  params.forEach((value: string | string[] | undefined, key: string) => {
+    // TODO(SP): handle arrays
+    if (typeof value === "undefined" || Array.isArray(value) || value.length === 0) return
+
+    let prefix: string = "?"
+    if (newPath.includes("?")) prefix = "&"
+
+    newPath += `${prefix}${key}=${value}`
+  })
+
+  return newPath
 }
 
 // TODO: move this to a module.css file

@@ -1,24 +1,25 @@
+import { ArrElement, pathWithParams, switchSprint } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
 import { addDays, format, getWeek, isSameDay, setHours, startOfWeek, subDays } from "date-fns"
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 
-import { ArrElement } from "../../../utils/aux"
 import { GetServerSidePropsContext } from "next"
 import { IoTodayOutline } from "react-icons/io5"
-import Layout from "../../../components/layout/layout"
-import Modal from "../../../components/modal/modal"
-import { NoSprint } from "../../../server/data/data"
-import Select from "../../../components/select/select"
-import Sidebar from "../../../components/sidebar/sidebar"
-import { SprintGetByProjectIdOutput } from "../../../server/router/sprint"
-import StoryEntry from "../../../components/storyEntry/storyEntry"
-import StoryForm from "../../../components/storyForm/storyForm"
-import { StoryGetForTimekeeperOutput } from "../../../server/router/story"
-import { StoryInput } from "../../../server/schemas/schemas"
-import { appRouter } from "../../../server/createRouter"
+import Layout from "../../components/layout/layout"
+import Modal from "../../components/modal/modal"
+import { NoSprint } from "../../server/data/data"
+import Select from "../../components/select/select"
+import Sidebar from "../../components/sidebar/sidebar"
+import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
+import StoryEntry from "../../components/storyEntry/storyEntry"
+import StoryForm from "../../components/storyForm/storyForm"
+import { StoryGetForTimekeeperOutput } from "../../server/router/story"
+import { StoryInput } from "../../server/schemas/schemas"
+import { appRouter } from "../../server/createRouter"
 import { createSSGHelpers } from "@trpc/react/ssg"
+import { prisma } from "../../server/db/client"
 import superjson from "superjson"
-import { trpc } from "../../../utils/trpc"
+import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 
 // TODO: move this to a module.css
@@ -26,7 +27,7 @@ const timekeeperGridCell = "col-span-1 border-2 flex items-center justify-center
 
 export default function TimeKeeper() {
   const router = useRouter()
-  const { projectId } = router.query
+  const { projectId, sprintId } = router.query
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
@@ -36,12 +37,21 @@ export default function TimeKeeper() {
     "story.getForTimekeeper",
     {
       projectId: projectId as string,
+      sprintId: sprintId as string,
       startDate: currentDayRange[0]!,
       endDate: currentDayRange[currentDayRange.length - 1]!,
     },
   ])
 
-  const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(NoSprint)
+  const selectedSprint = useRef<ArrElement<SprintGetByProjectIdOutput>>(
+    ((data) => {
+      if (!data) return NoSprint
+      for (let i = 0; i < data.length; i++) {
+        if (data[i]?.id === sprintId) return data[i]!
+      }
+      return NoSprint
+    })(sprints.data)
+  )
 
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
@@ -57,8 +67,8 @@ export default function TimeKeeper() {
           <div className="col-span-11 flex items-center justify-center py-2">
             <TimeKeeperNav
               sprints={sprints.data!}
-              selectedSprint={selectedSprint}
-              setSelectedSprint={setSelectedSprint}
+              selectedSprint={selectedSprint.current}
+              setSelectedSprint={(s) => switchSprint(s.id, router)}
               currentDate={currentDate}
               setCurrentDate={setCurrentDate}
               setCurrentDayRange={setCurrentDayRange}
@@ -318,7 +328,31 @@ const getWeekBusinessDays = (currentDate: Date): Date[] => {
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { projectId } = ctx.query
+  const { projectId, sprintId } = ctx.query
+
+  // TODO(SP): This logic is common in every page. Find a way to abastract it in one place.
+  if (typeof sprintId === "undefined") {
+    const sprint = await prisma.sprint.findFirst({
+      where: {
+        projectId: projectId as string,
+      },
+    })
+
+    if (sprint) {
+      return {
+        redirect: {
+          destination: pathWithParams(
+            "/app/timekeeper",
+            new Map([
+              ["projectId", projectId],
+              ["sprintId", sprint.id],
+            ])
+          ),
+          permanent: false,
+        },
+      }
+    }
+  }
 
   const ssg = await createSSGHelpers({
     router: appRouter,
@@ -330,8 +364,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const businessDays: Date[] = getWeekBusinessDays(new Date())
 
   // Prefetching
+  await ssg.fetchQuery("sprint.getByProjectId", { projectId: projectId as string })
   await ssg.fetchQuery("story.getForTimekeeper", {
     projectId: projectId as string,
+    sprintId: sprintId as string,
     startDate: businessDays[0]!,
     endDate: businessDays[businessDays.length - 1]!,
   })

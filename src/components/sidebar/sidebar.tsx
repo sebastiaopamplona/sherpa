@@ -1,4 +1,4 @@
-import { ArrElement, classNames, switchProject } from "../../utils/aux"
+import { ArrElement, classNames, pathWithParams, switchProject } from "../../utils/aux"
 import { GiBackpack, GiEmptyHourglass, GiSprint } from "react-icons/gi"
 
 import { ImLab } from "react-icons/im"
@@ -13,7 +13,7 @@ import { useState } from "react"
 export default function Sidebar() {
   const router = useRouter()
   const { data: session, status } = useSession()
-  const { projectId } = router.query
+  const { projectId, sprintId } = router.query
 
   const [selectedProject, setSelectedProject] = useState<ArrElement<ProjectGetByUserIdOutput>>({ id: "", name: "" })
 
@@ -29,21 +29,49 @@ export default function Sidebar() {
   })
 
   const navigation = [
-    { name: "Time Keeper", icon: GiEmptyHourglass, href: `/app/${projectId}/timekeeper` },
+    {
+      name: "Time Keeper",
+      icon: GiEmptyHourglass,
+      href: pathWithParams(
+        "/app/timekeeper",
+        new Map([
+          ["projectId", projectId],
+          ["sprintId", sprintId],
+        ])
+      ),
+    },
     {
       name: "Sprints",
       icon: GiSprint,
-      href: `/app/${projectId}/sprints`,
+      href: pathWithParams(
+        "/app/sprints",
+        new Map([
+          ["projectId", projectId],
+          ["sprintId", sprintId],
+        ])
+      ),
     },
     {
       name: "Backlog",
       icon: GiBackpack,
-      href: `/app/${projectId}/backlog`,
+      href: pathWithParams(
+        "/app/backlog",
+        new Map([
+          ["projectId", projectId],
+          ["sprintId", sprintId],
+        ])
+      ),
     },
     {
       name: "Testing (dev only)",
       icon: ImLab,
-      href: `/app/${projectId}/testing`,
+      href: pathWithParams(
+        "/app/testing",
+        new Map([
+          ["projectId", projectId],
+          ["sprintId", sprintId],
+        ])
+      ),
     },
   ]
 
