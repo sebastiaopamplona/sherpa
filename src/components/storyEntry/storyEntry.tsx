@@ -1,4 +1,4 @@
-import { ClockIcon, CubeIcon, FlagIcon } from "@heroicons/react/outline"
+import { GiCube, GiHourglass, GiSprint } from "react-icons/gi"
 import { StoryStates, StoryTypes } from "../../server/data/data"
 
 import { StoryGetByIdOutput } from "../../server/router/story"
@@ -36,19 +36,19 @@ export default function StoryEntry(props: Props) {
       <div className="flex justify-between text-xs">
         <div className="flex">
           <p className="flex items-center text-gray-500">
-            <CubeIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+            <GiCube className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
             {StoryTypes.get(props.story.type) as string}
           </p>
           <div className="pr-3" />
           <p className="flex items-center text-gray-500">
-            <ClockIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+            <GiHourglass className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
             {storyEffort}h / {props.story.estimate}h
           </p>
 
           <>
             <div className="pr-3" />
             <p className="flex items-center text-gray-500">
-              <FlagIcon className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+              <GiSprint className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
               {props.story.sprint ? props.story.sprint.title : "Backlog"}
             </p>
           </>

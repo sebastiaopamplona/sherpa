@@ -80,12 +80,6 @@ export const projectRouter = createRouter()
     input: z.object({
       userId: z.string().nullish(),
     }),
-    output: z.array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-      })
-    ),
     async resolve({ ctx, input }) {
       const userRolesProject = await prisma.userRolesInProjects.findMany({
         where: {
@@ -100,13 +94,26 @@ export const projectRouter = createRouter()
       let projectIds: string[] = []
       userRolesProject.forEach((r) => projectIds.push(r.projectId))
 
-      const projects = prisma.project.findMany({
+      const projects = await prisma.project.findMany({
         orderBy: {
           name: "asc",
         },
         where: {
           id: {
             in: projectIds,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          githubUrl: true,
+          _count: {
+            select: {
+              stories: true,
+              users: true,
+              sprints: true,
+            },
           },
         },
       })

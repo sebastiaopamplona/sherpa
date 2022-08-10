@@ -1,7 +1,8 @@
-import { ButtonDefaultCSS, classNames } from "../../utils/aux"
+import { ArrElement, ButtonDefaultCSS, classNames } from "../../utils/aux"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import Input from "../input/input"
+import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import Textarea from "../textarea/textarea"
 import { XCircleIcon } from "@heroicons/react/solid"
 import { trpc } from "../../utils/trpc"
@@ -16,11 +17,12 @@ type ProjectInformation = {
 }
 
 interface Props {
+  project?: ArrElement<ProjectGetByUserIdOutput>
   onCreateOrUpdateSuccess: (projectId: string) => void
   onCreateOrUpdateError: () => void
 }
 
-export default function ProjectForm({ onCreateOrUpdateSuccess, onCreateOrUpdateError }: Props) {
+export default function ProjectForm({ project, onCreateOrUpdateSuccess, onCreateOrUpdateError }: Props) {
   const session = useSession()
 
   const { register, handleSubmit } = useForm<ProjectInformation>()
@@ -48,13 +50,21 @@ export default function ProjectForm({ onCreateOrUpdateSuccess, onCreateOrUpdateE
           Get started by creating a project
         </h1>
         <div className="col-span-1">
-          <Input label="Project name" register={register("name")} />
+          <Input value={project ? project.name : ""} label="Project name" register={register("name")} />
         </div>
         <div className="col-span-1">
-          <Input label="GitHub URL" register={register("githubUrl")} />
+          <Input
+            value={project && project.githubUrl ? project.githubUrl : ""}
+            label="GitHub URL"
+            register={register("githubUrl")}
+          />
         </div>
         <div className="col-span-2">
-          <Textarea label="Description" register={register("description")} />
+          <Textarea
+            value={project && project.description ? project.description : ""}
+            label="Description"
+            register={register("description")}
+          />
         </div>
         <div className="col-span-2 flex items-center justify-center">
           <button className={ButtonDefaultCSS}>Create project</button>

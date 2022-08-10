@@ -1,7 +1,6 @@
 import { ArrElement, classNames, pathWithParams, switchProject } from "../../utils/aux"
-import { GiBackpack, GiEmptyHourglass, GiOpenTreasureChest, GiSprint } from "react-icons/gi"
+import { GiHourglass, GiNotebook, GiOpenTreasureChest, GiSprint } from "react-icons/gi"
 
-import { ImLab } from "react-icons/im"
 import Link from "next/link"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import Select from "../select/select"
@@ -31,7 +30,7 @@ export default function Sidebar() {
   const navigation = [
     {
       name: "Time Keeper",
-      icon: GiEmptyHourglass,
+      icon: GiHourglass,
       href: pathWithParams(
         "/app/timekeeper",
         new Map([
@@ -53,7 +52,7 @@ export default function Sidebar() {
     },
     {
       name: "Backlog",
-      icon: GiBackpack,
+      icon: GiNotebook,
       href: pathWithParams(
         "/app/backlog",
         new Map([
@@ -67,17 +66,6 @@ export default function Sidebar() {
       icon: GiOpenTreasureChest,
       href: pathWithParams(
         "/app/projects",
-        new Map([
-          ["projectId", projectId],
-          ["sprintId", sprintId],
-        ])
-      ),
-    },
-    {
-      name: "Testing (dev only)",
-      icon: ImLab,
-      href: pathWithParams(
-        "/app/testing",
         new Map([
           ["projectId", projectId],
           ["sprintId", sprintId],
@@ -125,6 +113,7 @@ export default function Sidebar() {
       </div>
       <div className="flex flex-shrink-0 bg-gray-700 p-4">
         <div className="group block w-full flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center justify-center pb-1 text-gray-200">Select Project</div>
           <div className="flex flex-shrink-0 items-center justify-center px-4">
             <Select
               entries={projects.data!}

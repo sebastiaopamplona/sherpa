@@ -1,10 +1,12 @@
-import { ButtonDefaultCSS, classNames } from "../../utils/aux"
+import { ArrElement, ButtonDefaultCSS, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/emptyResources/emptyResources"
 import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/layout/layout"
 import Modal from "../../components/modal/modal"
+import ProjectEntry from "../../components/projectEntry/projectEntry"
 import ProjectForm from "../../components/projectForm/projectForm"
+import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import Sidebar from "../../components/sidebar/sidebar"
 import { appRouter } from "../../server/createRouter"
 import { checkIfShouldRedirect } from "../../server/aux"
@@ -23,11 +25,12 @@ export default function Projects() {
 
   const projects = trpc.useQuery(["project.getByUserId", { userId: session?.data?.userid as string }])
 
+  const [currentProject, setCurrentProject] = useState<ArrElement<ProjectGetByUserIdOutput>>()
   const [isProjectDetailsOpen, setIsProjectDetailsOpen] = useState<boolean>(false)
 
   return (
     <section>
-      <div className="h-full px-[300px]">
+      <div className="h-full px-[400px]">
         <div className={classNames(projects.data && projects.data.length === 0 ? "" : "hidden")}>
           <EmptyResources message="You have no projects. Get started by creating one." />
         </div>
@@ -41,24 +44,19 @@ export default function Projects() {
             Create project
           </button>
         </nav>
-        <div
-          className={classNames(
-            projects.data && projects.data.length === 0 ? "hidden" : "",
-            "col-span-3 rounded-sm border-2 shadow"
-          )}
-        >
-          <ul role="list" className="divide-y divide-gray-200">
+        <div className={classNames(projects.data && projects.data.length === 0 ? "hidden" : "", "col-span-3")}>
+          <ul role="list" className="space-y-4">
             {projects.data ? (
               projects.data.map((project) => (
                 <li
+                  className="rounded-sm border-2 shadow"
                   key={project.id}
                   onClick={() => {
-                    // setCurrentStory(story)
+                    setCurrentProject(project)
                     setIsProjectDetailsOpen(true)
                   }}
                 >
-                  <h1>{project.name}</h1>
-                  {/* <StoryEntry story={story} /> */}
+                  <ProjectEntry project={project} />
                 </li>
               ))
             ) : (
@@ -74,6 +72,7 @@ export default function Projects() {
         }}
       >
         <ProjectForm
+          project={currentProject}
           onCreateOrUpdateSuccess={() => {
             projects.refetch()
             setIsProjectDetailsOpen(false)
