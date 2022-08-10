@@ -1,17 +1,16 @@
-import { getProviders, signIn, useSession } from "next-auth/react"
+import * as Yup from "yup"
+
+import { ErrorMessage, Field, Formik } from "formik"
+import { getCsrfToken, signIn, useSession } from "next-auth/react"
 
 import { InferGetServerSidePropsType } from "next"
-import { InformationCircleIcon } from "@heroicons/react/outline"
 import { useRouter } from "next/router"
 
-export default function SignIn({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { data: session, status } = useSession()
   const router = useRouter()
-  // const { projectId, setProjectId } = useContext(JourndevContext)
 
   if (status === "authenticated") {
-    // router.push(`/app/${projectId}/timekeper`)
-    // router.push("/app/noproject/timekeeper")
     router.push("/app")
   }
 
@@ -19,7 +18,7 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
     <>
       {status === "unauthenticated" && (
         <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-          <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="mx-auto w-full max-w-md pb-4">
             <img
               className="mx-auto h-12 w-auto"
               src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
@@ -29,126 +28,85 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
           </div>
 
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
-            <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-              <form className="space-y-6" action="#" method="POST">
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Email address
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      required
-                      className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
+            {/* <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10"> */}
+            <Formik
+              initialValues={{ email: "", password: "", tenantKey: "" }}
+              validationSchema={Yup.object({
+                email: Yup.string()
+                  .max(30, "Must be 30 characters or less")
+                  .email("Invalid email address")
+                  .required("Please enter your email"),
+                password: Yup.string().required("Please enter your password"),
+              })}
+              onSubmit={async (values, { setSubmitting }) => {
+                const res = await signIn("credentials", {
+                  redirect: false,
+                  email: values.email,
+                  password: values.password,
+                  callbackUrl: `${window.location.origin}/app`,
+                })
 
-                <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      required
-                      className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
+                if (res?.error) {
+                  alert(res.error)
+                }
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                    />
-                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                      Remember me
-                    </label>
-                  </div>
+                // if (res?.url) router.push(res.url)
 
-                  <div className="text-sm">
-                    <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                      Forgot your password?
-                    </a>
-                  </div>
-                </div>
+                // setSubmitting(false)
+              }}
+            >
+              {(formik) => (
+                <form className="space-y-6" onSubmit={formik.handleSubmit}>
+                  <div className="mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-md">
+                    <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
-                <div>
-                  <button
-                    type="submit"
-                    className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      alert("Local user login not supported by this application. Please use GitHub OAuth.")
-                    }}
-                  >
-                    Sign in
-                  </button>
-                </div>
-              </form>
+                    <div className="mb-4">
+                      <label htmlFor="email" className="text-sm font-bold uppercase text-gray-600">
+                        Email
+                        <Field
+                          name="email"
+                          aria-label="enter your email"
+                          aria-required="true"
+                          type="text"
+                          className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        />
+                      </label>
 
-              <div className="mt-6">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300" />
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="bg-white px-2 text-gray-500">Or continue with</span>
-                  </div>
-                </div>
-                <div className="p-2" />
-                <>
-                  {providers
-                    ? Object.values(providers).map((provider, i) => {
-                        if (provider.id !== "email") {
-                          return (
-                            <button
-                              key={i}
-                              className="mb-2 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-                              onClick={() =>
-                                signIn(provider.id, {
-                                  // callbackUrl: `${window.location.origin}/app/noproject/timekeeper`,
-                                  callbackUrl: `${window.location.origin}/app`,
-                                })
-                              }
-                            >
-                              <svg className="h-7 w-7" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d={oauthProviderToSvg[provider.id]} clipRule="evenodd" />
-                              </svg>
-                            </button>
-                          )
-                        }
-                      })
-                    : ""}
-                </>
-
-                <div className="p-2" />
-
-                <div className="rounded-md bg-blue-50 p-4">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <InformationCircleIcon className="h-5 w-5 text-blue-400" aria-hidden="true" />
+                      <div className="text-sm text-red-600">
+                        <ErrorMessage name="email" />
+                      </div>
                     </div>
-                    <div className="ml-3 flex-1 md:flex md:justify-between">
-                      <p className=" text-sm text-blue-700">
-                        We currently only support login via GitHub. We plan to support more providers and local user in
-                        the future.
-                      </p>
+
+                    <div className="mb-6">
+                      <label htmlFor="password" className="text-sm font-bold uppercase text-gray-600">
+                        password
+                        <Field
+                          name="password"
+                          aria-label="enter your password"
+                          aria-required="true"
+                          type="password"
+                          className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                        />
+                      </label>
+
+                      <div className="text-sm text-red-600">
+                        <ErrorMessage name="password" />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                      <button
+                        type="submit"
+                        className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      >
+                        {formik.isSubmitting ? "Please wait..." : "Sign In"}
+                      </button>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
+                </form>
+              )}
+            </Formik>
+            {/* </div> */}
           </div>
         </div>
       )}
@@ -156,15 +114,11 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
   )
 }
 
+// This is the recommended way for Next.js 9.3 or newer
 export const getServerSideProps = async (context: any) => {
-  const providers = await getProviders()
-  // const csrfToken = await getCsrfToken(context)
   return {
-    props: { providers /*csrfToken*/ },
+    props: {
+      csrfToken: await getCsrfToken(context),
+    },
   }
-}
-
-const oauthProviderToSvg: Record<string, string> = {
-  github:
-    "M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z",
 }

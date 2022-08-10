@@ -1,47 +1,55 @@
 import NextAuth, { type NextAuthOptions } from "next-auth"
-import GithubProvider from "next-auth/providers/github"
+import CredentialsProvider from "next-auth/providers/credentials"
 
 import { prisma } from "../../../server/db/client"
 
 export const authOptions: NextAuthOptions = {
   providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
-      authorization: {
-        params: {
-          scope: "user",
+    CredentialsProvider({
+      name: "local_user",
+      credentials: {
+        email: {
+          label: "email",
+          type: "email",
+          placeholder: "jsmith@example.com",
         },
+        password: { label: "Password", type: "password" },
       },
-      profile: async (profile) => {
-        // Return all the profile information you need.
-        // The only truly required field is `id`
-        // to be able identify the account when added to a database
+      async authorize(credentials, req) {
+        if (!credentials) return null
 
-        const userId = await firstOrCreateUser(profile.name, profile.email, profile.avatar_url)
+        const user = await prisma.user.findUnique({
+          where: {
+            email: credentials.email,
+          },
+        })
 
-        return {
-          id: userId,
-          name: profile.name,
-          email: profile.email,
-          image: profile.avatar_url,
-        }
+        return user
       },
     }),
+    // ...add more providers here
   ],
+  secret: process.env.JWT_SECRET,
   pages: {
     signIn: "/auth/signin",
   },
   callbacks: {
-    jwt({ token, user, account, profile, isNewUser }) {
-      if (user) {
-        token.userid = user.id
-      }
+    async jwt({ token, user, account }) {
+      // if (account && user) {
+      //   return {
+      //     ...token,
+      //     accessToken: user.data.token,
+      //     refreshToken: user.data.refreshToken,
+      //   }
+      // }
 
       return token
     },
-    session({ session, user, token }) {
-      session.userid = token.userid
+
+    async session({ session, token }) {
+      // session.user.accessToken = token.accessToken
+      // session.user.refreshToken = token.refreshToken
+      // session.user.accessTokenExpires = token.accessTokenExpires
 
       return session
     },

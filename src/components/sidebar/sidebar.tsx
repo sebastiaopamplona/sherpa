@@ -14,7 +14,7 @@ export default function Sidebar() {
   const { data: session, status } = useSession()
   const { projectId, sprintId } = router.query
 
-  const [selectedProject, setSelectedProject] = useState<ArrElement<ProjectGetByUserIdOutput>>({ id: "", name: "" })
+  const [selectedProject, setSelectedProject] = useState<ArrElement<ProjectGetByUserIdOutput>>()
 
   const projects = trpc.useQuery(["project.getByUserId", { userId: session?.userid as string }], {
     onSuccess: (data) => {
@@ -113,22 +113,28 @@ export default function Sidebar() {
       </div>
       <div className="flex flex-shrink-0 bg-gray-700 p-4">
         <div className="group block w-full flex-shrink-0">
-          <div className="flex flex-shrink-0 items-center justify-center pb-1 text-gray-200">Select Project</div>
-          <div className="flex flex-shrink-0 items-center justify-center px-4">
-            <Select
-              entries={projects.data!}
-              getId={(t) => t.id}
-              getText={(t) => t.name}
-              selectedState={[
-                selectedProject,
-                (p) => {
-                  switchProject(p.id, router)
-                },
-              ]}
-              upwards={true}
-            />
-          </div>
-          <div className="p-2" />
+          {selectedProject ? (
+            <>
+              <div className="flex flex-shrink-0 items-center justify-center pb-1 text-gray-200">Select Project</div>
+              <div className="flex flex-shrink-0 items-center justify-center px-4">
+                <Select
+                  entries={projects.data!}
+                  getId={(t) => t.id}
+                  getText={(t) => t.name}
+                  selectedState={[
+                    selectedProject,
+                    (p) => {
+                      switchProject(p.id, router)
+                    },
+                  ]}
+                  upwards={true}
+                />
+              </div>
+              <div className="p-2" />
+            </>
+          ) : (
+            <></>
+          )}
           <div className="flex items-center">
             <div>
               <img
