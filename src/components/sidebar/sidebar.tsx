@@ -1,5 +1,5 @@
 import { ArrElement, classNames, pathWithParams, switchProject } from "../../utils/aux"
-import { GiHourglass, GiNotebook, GiOpenTreasureChest, GiSprint } from "react-icons/gi"
+import { GiEmptyHourglass, GiFullFolder, GiNotebook, GiSprint } from "react-icons/gi"
 
 import Link from "next/link"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
@@ -30,7 +30,7 @@ export default function Sidebar() {
   const navigation = [
     {
       name: "Time Keeper",
-      icon: GiHourglass,
+      icon: GiEmptyHourglass,
       href: pathWithParams(
         "/app/timekeeper",
         new Map([
@@ -63,7 +63,7 @@ export default function Sidebar() {
     },
     {
       name: "Projects",
-      icon: GiOpenTreasureChest,
+      icon: GiFullFolder,
       href: pathWithParams(
         "/app/projects",
         new Map([

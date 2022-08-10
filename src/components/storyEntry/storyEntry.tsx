@@ -1,4 +1,4 @@
-import { GiCube, GiHourglass, GiSprint } from "react-icons/gi"
+import { GiCube, GiEmptyHourglass, GiSprint } from "react-icons/gi"
 import { StoryStates, StoryTypes } from "../../server/data/data"
 
 import { StoryGetByIdOutput } from "../../server/router/story"
@@ -41,7 +41,7 @@ export default function StoryEntry(props: Props) {
           </p>
           <div className="pr-3" />
           <p className="flex items-center text-gray-500">
-            <GiHourglass className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+            <GiEmptyHourglass className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
             {storyEffort}h / {props.story.estimate}h
           </p>
 

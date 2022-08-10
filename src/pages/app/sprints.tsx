@@ -59,7 +59,7 @@ export default function Dashboard() {
     <section>
       <div className="h-full px-[300px]">
         <div className={classNames(sprints.data && sprints.data.length === 0 ? "" : "hidden")}>
-          <EmptyResources message="You have no sprints in your backlog. Get started by creating one." />
+          <EmptyResources message="The current project has no sprints. Get started by creating one." />
         </div>
         <nav className="relative z-10 inline-flex w-full items-center justify-center pb-5">
           <div className={classNames(sprints.data && sprints.data.length === 0 ? "hidden" : "")}>
@@ -123,6 +123,7 @@ export default function Dashboard() {
       >
         <SprintForm
           onCreateOrUpdateSuccess={() => {
+            sprints.refetch()
             setIsSprintDetailsOpen(false)
           }}
           onCreateOrUpdateError={() => {

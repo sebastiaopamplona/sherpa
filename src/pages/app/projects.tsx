@@ -14,14 +14,11 @@ import { createSSGHelpers } from "@trpc/react/ssg"
 import { getJourndevAuthSession } from "../../server/session"
 import superjson from "superjson"
 import { trpc } from "../../utils/trpc"
-import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { useState } from "react"
 
 export default function Projects() {
   const session = useSession()
-  const router = useRouter()
-  const { projectId } = router.query
 
   const projects = trpc.useQuery(["project.getByUserId", { userId: session?.data?.userid as string }])
 

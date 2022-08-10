@@ -1,11 +1,13 @@
-import { ArrElement, switchSprint } from "../../utils/aux"
+import { ArrElement, classNames, pathWithParams, switchSprint } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
 import { addDays, format, getWeek, isSameDay, setHours, startOfWeek, subDays } from "date-fns"
 import { useMemo, useRef, useState } from "react"
 
+import EmptyResourcesV2 from "../../components/emptyResourcesv2/emptyResourcesv2"
 import { GetServerSidePropsContext } from "next"
 import { IoTodayOutline } from "react-icons/io5"
 import Layout from "../../components/layout/layout"
+import Link from "next/link"
 import Modal from "../../components/modal/modal"
 import { NoSprint } from "../../server/data/data"
 import Select from "../../components/select/select"
@@ -25,7 +27,6 @@ import { useRouter } from "next/router"
 
 // TODO: move this to a module.css
 const timekeeperGridCell = "col-span-1 border-2 flex items-center justify-center"
-
 export default function TimeKeeper() {
   const router = useRouter()
   const { projectId, sprintId } = router.query
@@ -61,45 +62,98 @@ export default function TimeKeeper() {
 
   if (sprints.isLoading || stories.isLoading) return null
 
+  // FIXME(SP): this is wrong
+  const hasSprints = sprints.data && sprints.data.length !== 0
+  const hasStories = stories.data && stories.data.length !== 0
+
   return (
     <section>
       <div className="h-full px-[100px]">
-        <div className="grid grid-cols-11 content-center gap-[2px]">
-          <div className="col-span-11 flex items-center justify-center py-2">
-            <TimeKeeperNav
-              sprints={sprints.data!}
-              selectedSprint={selectedSprint.current}
-              setSelectedSprint={(s) => switchSprint(s.id, router)}
-              currentDate={currentDate}
-              setCurrentDate={setCurrentDate}
-              setCurrentDayRange={setCurrentDayRange}
-              onToday={() => {
-                const newCurrDate = new Date()
-                setCurrentDate(newCurrDate)
-                setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-                stories.refetch()
-              }}
-              onPrevWeek={() => {
-                const newCurrDate = subDays(currentDate, 7)
-                setCurrentDate(newCurrDate)
-                setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-                stories.refetch()
-              }}
-              onNextWeek={() => {
-                const newCurrDate = addDays(currentDate, 7)
-                setCurrentDate(newCurrDate)
-                setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-                stories.refetch()
-              }}
-            />
-          </div>
-          <div className="col-span-6 h-6 rounded-sm"></div>
-          {currentDayRange.map((d) => (
-            <div key={d.toUTCString()} className={`text-sm font-semibold ${timekeeperGridCell}`}>
-              {`${format(d, "eeeeee")}, ${format(d, "d/M")}`}
+        {!hasSprints ? (
+          <EmptyResourcesV2>
+            <div className="grid grid-cols-1 content-center gap-1">
+              <p className="flex items-center justify-center">The current project has no sprints.</p>
+              <p>
+                Head over to the{" "}
+                <Link
+                  href={pathWithParams(
+                    "/app/sprints",
+                    new Map([
+                      ["projectId", projectId],
+                      ["sprintId", sprintId],
+                    ])
+                  )}
+                >
+                  <a className="text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
+                    sprints page
+                  </a>
+                </Link>{" "}
+                and create one.
+              </p>
             </div>
-          ))}
-          {/* 
+          </EmptyResourcesV2>
+        ) : !hasStories ? (
+          <EmptyResourcesV2>
+            <div className="grid grid-cols-1 content-center gap-1">
+              <p className="flex items-center justify-center">
+                The sprint {selectedSprint.current.title} has no stories.
+              </p>
+              <p>
+                Head over to the{" "}
+                <Link
+                  href={pathWithParams(
+                    "/app/backlog",
+                    new Map([
+                      ["projectId", projectId],
+                      ["sprintId", sprintId],
+                    ])
+                  )}
+                >
+                  <a className="text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
+                    backlog page
+                  </a>
+                </Link>{" "}
+                and create one.
+              </p>
+            </div>
+          </EmptyResourcesV2>
+        ) : (
+          <div className={classNames("grid grid-cols-11 content-center gap-[2px]")}>
+            <div className="col-span-11 flex items-center justify-center py-2">
+              <TimeKeeperNav
+                sprints={sprints.data!}
+                selectedSprint={selectedSprint.current}
+                setSelectedSprint={(s) => switchSprint(s.id, router)}
+                currentDate={currentDate}
+                setCurrentDate={setCurrentDate}
+                setCurrentDayRange={setCurrentDayRange}
+                onToday={() => {
+                  const newCurrDate = new Date()
+                  setCurrentDate(newCurrDate)
+                  setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                  stories.refetch()
+                }}
+                onPrevWeek={() => {
+                  const newCurrDate = subDays(currentDate, 7)
+                  setCurrentDate(newCurrDate)
+                  setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                  stories.refetch()
+                }}
+                onNextWeek={() => {
+                  const newCurrDate = addDays(currentDate, 7)
+                  setCurrentDate(newCurrDate)
+                  setCurrentDayRange(getWeekBusinessDays(newCurrDate))
+                  stories.refetch()
+                }}
+              />
+            </div>
+            <div className="col-span-6 h-6 rounded-sm"></div>
+            {currentDayRange.map((d) => (
+              <div key={d.toUTCString()} className={`text-sm font-semibold ${timekeeperGridCell}`}>
+                {`${format(d, "eeeeee")}, ${format(d, "d/M")}`}
+              </div>
+            ))}
+            {/* 
           // TODO: uncomment when we handle capacity
           <div className="col-span-6 h-6 rounded-sm"></div>
           <div className={timekeeperGridCell}></div>
@@ -108,7 +162,7 @@ export default function TimeKeeper() {
           <div className={timekeeperGridCell}></div>
           <div className={timekeeperGridCell}></div>
           */}
-          {/* {stories.data?.map((story) => (
+            {/* {stories.data?.map((story) => (
             <TimeKeeperEntry
               key={story.id}
               story={story}
@@ -125,24 +179,25 @@ export default function TimeKeeper() {
               }}
             />
           ))} */}
-          {stories.data?.map((story) => (
-            <TimeKeeperEntry
-              key={story.id}
-              story={story}
-              dayRange={currentDayRange}
-              onStoryClick={(story: StoryInput) => {
-                setCurrentStory(story)
-                setIsStoryDetailsOpen(true)
-              }}
-              onWorklogCellClick={(story: StoryInput, date: Date) => {
-                setCurrentStory(story)
-                setIsAddingWorklog(true)
-                setWorklogDay(date)
-                setIsStoryDetailsOpen(true)
-              }}
-            />
-          ))}
-        </div>
+            {stories.data?.map((story) => (
+              <TimeKeeperEntry
+                key={story.id}
+                story={story}
+                dayRange={currentDayRange}
+                onStoryClick={(story: StoryInput) => {
+                  setCurrentStory(story)
+                  setIsStoryDetailsOpen(true)
+                }}
+                onWorklogCellClick={(story: StoryInput, date: Date) => {
+                  setCurrentStory(story)
+                  setIsAddingWorklog(true)
+                  setWorklogDay(date)
+                  setIsStoryDetailsOpen(true)
+                }}
+              />
+            ))}
+          </div>
+        )}
       </div>
       <Modal
         isOpen={isStoryDetailsOpen}
