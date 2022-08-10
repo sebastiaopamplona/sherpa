@@ -46,9 +46,9 @@ export default function ProjectForm({ project, onCreateOrUpdateSuccess, onCreate
   return (
     <form className="col-span-3 col-start-2" onSubmit={handleSubmit(handleCreateProject)}>
       <div className="col-span-3 col-start-2 grid grid-cols-2 gap-4 p-4">
-        <h1 className="col-span-2 flex items-center justify-center text-2xl font-bold underline">
-          Get started by creating a project
-        </h1>
+        <div className="col-span-3">
+          <h3 className="text-lg font-medium leading-6 text-gray-900">Create Story</h3>
+        </div>
         <div className="col-span-1">
           <Input value={project ? project.name : ""} label="Project name" register={register("name")} />
         </div>
