@@ -2,50 +2,60 @@ import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as Story
 import { addDays, setHours, subDays } from "date-fns"
 
 import { PrismaClient } from "@prisma/client"
+import bcrypt from "bcrypt"
 
 const prisma = new PrismaClient()
 
 async function seedUsers() {
   type user = {
     email: string
+    password: string
     name: string
     image: string
   }
   const users: user[] = [
     {
       email: "sebastiaodsrp@gmail.com",
+      password: "secret",
       name: "Sebastião Pamplona",
       image: "https://avatars.githubusercontent.com/u/27507750?v=4",
     },
     {
       email: "dummyuser01@journdev.io",
+      password: "secret",
       name: "Dummy User 01",
       image:
         "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
     {
       email: "dummyuser02@journdev.io",
+      password: "secret",
       name: "Dummy User 02",
       image:
         "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
     {
       email: "dummyuser03@journdev.io",
+      password: "secret",
       name: "Dummy User 03",
       image:
         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80'",
     },
     {
       email: "dummyuser04@journdev.io",
+      password: "secret",
       name: "Dummy User 04",
       image:
         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
   ]
   const seed = users.map(async (u) => {
+    const passwordHash = await bcrypt.hash(u.password, 10)
+
     await prisma.user.create({
       data: {
         email: u.email,
+        password: passwordHash,
         name: u.name,
         image: u.image,
       },

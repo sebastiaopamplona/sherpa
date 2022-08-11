@@ -1,6 +1,7 @@
 import NextAuth, { type NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 
+import bcrypt from "bcrypt"
 import { prisma } from "../../../server/db/client"
 
 export const authOptions: NextAuthOptions = {
@@ -11,7 +12,6 @@ export const authOptions: NextAuthOptions = {
         email: {
           label: "email",
           type: "email",
-          placeholder: "jsmith@example.com",
         },
         password: { label: "Password", type: "password" },
       },
@@ -23,6 +23,10 @@ export const authOptions: NextAuthOptions = {
             email: credentials.email,
           },
         })
+        if (!user) return null
+
+        const passwordsMatch = await bcrypt.compare(credentials.password, user.password)
+        if (!passwordsMatch) return null
 
         return user
       },
@@ -35,21 +39,20 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      // if (account && user) {
-      //   return {
-      //     ...token,
-      //     accessToken: user.data.token,
-      //     refreshToken: user.data.refreshToken,
-      //   }
-      // }
+      if (account && user) {
+        return {
+          ...token,
+          userid: user.id,
+        }
+      }
 
       return token
     },
 
     async session({ session, token }) {
-      // session.user.accessToken = token.accessToken
-      // session.user.refreshToken = token.refreshToken
-      // session.user.accessTokenExpires = token.accessTokenExpires
+      if (token) {
+        session.userid = token.userid
+      }
 
       return session
     },
@@ -57,23 +60,3 @@ export const authOptions: NextAuthOptions = {
 }
 
 export default NextAuth(authOptions)
-
-const firstOrCreateUser = async (name: string, email: string, image: string): Promise<string> => {
-  let user = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-  })
-
-  if (!user) {
-    user = await prisma.user.create({
-      data: {
-        name: name,
-        email: email,
-        image: image,
-      },
-    })
-  }
-
-  return user.id
-}

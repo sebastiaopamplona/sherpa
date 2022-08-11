@@ -22,6 +22,7 @@
     "@trpc/next": "^9.26.0",
     "@trpc/react": "^9.26.0",
     "@trpc/server": "^9.26.0",
+    "bcrypt": "^5.0.1",
     "date-fns": "^2.29.1",
     "formik": "^2.2.9",
     "next": "12.2.0",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^9.1.4",
+    "@types/bcrypt": "^5.0.0",
     "@types/node": "^18.0.0",
     "@types/react": "18.0.14",
     "@types/react-dom": "18.0.5",

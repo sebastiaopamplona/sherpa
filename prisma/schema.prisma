@@ -14,9 +14,10 @@ datasource db {
 model User {
   id String @id @default(cuid())
 
-  name  String
-  email String @unique
-  image String
+  name     String
+  email    String @unique
+  password String
+  image    String
 
   createdSprints  Sprint[]
   roleInProjects  UserRolesInProjects[]

@@ -3,12 +3,17 @@ import * as Yup from "yup"
 import { ErrorMessage, Field, Formik } from "formik"
 import { getCsrfToken, signIn, useSession } from "next-auth/react"
 
+import { GiGate } from "react-icons/gi"
 import { InferGetServerSidePropsType } from "next"
+import InfoBox from "../../components/infoBox/infoBox"
+import { classNames } from "../../utils/aux"
 import { useRouter } from "next/router"
+import { useState } from "react"
 
 export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [errorMessage, setErrorMessage] = useState<string>("")
 
   if (status === "authenticated") {
     router.push("/app")
@@ -18,19 +23,15 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
     <>
       {status === "unauthenticated" && (
         <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-          <div className="mx-auto w-full max-w-md pb-4">
-            <img
-              className="mx-auto h-12 w-auto"
-              src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-              alt="Workflow"
-            />
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+          <div className="flex w-full items-center justify-center pb-4">
+            <GiGate className="h-32 w-32 text-gray-600" aria-hidden="true" />
           </div>
-
+          <div className="flex w-full items-center justify-center pb-4">
+            <h2 className="text-center text-3xl font-extrabold text-gray-600">Sign in to your account</h2>
+          </div>
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
-            {/* <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10"> */}
             <Formik
-              initialValues={{ email: "", password: "", tenantKey: "" }}
+              initialValues={{ email: "", password: "" }}
               validationSchema={Yup.object({
                 email: Yup.string()
                   .max(30, "Must be 30 characters or less")
@@ -38,7 +39,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                   .required("Please enter your email"),
                 password: Yup.string().required("Please enter your password"),
               })}
-              onSubmit={async (values, { setSubmitting }) => {
+              onSubmit={async (values) => {
                 const res = await signIn("credentials", {
                   redirect: false,
                   email: values.email,
@@ -47,12 +48,15 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                 })
 
                 if (res?.error) {
-                  alert(res.error)
+                  switch (res.status) {
+                    case 401:
+                      setErrorMessage("Invalid credentials")
+                      break
+                    default:
+                      setErrorMessage("Something went wrong")
+                      break
+                  }
                 }
-
-                // if (res?.url) router.push(res.url)
-
-                // setSubmitting(false)
               }}
             >
               {(formik) => (
@@ -60,7 +64,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                   <div className="mb-4 rounded bg-white px-8 pt-6 pb-8 shadow-md">
                     <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
-                    <div className="mb-4">
+                    <div className="pb-4">
                       <label htmlFor="email" className="text-sm font-bold uppercase text-gray-600">
                         Email
                         <Field
@@ -77,7 +81,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                       </div>
                     </div>
 
-                    <div className="mb-6">
+                    <div className="pb-6">
                       <label htmlFor="password" className="text-sm font-bold uppercase text-gray-600">
                         password
                         <Field
@@ -102,11 +106,16 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                         {formik.isSubmitting ? "Please wait..." : "Sign In"}
                       </button>
                     </div>
+
+                    <div
+                      className={classNames(errorMessage !== "" ? "flex items-center justify-center pt-8" : "hidden")}
+                    >
+                      <InfoBox message={errorMessage} />
+                    </div>
                   </div>
                 </form>
               )}
             </Formik>
-            {/* </div> */}
           </div>
         </div>
       )}
@@ -114,7 +123,6 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
   )
 }
 
-// This is the recommended way for Next.js 9.3 or newer
 export const getServerSideProps = async (context: any) => {
   return {
     props: {

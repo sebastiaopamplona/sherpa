@@ -62,14 +62,10 @@ export default function TimeKeeper() {
 
   if (sprints.isLoading || stories.isLoading) return null
 
-  // FIXME(SP): this is wrong
-  const hasSprints = sprints.data && sprints.data.length !== 0
-  const hasStories = stories.data && stories.data.length !== 0
-
   return (
     <section>
       <div className="h-full px-[100px]">
-        {!hasSprints ? (
+        {!(sprints.data && sprints.data.length !== 0) ? (
           <EmptyResourcesV2>
             <div className="grid grid-cols-1 content-center gap-1">
               <p className="flex items-center justify-center">The current project has no sprints.</p>
@@ -92,7 +88,7 @@ export default function TimeKeeper() {
               </p>
             </div>
           </EmptyResourcesV2>
-        ) : !hasStories ? (
+        ) : !(stories.data && stories.data.length !== 0) ? (
           <EmptyResourcesV2>
             <div className="grid grid-cols-1 content-center gap-1">
               <p className="flex items-center justify-center">

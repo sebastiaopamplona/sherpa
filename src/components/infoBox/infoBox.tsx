@@ -2,7 +2,7 @@ import { XCircleIcon } from "@heroicons/react/outline"
 
 interface Props {
   message: string
-  level: MessageLevel
+  level?: string
 }
 
 export default function InfoBox({ message, level }: Props) {
@@ -12,18 +12,10 @@ export default function InfoBox({ message, level }: Props) {
         <div className="flex-shrink-0">
           {(() => {
             switch (level) {
-              case MessageLevel.Success:
-                return <p>hey</p>
-
-                break
-
               default:
-                return <p>hey</p>
-                break
+                return <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
             }
           })()}
-
-          <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
         </div>
         <div className="ml-3">
           <h3 className="text-sm font-medium text-red-800">{message}</h3>
@@ -31,11 +23,4 @@ export default function InfoBox({ message, level }: Props) {
       </div>
     </div>
   )
-}
-
-export enum MessageLevel {
-  Success = 1,
-  Error,
-  Info,
-  Warning,
 }
