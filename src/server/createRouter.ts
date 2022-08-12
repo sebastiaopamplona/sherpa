@@ -9,7 +9,14 @@ import { worklogRouter } from "./router/worklog"
 
 export const appRouter = createRouter()
   .transformer(superjson)
-  .middleware(({ ctx, next }) => {
+  .middleware(async ({ ctx, next, path, type }) => {
+    const start = Date.now()
+    const result = await next()
+    const durationMs = Date.now() - start
+    result.ok
+      ? console.log("OK request timing:", { path, type, durationMs })
+      : console.log("Non-OK request timing", { path, type, durationMs })
+
     // FIXME: When there's a refresh in the browser, the first time this
     // request is hit the ctx is null resulting in the TRPCError bellow.
     // The second time, the ctx is not null and it works fine.
