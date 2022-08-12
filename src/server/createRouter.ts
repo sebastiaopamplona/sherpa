@@ -15,7 +15,7 @@ export const appRouter = createRouter()
     const durationMs = Date.now() - start
     result.ok
       ? console.log("OK request timing:", { path, type, durationMs })
-      : console.log("Non-OK request timing", { path, type, durationMs })
+      : console.log("Non-OK request timing:", { path, type, durationMs })
 
     // FIXME: When there's a refresh in the browser, the first time this
     // request is hit the ctx is null resulting in the TRPCError bellow.
