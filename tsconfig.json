@@ -23,7 +23,8 @@
     "**/*.tsx",
     "src/middleware.js",
     "src/pages/middleware.js",
-    "src/components/layout.js"
+    "src/components/layout.js",
+    "scripts"
   ],
   "exclude": ["node_modules"]
 }
