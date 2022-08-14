@@ -53,6 +53,8 @@ async function main() {
       break
     default:
       console.log("Unknown command: ", command)
+      console.log("Available commands:")
+      console.log("     register-user - registers a new user")
   }
 }
 
