@@ -13,5 +13,9 @@ startlocal:
 	npx prisma migrate reset -f
 	npm run dev
 
+startremote:
+	npx prisma migrate reset -f
+	npm run dev
+
 teardown:
 	docker rm -f journdev-local-db

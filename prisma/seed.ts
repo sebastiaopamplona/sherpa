@@ -1,10 +1,10 @@
 import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as StoryTypeEnum } from "@prisma/client"
 import { addDays, setHours, subDays } from "date-fns"
 
-import { PrismaClient } from "@prisma/client"
+import { DefaultPrismaClient } from "../src/server/db/client"
 import bcrypt from "bcrypt"
 
-const prisma = new PrismaClient()
+const prisma = DefaultPrismaClient()
 
 async function seedUsers() {
   type user = {

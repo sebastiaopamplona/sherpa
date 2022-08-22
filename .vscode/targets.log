@@ -1,304 +1,191 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
-# GNU Make 4.2.1
-# Built for x86_64-pc-linux-gnu
-# Copyright (C) 1988-2016 Free Software Foundation, Inc.
-# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-# This is free software: you are free to change and redistribute it.
-# There is NO WARRANTY, to the extent permitted by law.
+# This program built for i386-apple-darwin11.3.0
+ 
+make: *** No rule to make target `all'.  Stop.
 
-# Make data base, printed on Thu Aug 11 15:29:41 2022
+
+# Make data base, printed on Thu Aug 18 19:03:10 2022
 
 # Variables
 
-# 'override' directive
-GNUMAKEFLAGS := 
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # automatic
+ 
 ?F = $(notdir $?)
 # environment
-DESKTOP_SESSION = ubuntu
-# default
-.SHELLFLAGS := -c
+ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
-PROVIDE_FULLSTACK_ACTION = true
-# environment
-XDG_SESSION_CLASS = user
-# environment
-SNAP_COMMON = /var/snap/code/common
-# environment
-XDG_SESSION_TYPE = x11
+LC_CTYPE = UTF-8
 # environment
 GREP_COLOR = 1;33
-# environment
-NVM_INC = /home/eduardo/.nvm/versions/node/v16.16.0/include/node
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # automatic
 @D = $(patsubst %/,%,$(dir $@))
-# environment
-XAUTHORITY = /run/user/1000/gdm/Xauthority
-# environment
-GDMSESSION = ubuntu
-# environment
-XMODIFIERS = @im=ibus
-# makefile
-CURDIR := /home/eduardo/Workspace/PersonalLearning/journdev
-# makefile (from 'Makefile', line 1)
-SHELL := /bin/bash
-# environment
-SNAP_DATA = /var/snap/code/102
-# environment
-VTE_VERSION = 6003
-# environment
-VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
-# environment
-JOURNAL_STREAM = 8:56170
-# environment
-XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
-# environment
-SNAP_INSTANCE_NAME = code
-# environment
-SNAP_ARCH = amd64
-# makefile (from 'Makefile', line 1)
-MAKEFILE_LIST :=  Makefile
-# environment
-JAVA_HOME = /home/eduardo/java/jdk-11.0.14
 # automatic
 @F = $(notdir $@)
+# makefile
+CURDIR := /Users/sduartesilvarangelpa/workspace-pers/journdev
+# makefile (from `Makefile', line 1)
+SHELL := /bin/bash
 # environment
-IM_CONFIG_PHASE = 1
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
 # environment
-USERNAME = eduardo
+_ = /usr/bin/make
+# makefile (from `Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
 # environment
-MAKELEVEL := 0
+GO111MODULE = auto
 # environment
-XDG_DATA_DIRS = /usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+__CFBundleIdentifier = com.microsoft.VSCode
 # environment
-DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+VSCODE_CWD = /Users/sduartesilvarangelpa/workspace-pers/journdev
 # environment
-LC_CTYPE = pt_PT.UTF-8
-# environment
-MANAGERPID = 1899
-# environment
-LC_NAME = pt_PT.UTF-8
-# environment
-VSCODE_CWD = /home/eduardo/Workspace/PersonalLearning/journdev
-# environment
-GSETTINGS_SCHEMA_DIR = /snap/code/102/usr/share/glib-2.0/schemas
-# default
-MAKE_HOST := x86_64-pc-linux-gnu
-# environment
-PATH = /home/eduardo/.nvm/versions/node/v16.16.0/bin:/home/eduardo/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/eduardo/.fzf/bin:/home/eduardo/bin:/home/eduardo/java/jdk-11.0.14/bin:/usr/local/go/bin:/home/eduardo/go/bin
-# environment
-GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
+PATH = /usr/local/bin:/usr/bin:/bin:/usr/local/opt/coreutils/libexec/gnubin:/Users/sduartesilvarangelpa/go/bin:.nvm/versions/node/v16.16.0/bin:/Users/sduartesilvarangelpa/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Applications/Wireshark.app/Contents/MacOS:/usr/local/opt/fzf/bin:/bin:/bin:/usr/local/opt/node/bin:/Users/sduartesilvarangelpa/.pulumi/bin
 # environment
 LSCOLORS = exfxcxdxbxegedabagacad
 # environment
-GOLANG_EXECUTABLE = go
-# environment
-SESSION_MANAGER = local/eduardo-ThinkPad-E15-Gen-2:@/tmp/.ICE-unix/2119,unix/eduardo-ThinkPad-E15-Gen-2:/tmp/.ICE-unix/2119
-# environment
-XDG_RUNTIME_DIR = /run/user/1000
-# environment
-GDK_PIXBUF_MODULE_FILE = /home/eduardo/snap/code/common/.cache/gdk-pixbuf-loaders.cache
-# environment
-SNAP = /snap/code/102
-# environment
-THREE_SCALE_USER_TOKEN = 207c527cfc2a6b8dcf4fa43ad7a976da
-# environment
-NVM_BIN = /home/eduardo/.nvm/versions/node/v16.16.0/bin
-# environment
-PSQL_INT_TEST_DB_USERNAME = eduardo
-# environment
-SNAP_VERSION = 3b889b09
-# environment
-XDG_MENU_PREFIX = gnome-
-# environment
-DISABLE_WAYLAND = 1
+WORKSPACE_PERS = /Users/sduartesilvarangelpa/workspace-pers
 # environment
 ELECTRON_RUN_AS_NODE = 1
-# environment
-INVOCATION_ID = 1fc4d36851b14578a96c9ae8c8f00a8f
-# environment
-GDK_PIXBUF_MODULEDIR = /snap/code/102/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders
 # default
-.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
-# environment
-ELECTRON_NO_ATTACH_CONSOLE = 1
-# environment
-UUID = d9ba91a2-d484-4bef-b35c-b514d07430a8
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
 # environment
 LS_COLORS = di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:
 # environment
-XDG_SESSION_DESKTOP = ubuntu
-# environment
-SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.nYx5Bjnbc7/Listeners
 # automatic
 %F = $(notdir $%)
 # environment
-DISPLAY = :0
+GOBIN = /Users/sduartesilvarangelpa/go/bin
 # environment
-SNAP_INSTANCE_KEY = 
+PWD = /Users/sduartesilvarangelpa/workspace-pers/journdev
 # environment
-PWD = /home/eduardo/Workspace/PersonalLearning/journdev
-# default
-.LOADED := 
-# environment
-SSH_AGENT_PID = 2081
-# environment
-ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
-# environment
-GTK_MODULES = gail:atk-bridge
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
-HOME = /home/eduardo
+HOME = /Users/sduartesilvarangelpa
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
 # environment
 VSCODE_CLI = 1
 # environment
-VSCODE_CODE_CACHE_PATH = /home/eduardo/.config/Code/CachedData/3b889b090b5ad5793f524b5d1d39fda662b96a2a
+VSCODE_CODE_CACHE_PATH = /Users/sduartesilvarangelpa/Library/Application Support/Code/CachedData/e4503b30fc78200f846c62cf8091b76ff5547662
 # environment
-LOGNAME = eduardo
+LOGNAME = sduartesilvarangelpa
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
 # environment
-SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd/void
-# environment
-SNAP_CONTEXT = AX5jGm3QNPbSR7Tg25pIyagt1Hd5c2apfgHRX2wZepKDX6cpGyfZ
-# environment
-NVM_CD_FLAGS = -q
-# automatic
-+F = $(notdir $+)
-# environment
-TELEMETRY_ID = a6bcd4a9-2905-4dac-b007-d6666856ccc9
-# environment
-ZSH = /home/eduardo/.oh-my-zsh
-# environment
-SNAP_USER_COMMON = /home/eduardo/snap/code/common
+ZSH = /Users/sduartesilvarangelpa/.oh-my-zsh
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
-# environment
-GNOME_DESKTOP_SESSION_ID = this-is-deprecated
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # environment
-LC_TIME = pt_PT.UTF-8
-# environment
-SNAP_REAL_HOME = /home/eduardo
+XPC_FLAGS = 0x0
 # environment
 COLORTERM = truecolor
 # default
 MAKE = $(MAKE_COMMAND)
+# environment
+LC_TERMINAL = iTerm2
+# environment
+SHLVL = 3
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = sduartesilvarangelpa
+# makefile
+.DEFAULT_GOAL := startlocal
 # default
 MAKECMDGOALS := all
 # environment
-QT_IM_MODULE = ibus
-# environment
-SNAP_USER_DATA = /home/eduardo/snap/code/102
-# environment
-SHLVL = 1
-# environment
-GNOME_SHELL_SESSION_MODE = ubuntu
-# default
-MAKE_VERSION := 4.2.1
-# environment
-USER = eduardo
-# environment
-SNAP_REVISION = 102
-# environment
-LC_MONETARY = pt_PT.UTF-8
-# makefile
-.DEFAULT_GOAL := startlocal
-# environment
-XDG_CURRENT_DESKTOP = Unity
-# environment
-PSQL_INT_TEST_DB_PASSWORD = 12012001ed
+TERM_SESSION_ID = w0t0p0:A4995CA1-8B2E-4F92-AA8C-7A3F98A476B4
 # environment
 LESS = -R
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
-# environment
-LC_TELEPHONE = pt_PT.UTF-8
 # default
-MAKE_COMMAND := make
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
 # environment
-UTM_SOURCE = vscode
-# environment
-OLDPWD = /home/eduardo/Workspace/PersonalLearning
+TERM_PROGRAM = iTerm.app
 # default
 .VARIABLES := 
+# environment
+TMPDIR = /var/folders/8r/ltsl1yyd46j048x52x16npnj32gb6c/T/
 # automatic
 *F = $(notdir $*)
 # environment
-VSCODE_IPC_HOOK = /run/user/1000/vscode-032917b2-1.69.2-main.sock
-# makefile
-MAKEFLAGS = pqrR
+VSCODE_IPC_HOOK = /Users/sduartesilvarangelpa/Library/Application Support/Code/1.70.2-main.sock
 # environment
-MFLAGS = -pqrR
+NODEBIN = /usr/local/opt/node/bin
+# environment
+MallocNanoZone = 0
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-NVM_DIR = /home/eduardo/.nvm
+TERM_PROGRAM_VERSION = 3.4.16
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.27399483.27399489.86C0FD14-D210-44D7-B795-7A99DFCC80C1
+# environment
+LC_TERMINAL_VERSION = 3.4.16
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
 # environment
-RECOMMENDER_API_URL = https://gw.api.openshift.io//api/v2
+ITERM_SESSION_ID = w0t0p0:A4995CA1-8B2E-4F92-AA8C-7A3F98A476B4
 # environment
-GDK_BACKEND = x11
+COLORFGBG = 15;0
 # environment
-LC_PAPER = pt_PT.UTF-8
+__CF_USER_TEXT_ENCODING = 0x4627ACCC:0x0:0x0
 # environment
-QT_ACCESSIBILITY = 1
+COMMAND_MODE = unix2003
+# environment
+WORKSPACE = /Users/sduartesilvarangelpa/workspace-tesla
 # default
 MAKEFILES := 
-# environment
-SNAP_COOKIE = AX5jGm3QNPbSR7Tg25pIyagt1Hd5c2apfgHRX2wZepKDX6cpGyfZ
-# environment
-LC_NUMERIC = pt_PT.UTF-8
 # automatic
 <F = $(notdir $<)
+ 
 # environment
-LC_MEASUREMENT = pt_PT.UTF-8
+ITERM_PROFILE = Default
 # environment
-SNAP_NAME = code
+GOPRIVATE = github-it.tesla.com/LXSRE
+# environment
+EDITOR = nvim
 # environment
 PAGER = less
 # environment
 LC_ALL = C
-# environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/7d8ebb14_b691_4b09_b7e7_f29d7c42d5a0
 # automatic
 ^F = $(notdir $^)
-# environment
-GNOME_TERMINAL_SERVICE = :1.2387
 # default
 SUFFIXES := 
-# environment
-SNAP_REEXEC = 
-# environment
-CHROME_DESKTOP = code-url-handler.desktop
-# environment
-WINDOWPATH = 2
 # default
-.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+.INCLUDE_DIRS = /usr/local/include
 # environment
-LC_IDENTIFICATION = pt_PT.UTF-8
- 
-# default
-.RECIPEPREFIX := 
-# environment
-LC_ADDRESS = pt_PT.UTF-8
+MAKELEVEL := 0
 # environment
 LANG = C
 # environment
 TERM = xterm-256color
 # environment
-VSCODE_PID = 238532
+VSCODE_PID = 42080
 # variable set hash-table stats:
-# Load=142/1024=14%, Rehash=0, Collisions=23/168=14%
+# Load=84/1024=8%, Rehash=0, Collisions=5/109=5%
 
 # Pattern-specific Variable Values
 
@@ -306,9 +193,9 @@ VSCODE_PID = 238532
 
 # Directories
 
-# . (device 66309, inode 3279941): 24 files, no impossibilities.
+# . (device 16777220, inode 24252069): 30 files, no impossibilities.
 
-# 24 files, no impossibilities in 1 directories.
+# 30 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -318,34 +205,45 @@ VSCODE_PID = 238532
 
 # Not a target:
 all:
-#  Command line target.
+#  Command-line target.
 #  Implicit rule search has been done.
 #  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
 #  File has not been updated.
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-08-11 15:29:11.587267344
+#  Last modified 2022-08-18 10:16:15
 #  File has been updated.
 #  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
 
 startlocal:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 4):
+#  commands to execute (from `Makefile', line 4):
 	docker run -d --name journdev-local-db \
-		-p 5432:5432 \
-		-e PGUSER=postgres \
-		-e PGDATABASE=postgres \
-		-e POSTGRES_DB=postgress \
-		-e POSTGRES_USER=postgres \
-		-e POSTGRES_PASSWORD=secret \
-		postgres
+	-p 5432:5432 \
+	-e PGUSER=postgres \
+	-e PGDATABASE=postgres \
+	-e POSTGRES_DB=postgress \
+	-e POSTGRES_USER=postgres \
+	-e POSTGRES_PASSWORD=secret \
+	postgres
 	sleep 5
 	npx prisma migrate reset -f
 	npm run dev
+	
 
 # Not a target:
 .DEFAULT:
@@ -353,27 +251,37 @@ startlocal:
 #  Modification time never checked.
 #  File has not been updated.
 
+startremote:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `Makefile', line 17):
+	npx prisma migrate reset -f
+	npm run dev
+	
+
 teardown:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 17):
+#  commands to execute (from `Makefile', line 21):
 	docker rm -f journdev-local-db
+	
 
 # files hash-table stats:
-# Load=6/1024=1%, Rehash=0, Collisions=0/16=0%
+# Load=7/1024=1%, Rehash=0, Collisions=0/19=0%
 # VPATH Search Paths
 
-# No 'vpath' search paths.
+# No `vpath' search paths.
 
-# No general ('VPATH' variable) search path.
+# No general (`VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 31 / storage = 342 B / avg = 11 B
-# current buf: size = 8162 B / used = 342 B / count = 31 / avg = 11 B
+# # of strings in strcache: 1
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+ 
+# strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
 
-# strcache performance: lookups = 37 / hit rate = 16%
-# hash-table stats:
-# Load=31/8192=0%, Rehash=0, Collisions=1/37=3%
-# Finished Make data base on Thu Aug 11 15:29:41 2022
+# Finished Make data base on Thu Aug 18 19:03:10 2022
 
  

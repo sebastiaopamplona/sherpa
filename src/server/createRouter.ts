@@ -1,3 +1,5 @@
+import { FgRed, FgWhite, FgYellow } from "../utils/aux"
+
 import { authRouter } from "./router/auth"
 import { createRouter } from "./context"
 import { projectRouter } from "./router/project"
@@ -13,9 +15,17 @@ export const appRouter = createRouter()
     const start = Date.now()
     const result = await next()
     const durationMs = Date.now() - start
-    result.ok
-      ? console.log("OK request timing:", { path, type, durationMs })
-      : console.log("Non-OK request timing:", { path, type, durationMs })
+
+    let logColor: string = FgWhite
+    if (durationMs > 200 && durationMs < 300) {
+      logColor = FgYellow
+    } else if (durationMs > 300) {
+      logColor = FgRed
+    }
+
+    console.log(
+      `${logColor}{"path": "${path}", "type": "${type}", "duration": "${durationMs}ms", "ok": "${result.ok}"}\x1b[0m`
+    )
 
     // FIXME: When there's a refresh in the browser, the first time this
     // request is hit the ctx is null resulting in the TRPCError bellow.
@@ -26,7 +36,7 @@ export const appRouter = createRouter()
     //   throw new TRPCError({ code: "UNAUTHORIZED" })
     // }
 
-    return next()
+    return result
   })
   .merge("project.", projectRouter)
   .merge("story.", storyRouter)
