@@ -480,15 +480,17 @@ async function seedStories() {
 }
 
 async function main() {
-  await seedUsers()
-  await seedProjects()
   await seedRoles()
   await seedPermissions()
-
   await seedRoleToPermissions()
-  await seedUsersInProjects()
-  await seedSprints()
-  await seedStories()
+
+  if (process.env.NODE_ENV !== "production") {
+    await seedUsers()
+    await seedProjects()
+    await seedUsersInProjects()
+    await seedSprints()
+    await seedStories()
+  }
 }
 
 main()
