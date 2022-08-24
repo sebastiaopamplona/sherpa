@@ -1,4 +1,5 @@
 import ProjectForm from "../../components/projectForm/projectForm"
+import { pathWithParams } from "../../utils/aux"
 import { useRouter } from "next/router"
 
 export default function CreateProject() {
@@ -8,7 +9,7 @@ export default function CreateProject() {
     <div className="grid grid-cols-5 content-start ">
       <ProjectForm
         onCreateOrUpdateSuccess={(projectId: string) => {
-          router.push(`/app/${projectId}/timekeeper`)
+          router.push(pathWithParams("/app/timekeeper", new Map([["projectId", projectId]])))
         }}
         onCreateOrUpdateError={() => {}}
       />

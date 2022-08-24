@@ -1,3 +1,9 @@
+# Build sherpa cli
+FROM golang:1.18.5-alpine AS sherpa-cli-builder
+WORKDIR /app
+COPY cli .
+RUN go build -o sherpa main.go
+
 # Install dependencies only when needed
 FROM node:16-alpine AS deps
 RUN apk add --no-cache libc6-compat
@@ -24,6 +30,9 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+# Copy sherpa cli
+COPY --from=sherpa-cli-builder --chown=nextjs:nodejs /app/sherpa /bin
 
 # You only need to copy next.config.js if you are NOT using the default configuration
 COPY --from=builder /app/next.config.js ./
