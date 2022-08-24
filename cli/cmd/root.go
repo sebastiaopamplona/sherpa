@@ -1,7 +1,3 @@
-/*
-Copyright © 2022 Sebastião Pamplona sebastiaopdsrp@gmail.com
-
-*/
 package cmd
 
 import (
@@ -11,8 +7,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "cli",
-	Short: "Minimal cli to help when self hosting",
+	Use:   "sherpa",
+	Short: "Minimal cli to help manage Sherpa when self hosting",
 }
 
 func Execute() {

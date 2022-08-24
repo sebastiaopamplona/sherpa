@@ -1,7 +1,3 @@
-/*
-Copyright © 2022 Sebastião Pamplona sebastiaopdsrp@gmail.com
-
-*/
 package cmd
 
 import (
