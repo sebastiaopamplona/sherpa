@@ -3,7 +3,7 @@ import { GiEmptyHourglass, GiFullFolder, GiNotebook, GiSprint } from "react-icon
 
 import Link from "next/link"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
-import Select from "../select/select"
+import Select from "../Select/Select"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"

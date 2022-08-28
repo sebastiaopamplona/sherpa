@@ -5,7 +5,7 @@ import { getCsrfToken, signIn, useSession } from "next-auth/react"
 
 import { GiGate } from "react-icons/gi"
 import { InferGetServerSidePropsType } from "next"
-import InfoBox from "../../components/infoBox/infoBox"
+import InfoBox from "../../components/InfoBox/InfoBox"
 import { classNames } from "../../utils/aux"
 import { useRouter } from "next/router"
 import { useState } from "react"

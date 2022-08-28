@@ -1,9 +1,9 @@
 import { ArrElement, ButtonDefaultCSS, classNames } from "../../utils/aux"
 import { SubmitHandler, useForm } from "react-hook-form"
 
-import Input from "../input/input"
+import Input from "../Input/Input"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
-import Textarea from "../textarea/textarea"
+import Textarea from "../Textarea/Textarea"
 import { XCircleIcon } from "@heroicons/react/solid"
 import { trpc } from "../../utils/trpc"
 import { useSession } from "next-auth/react"

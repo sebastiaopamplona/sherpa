@@ -1,7 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 
-import Layout from "../../components/layout/layout"
-import Sidebar from "../../components/sidebar/sidebar"
+import Layout from "../../components/Layout/Layout"
+import Sidebar from "../../components/Sidebar/Sidebar"
 
 export default function Profile() {
   const { data: session, status } = useSession()

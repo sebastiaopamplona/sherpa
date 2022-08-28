@@ -1,4 +1,4 @@
-import ProjectForm from "../../components/projectForm/projectForm"
+import ProjectForm from "../../components/ProjectForm/ProjectForm"
 import { pathWithParams } from "../../utils/aux"
 import { useRouter } from "next/router"
 
