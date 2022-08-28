@@ -59,10 +59,10 @@ model RoleToPermissions {
   id String @id @default(uuid())
 
   roleId String
-  role   Role   @relation(fields: [roleId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   permissionId String
-  permission   Permission @relation(fields: [permissionId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -78,7 +78,7 @@ model Project {
   jiraUrl   String?
 
   creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id])
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: SetNull)
 
   users   UserRolesInProjects[]
   stories Story[]
@@ -93,13 +93,13 @@ model UserRolesInProjects {
   id String @id @default(uuid())
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   roleId String
-  role   Role   @relation(fields: [roleId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -114,10 +114,10 @@ model Sprint {
   endAt       DateTime
 
   creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id])
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: SetNull)
 
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   stories Story[]
 
@@ -137,16 +137,16 @@ model Story {
   jiraId      String?
 
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   creatorId String
-  creator   User   @relation(name: "creator", fields: [creatorId], references: [id])
+  creator   User   @relation(name: "creator", fields: [creatorId], references: [id], onDelete: SetNull)
 
   assigneeId String?
-  assignee   User?   @relation(name: "assignee", fields: [assigneeId], references: [id])
+  assignee   User?   @relation(name: "assignee", fields: [assigneeId], references: [id], onDelete: SetNull)
 
   sprintId String?
-  sprint   Sprint? @relation(fields: [sprintId], references: [id])
+  sprint   Sprint? @relation(fields: [sprintId], references: [id], onDelete: SetNull)
 
   worklogs Worklog[]
 
@@ -164,10 +164,10 @@ model Worklog {
   remainingEffort Int
 
   storyId String
-  story   Story  @relation(fields: [storyId], references: [id])
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
   creatorId String
-  creator   User   @relation(fields: [creatorId], references: [id])
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
