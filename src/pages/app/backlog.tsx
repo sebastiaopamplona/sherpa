@@ -87,6 +87,13 @@ export default function Backlog() {
           }}
           onCreateOrUpdateWorklogSuccess={() => {}}
           onCreateOrUpdateWorklogError={() => {}}
+          onDeleteSuccess={() => {
+            stories.refetch()
+            setIsStoryDetailsModalOpen(false)
+          }}
+          onDeleteError={() => {
+            alert("story deletion failed")
+          }}
         />
       </Modal>
     </section>
