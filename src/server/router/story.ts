@@ -138,6 +138,7 @@ export const storyRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      console.log("input: ", input)
       const story = await prisma.story.update({
         where: {
           id: input.id as string,
@@ -147,8 +148,6 @@ export const storyRouter = createRouter()
           description: input.description,
           estimate: input.estimate,
 
-          projectId: input.projectId,
-          creatorId: input.creatorId,
           assigneeId: input.assigneeId,
           sprintId: input.sprintId,
 
@@ -172,6 +171,7 @@ export const storyRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      console.log("input: ", input)
       await prisma.story.delete({
         where: {
           id: input.id,
