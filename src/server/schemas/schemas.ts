@@ -75,10 +75,10 @@ export const Story: Zod.AnyZodObject = z.object({
   githubId: z.string().nullish(),
   jiraId: z.string().nullish(),
 
-  projectId: z.string(),
+  projectId: z.string().nullish(),
   project: z.lazy(() => Project).nullish(),
 
-  creatorId: z.string(),
+  creatorId: z.string().nullish(),
   creator: z.lazy(() => User).nullish(),
 
   assigneeId: z.string().nullish(),

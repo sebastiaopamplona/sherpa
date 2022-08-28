@@ -371,7 +371,7 @@ async function seedStories() {
       assigneeEmail: "sebastiaodsrp@gmail.com",
       sprintId: sprint!.id,
 
-      state: StoryStateEnum.DONE,
+      state: StoryStateEnum.READY,
       type: StoryTypeEnum.DEVELOPMENT,
 
       worklogs: [
@@ -405,7 +405,7 @@ async function seedStories() {
       assigneeEmail: "sebastiaodsrp@gmail.com",
       sprintId: sprint!.id,
 
-      state: StoryStateEnum.DONE,
+      state: StoryStateEnum.READY,
       type: StoryTypeEnum.DEVELOPMENT,
 
       worklogs: [

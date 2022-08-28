@@ -208,17 +208,21 @@ export default function TimeKeeper() {
           worklogDay={worklogDay}
           onCreateOrUpdateStorySuccess={() => {
             setIsStoryDetailsOpen(false)
-            alert("story updated")
           }}
-          onCreateOrUpdateStoryError={() => {
-            alert("story update failed")
-          }}
+          onCreateOrUpdateStoryError={() => {}}
           onCreateOrUpdateWorklogSuccess={() => {
             // TODO(SP): optimize this, as in find a way to only fetch the single day
             stories.refetch()
             setIsStoryDetailsOpen(false)
           }}
           onCreateOrUpdateWorklogError={() => {}}
+          onDeleteSuccess={() => {
+            stories.refetch()
+            setIsStoryDetailsOpen(false)
+          }}
+          onDeleteError={() => {
+            alert("story deletion failed")
+          }}
         />
       </Modal>
     </section>

@@ -1,4 +1,4 @@
-import { ArrElement, ButtonDefaultCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
+import { ArrElement, ButtonDefaultCSS, ButtonDefaultRedCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
 import {
   NoSprint,
   NoUser,
@@ -38,6 +38,8 @@ interface Props {
   worklogDay?: Date
   onCreateOrUpdateStorySuccess: () => void
   onCreateOrUpdateStoryError: () => void
+  onDeleteSuccess: () => void
+  onDeleteError: () => void
   onCreateOrUpdateWorklogSuccess: () => void
   onCreateOrUpdateWorklogError: () => void
 }
@@ -102,6 +104,8 @@ export default function StoryForm(props: Props) {
             story={props.story}
             onCreateOrUpdateSuccess={props.onCreateOrUpdateStorySuccess}
             onCreateOrUpdateError={props.onCreateOrUpdateStoryError}
+            onDeleteSuccess={props.onDeleteSuccess}
+            onDeleteError={props.onDeleteError}
           />
         </div>
         <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
@@ -122,10 +126,15 @@ const StoryDetails: React.FC<{
   story?: StoryInput
   onCreateOrUpdateSuccess: () => void
   onCreateOrUpdateError: () => void
-}> = ({ story, onCreateOrUpdateSuccess, onCreateOrUpdateError }) => {
+  onDeleteSuccess: () => void
+  onDeleteError: () => void
+}> = ({ story, onCreateOrUpdateSuccess, onCreateOrUpdateError, onDeleteSuccess, onDeleteError }) => {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
+
+  const isCreateMode = typeof story === "undefined"
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
   const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {})
   const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {})
@@ -143,28 +152,39 @@ const StoryDetails: React.FC<{
     story && story.sprint ? story.sprint : NoSprint
   )
 
-  const { handleSubmit, register } = useForm<StoryInput>()
+  const { handleSubmit, register, formState } = useForm<StoryInput>({})
+
   const createStoryMutation = trpc.useMutation(["story.create"], {
-    onSuccess: () => {
-      onCreateOrUpdateSuccess()
-    },
-    onError: () => {
-      onCreateOrUpdateError()
-    },
+    onSuccess: onCreateOrUpdateSuccess,
+    onError: onCreateOrUpdateError,
   })
+
+  const updateStoryMutation = trpc.useMutation(["story.update"], {
+    onSuccess: onCreateOrUpdateSuccess,
+    onError: onCreateOrUpdateError,
+  })
+
+  const deleteStoryMutation = trpc.useMutation(["story.deleteById"], {
+    onSuccess: onDeleteSuccess,
+    onError: onDeleteError,
+  })
+
   const handleCreateStory = (values: StoryInput) => {
-    values.creatorId = session?.data?.userid as string
-    if (selectedUser.id !== NoUser.id) {
-      values.assigneeId = selectedUser.id
-    }
     values.type = selectedType.id
     values.state = selectedState.id
-    if (selectedSprint.id !== NoSprint.id) {
-      values.sprintId = selectedSprint.id
-    }
-    values.projectId = projectId
+    if (selectedUser.id !== NoUser.id) values.assigneeId = selectedUser.id
+    if (selectedSprint.id !== NoSprint.id) values.sprintId = selectedSprint.id
 
-    createStoryMutation.mutate(values)
+    if (isCreateMode) {
+      values.creatorId = session?.data?.userid as string
+      values.projectId = projectId
+
+      createStoryMutation.mutate(values)
+    } else {
+      values.id = story.id
+
+      updateStoryMutation.mutate(values)
+    }
   }
 
   if (users.isLoading || sprints.isLoading) return null
@@ -254,19 +274,42 @@ const StoryDetails: React.FC<{
           </div>
         </div>
         <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4">
-          {story ? (
-            <>
-              <div className="col-span-2 col-start-2 inline-flex items-center justify-center">
-                <button className={ButtonDisabledCSS} disabled={true}>
-                  Save changes
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="col-span-6 inline-flex items-center justify-center">
-              <button className={ButtonDefaultCSS}>Create story</button>
-            </div>
-          )}
+          <div className="col-span-6 inline-flex items-center justify-center">
+            <button disabled={!isCreateMode} className={classNames(isCreateMode ? "" : "hidden", ButtonDefaultCSS)}>
+              Create story
+            </button>
+            <div className="px-2" />
+            <button
+              disabled={isCreateMode || !formState.isDirty}
+              className={classNames(
+                isCreateMode ? "hidden" : "",
+                formState.isDirty ? ButtonDefaultCSS : ButtonDisabledCSS
+              )}
+            >
+              Update story
+            </button>
+            <div className="px-2" />
+            <button
+              disabled={isCreateMode || isDeleting}
+              className={classNames(isCreateMode || isDeleting ? "hidden" : "", ButtonDefaultRedCSS)}
+              onClick={(e) => {
+                e.preventDefault()
+                setIsDeleting(true)
+              }}
+            >
+              Delete story
+            </button>
+            <button
+              disabled={isCreateMode || !isDeleting}
+              className={classNames(isCreateMode || !isDeleting ? "hidden" : "", ButtonDefaultRedCSS)}
+              onClick={(e) => {
+                e.preventDefault()
+                deleteStoryMutation.mutate({ id: story!.id })
+              }}
+            >
+              Confirm delete?
+            </button>
+          </div>
         </div>
       </div>
     </form>
@@ -374,9 +417,8 @@ const StoryWorklogs: React.FC<{
           <div className="col-span-1 inline-flex items-center justify-center">
             <button
               className={ButtonDefaultCSS}
-              onClick={(e) => {
+              onClick={() => {
                 setIsWrittingWorklog(false)
-                // e.preventDefault()
               }}
             >
               Save
