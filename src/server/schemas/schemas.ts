@@ -66,7 +66,7 @@ export type WorklogInput = z.infer<typeof Worklog>
 export const Story: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
 
-  title: z.string(),
+  title: z.string().default(""),
   description: z.string(),
   estimate: z.number(),
   state: z.enum(["NEW", "READY", "IN_PROGRESS", "DELIVERED", "IN_REVIEW", "DONE", "DELETED"]),
