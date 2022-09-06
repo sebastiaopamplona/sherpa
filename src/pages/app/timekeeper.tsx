@@ -8,13 +8,12 @@ import { GetServerSidePropsContext } from "next"
 import { IoTodayOutline } from "react-icons/io5"
 import Layout from "../../components/Layout/Layout"
 import Link from "next/link"
-import Modal from "../../components/Modal/Modal"
 import { NoSprint } from "../../server/data/data"
 import Select from "../../components/Select/Select"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
-import StoryForm from "../../components/StoryForm/StoryForm"
+import StoryFormV2 from "../../components/StoryFormV2/StoryFormV2"
 import { StoryGetForTimekeeperOutput } from "../../server/router/story"
 import { StoryInput } from "../../server/schemas/schemas"
 import { appRouter } from "../../server/createRouter"
@@ -181,6 +180,7 @@ export default function TimeKeeper() {
                 story={story}
                 dayRange={currentDayRange}
                 onStoryClick={(story: StoryInput) => {
+                  setIsAddingWorklog(false)
                   setCurrentStory(story)
                   setIsStoryDetailsOpen(true)
                 }}
@@ -195,36 +195,45 @@ export default function TimeKeeper() {
           </div>
         )}
       </div>
-      <Modal
+      <StoryFormV2
+        story={currentStory}
+        isAddingWorklog={isAddingWorklog}
+        worklogDay={worklogDay}
         isOpen={isStoryDetailsOpen}
         onClose={() => {
           setIsStoryDetailsOpen(false)
-          setIsAddingWorklog(false)
         }}
-      >
-        <StoryForm
-          story={currentStory}
-          isAddingWorklog={isAddingWorklog}
-          worklogDay={worklogDay}
-          onCreateOrUpdateStorySuccess={() => {
+        onStoryCreate={{
+          onSuccess: () => {
             setIsStoryDetailsOpen(false)
-          }}
-          onCreateOrUpdateStoryError={() => {}}
-          onCreateOrUpdateWorklogSuccess={() => {
-            // TODO(SP): optimize this, as in find a way to only fetch the single day
             stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onStoryUpdate={{
+          onSuccess: () => {
             setIsStoryDetailsOpen(false)
-          }}
-          onCreateOrUpdateWorklogError={() => {}}
-          onDeleteSuccess={() => {
             stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onWorklogCreate={{
+          onSuccess: () => {
             setIsStoryDetailsOpen(false)
-          }}
-          onDeleteError={() => {
-            alert("story deletion failed")
-          }}
-        />
-      </Modal>
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onWorklogUpdate={{
+          onSuccess: () => {
+            setIsStoryDetailsOpen(false)
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+      />
     </section>
   )
 }

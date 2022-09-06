@@ -52,7 +52,19 @@ export default function StoryFormV2({
   )
 
   const [selectedTab, setSelectedTab] = useState<Tab>(tabs[0]!)
-  useEffect(() => setSelectedTab(tabs[0]!), [tabs])
+  useEffect(() => {
+    if (story) {
+      tabs[1]!.enabled = true
+
+      if (isAddingWorklog) {
+        setSelectedTab(tabs[1]!)
+      } else {
+        setSelectedTab(tabs[0]!)
+      }
+    } else {
+      setSelectedTab(tabs[0]!)
+    }
+  }, [tabs, story, isAddingWorklog])
 
   return (
     <SlideOver
@@ -60,7 +72,9 @@ export default function StoryFormV2({
       onClose={onClose}
       title={typeof story === "undefined" ? "New story" : story.title}
       titleSumary={
-        typeof story === "undefined" ? "Get started by creating a new story" : "Edit story details and register worklogs"
+        typeof story === "undefined"
+          ? "Get started by creating a new story"
+          : "Edit story details and register worklogs"
       }
     >
       <div className="hidden sm:block">
@@ -106,6 +120,8 @@ export default function StoryFormV2({
       <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
         <StoryWorklogs
           story={story}
+          isAddingWorklog={isAddingWorklog}
+          worklogDay={worklogDay}
           onCreate={onWorklogCreate}
           onUpdate={onWorklogUpdate}
           onDelete={onWorklogDelete}

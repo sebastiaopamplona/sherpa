@@ -3,10 +3,8 @@ import { ButtonDefaultCSS, classNames } from "../../utils/aux"
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
-import Modal from "../../components/Modal/Modal"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
-import StoryForm from "../../components/StoryForm/StoryForm"
 import StoryFormV2 from "../../components/StoryFormV2/StoryFormV2"
 import { StoryInput } from "../../server/schemas/schemas"
 import { checkIfShouldRedirect } from "../../server/aux"
@@ -71,35 +69,6 @@ export default function Backlog() {
           </div>
         </div>
       </div>
-      <Modal
-        isOpen={isStoryDetailsModalOpen}
-        onClose={() => {
-          setIsStoryDetailsModalOpen(false)
-          setTimeout(function () {
-            setCurrentStory(undefined)
-          }, 200)
-        }}
-      >
-        <StoryForm
-          story={currentStory}
-          onCreateOrUpdateStorySuccess={() => {
-            stories.refetch()
-            setIsStoryDetailsModalOpen(false)
-          }}
-          onCreateOrUpdateStoryError={() => {
-            alert("story creation failed")
-          }}
-          onCreateOrUpdateWorklogSuccess={() => {}}
-          onCreateOrUpdateWorklogError={() => {}}
-          onDeleteSuccess={() => {
-            stories.refetch()
-            setIsStoryDetailsModalOpen(false)
-          }}
-          onDeleteError={() => {
-            alert("story deletion failed")
-          }}
-        />
-      </Modal>
       <StoryFormV2
         story={currentStory}
         isOpen={isSlideOverOpen}
