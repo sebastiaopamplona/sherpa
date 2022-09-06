@@ -1,13 +1,5 @@
 import { ArrElement, ButtonDefaultCSS, ButtonDefaultRedCSS, ButtonDisabledCSS, classNames } from "../../utils/aux"
-import {
-  NoSprint,
-  NoUser,
-  StoryStates,
-  StoryStatesArray,
-  StoryType,
-  StoryTypes,
-  StoryTypesArray,
-} from "../../server/data/data"
+import { NoSprint, NoUser, StoryStates, StoryStatesArray, StoryType, StoryTypes, StoryTypesArray } from "../../server/data/data"
 import { SVGProps, useEffect, useMemo, useState } from "react"
 import { StoryInput, WorklogInput } from "../../server/schemas/schemas"
 import { setHours, setMinutes, setSeconds } from "date-fns"
@@ -265,12 +257,7 @@ const StoryDetails: React.FC<{
             />
           </div>
           <div className="col-span-2">
-            <Input
-              label="Jira Ticket ID"
-              value={story ? story.jiraId : ""}
-              note="(Optional)"
-              register={register("jiraId")}
-            />
+            <Input label="Jira Ticket ID" value={story ? story.jiraId : ""} note="(Optional)" register={register("jiraId")} />
           </div>
         </div>
         <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4">
@@ -281,10 +268,7 @@ const StoryDetails: React.FC<{
             <div className="px-2" />
             <button
               disabled={isCreateMode || !formState.isDirty}
-              className={classNames(
-                isCreateMode ? "hidden" : "",
-                formState.isDirty ? ButtonDefaultCSS : ButtonDisabledCSS
-              )}
+              className={classNames(isCreateMode ? "hidden" : "", formState.isDirty ? ButtonDefaultCSS : ButtonDisabledCSS)}
             >
               Update story
             </button>
@@ -345,10 +329,7 @@ const StoryWorklogs: React.FC<{
 
   const handleCreateWorklog = (values: WorklogInput) => {
     const now = new Date()
-    const dateWithHour: Date = setHours(
-      setMinutes(setSeconds(selectedDate, now.getSeconds()), now.getMinutes()),
-      now.getHours()
-    )
+    const dateWithHour: Date = setHours(setMinutes(setSeconds(selectedDate, now.getSeconds()), now.getMinutes()), now.getHours())
 
     values.creatorId = session?.data?.userid as string
     values.projectId = projectId
@@ -439,6 +420,7 @@ const StoryWorklogs: React.FC<{
               <ul role="list" className="divide-y divide-gray-200">
                 {story.worklogs.map((worklog: WorklogInput) => (
                   <li
+                    className="py-2"
                     key={worklog.id}
                     onClick={() => {
                       // TODO:
