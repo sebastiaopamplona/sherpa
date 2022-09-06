@@ -41,6 +41,11 @@ export function pathWithParams(path: string, params: Map<string, string | string
   return newPath
 }
 
+export type EventWrapper = {
+  onSuccess: () => void
+  onError: () => void
+}
+
 // TODO: move this to a module.css file
 export const ButtonDefaultCSS =
   "inline-flex items-center justify-center px-2.5 py-1.5 border border-transparent text-md font-medium rounded text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
