@@ -7,6 +7,7 @@ import Modal from "../../components/Modal/Modal"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
 import StoryForm from "../../components/StoryForm/StoryForm"
+import StoryFormV2 from "../../components/StoryFormV2/StoryFormV2"
 import { StoryInput } from "../../server/schemas/schemas"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
@@ -21,6 +22,7 @@ export default function Backlog() {
 
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsModalOpen, setIsStoryDetailsModalOpen] = useState<boolean>(false)
+  const [isSlideOverOpen, setIsSlideOverOpen] = useState<boolean>(false)
 
   if (stories.isLoading) return null
 
@@ -35,11 +37,13 @@ export default function Backlog() {
             <button
               className={ButtonDefaultCSS}
               onClick={() => {
-                setIsStoryDetailsModalOpen(true)
+                setCurrentStory(undefined)
+                setIsSlideOverOpen(true)
               }}
             >
               Create story
             </button>
+            <div className="px-2" />
           </div>
           <div
             className={classNames(
@@ -54,7 +58,7 @@ export default function Backlog() {
                     key={story.id}
                     onClick={() => {
                       setCurrentStory(story)
-                      setIsStoryDetailsModalOpen(true)
+                      setIsSlideOverOpen(true)
                     }}
                   >
                     <StoryEntry story={story} />
@@ -96,6 +100,43 @@ export default function Backlog() {
           }}
         />
       </Modal>
+      <StoryFormV2
+        story={currentStory}
+        isOpen={isSlideOverOpen}
+        onClose={() => {
+          setIsSlideOverOpen(false)
+        }}
+        onStoryCreate={{
+          onSuccess: () => {
+            setIsSlideOverOpen(false)
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onStoryUpdate={{
+          onSuccess: () => {
+            setIsSlideOverOpen(false)
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onWorklogCreate={{
+          onSuccess: () => {
+            setIsSlideOverOpen(false)
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onWorklogUpdate={{
+          onSuccess: () => {
+            setIsSlideOverOpen(false)
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+      />
     </section>
   )
 }
