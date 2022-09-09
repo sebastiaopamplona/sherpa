@@ -1,0 +1,12 @@
+.main {
+  display: flex;
+  height: calc(100vh);
+}
+
+.main > section {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  width: calc(100vw - 208px);
+  min-width: 1200px;
+  padding: 24px 100px 24px 100px;
+}
