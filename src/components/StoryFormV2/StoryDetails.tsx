@@ -12,7 +12,7 @@ import {
 import { Story, StoryInput } from "../../server/schemas/schemas"
 
 import Input from "../Input/Input"
-import Select from "../Select/select"
+import Select from "../Select/Select"
 import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
 import Textarea from "../Textarea/Textarea"
 import { UserGetByProjectIdOutput } from "../../server/router/user"
@@ -34,7 +34,15 @@ interface Props {
   onCancel: () => void
 }
 
-export default function StoryDetails({ story, isAddingWorklog, worklogDay, onCreate, onUpdate, onDelete, onCancel }: Props) {
+export default function StoryDetails({
+  story,
+  isAddingWorklog,
+  worklogDay,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onCancel,
+}: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
@@ -48,9 +56,18 @@ export default function StoryDetails({ story, isAddingWorklog, worklogDay, onCre
 
   const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {})
   const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {})
-  const createStoryM = trpc.useMutation(["story.create"], { onSuccess: onCreate?.onSuccess, onError: onCreate?.onError })
-  const updateStoryM = trpc.useMutation(["story.update"], { onSuccess: onUpdate?.onSuccess, onError: onUpdate?.onError })
-  const deleteStoryM = trpc.useMutation(["story.deleteById"], { onSuccess: onDelete?.onSuccess, onError: onDelete?.onError })
+  const createStoryM = trpc.useMutation(["story.create"], {
+    onSuccess: onCreate?.onSuccess,
+    onError: onCreate?.onError,
+  })
+  const updateStoryM = trpc.useMutation(["story.update"], {
+    onSuccess: onUpdate?.onSuccess,
+    onError: onUpdate?.onError,
+  })
+  const deleteStoryM = trpc.useMutation(["story.deleteById"], {
+    onSuccess: onDelete?.onSuccess,
+    onError: onDelete?.onError,
+  })
 
   const { reset, register, getValues, setValue } = useForm<StoryInput>({})
 
@@ -146,7 +163,12 @@ export default function StoryDetails({ story, isAddingWorklog, worklogDay, onCre
           />
         </div>
         <div className="col-span-2">
-          <Input label="Jira Ticket ID" value={story ? story.jiraId : ""} note="(Optional)" register={register("jiraId")} />
+          <Input
+            label="Jira Ticket ID"
+            value={story ? story.jiraId : ""}
+            note="(Optional)"
+            register={register("jiraId")}
+          />
         </div>
       </div>
 
