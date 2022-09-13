@@ -13,7 +13,7 @@ import Select from "../../components/Select/Select"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
-import StoryFormV2 from "../../components/StoryFormV2/StoryFormV2"
+import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryGetForTimekeeperOutput } from "../../server/router/story"
 import { StoryInput } from "../../server/schemas/schemas"
 import { appRouter } from "../../server/createRouter"
@@ -195,7 +195,7 @@ export default function TimeKeeper() {
           </div>
         )}
       </div>
-      <StoryFormV2
+      <StoryForm
         story={currentStory}
         isAddingWorklog={isAddingWorklog}
         worklogDay={worklogDay}

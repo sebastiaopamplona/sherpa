@@ -24,8 +24,6 @@ import { useState } from "react"
 
 interface Props {
   story?: StoryInput
-  isAddingWorklog?: boolean
-  worklogDay?: Date
 
   onCreate?: EventWrapper
   onUpdate?: EventWrapper
@@ -34,15 +32,7 @@ interface Props {
   onCancel: () => void
 }
 
-export default function StoryDetails({
-  story,
-  isAddingWorklog,
-  worklogDay,
-  onCreate,
-  onUpdate,
-  onDelete,
-  onCancel,
-}: Props) {
+export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCancel }: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query

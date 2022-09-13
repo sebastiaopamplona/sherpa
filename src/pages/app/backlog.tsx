@@ -5,7 +5,7 @@ import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
-import StoryFormV2 from "../../components/StoryFormV2/StoryFormV2"
+import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryInput } from "../../server/schemas/schemas"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
@@ -69,7 +69,7 @@ export default function Backlog() {
           </div>
         </div>
       </div>
-      <StoryFormV2
+      <StoryForm
         story={currentStory}
         isOpen={isSlideOverOpen}
         onClose={() => {
