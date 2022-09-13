@@ -89,6 +89,13 @@ export default function Backlog() {
           },
           onError: () => {},
         }}
+        onStoryDelete={{
+          onSuccess: () => {
+            setIsSlideOverOpen(false)
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
         onWorklogCreate={{
           onSuccess: () => {
             setIsSlideOverOpen(false)
