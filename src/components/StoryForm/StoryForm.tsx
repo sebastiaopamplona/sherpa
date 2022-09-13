@@ -1,11 +1,11 @@
-import { EventWrapper, classNames } from "../../utils/aux"
 import { SVGProps, useEffect, useMemo, useState } from "react"
+import { classNames, EventWrapper } from "../../utils/aux"
 
+import { UserIcon } from "@heroicons/react/solid"
+import { StoryInput } from "../../server/schemas/schemas"
 import SlideOver from "../SlideOver/SlideOver"
 import StoryDetails from "./StoryDetails"
-import { StoryInput } from "../../server/schemas/schemas"
 import StoryWorklogs from "./StoryWorklogs"
-import { UserIcon } from "@heroicons/react/solid"
 
 type Tab = {
   name: string
@@ -30,7 +30,7 @@ interface Props {
   onWorklogDelete?: EventWrapper
 }
 
-export default function StoryFormV2({
+export default function StoryForm({
   isOpen,
   onClose,
   story,

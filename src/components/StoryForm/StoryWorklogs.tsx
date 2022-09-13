@@ -24,7 +24,15 @@ interface Props {
   onCancel: () => void
 }
 
-export default function StoryWorklogs({ story, isAddingWorklog, worklogDay, onCreate, onUpdate, onDelete, onCancel }: Props) {
+export default function StoryWorklogs({
+  story,
+  isAddingWorklog,
+  worklogDay,
+  onCreate,
+  onUpdate,
+  onDelete,
+  onCancel,
+}: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
@@ -32,13 +40,19 @@ export default function StoryWorklogs({ story, isAddingWorklog, worklogDay, onCr
   const [selectedDate, setSelectedDate] = useState(worklogDay ? worklogDay : new Date())
   const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog ? isAddingWorklog : false)
 
-  const createWorklogM = trpc.useMutation(["worklog.create"], { onSuccess: onCreate?.onSuccess, onError: onCreate?.onError })
+  const createWorklogM = trpc.useMutation(["worklog.create"], {
+    onSuccess: onCreate?.onSuccess,
+    onError: onCreate?.onError,
+  })
 
   const { register, getValues } = useForm<WorklogInput>()
 
   const handleCreateWorklog = () => {
     const now = new Date()
-    const dateWithHour: Date = setHours(setMinutes(setSeconds(selectedDate, now.getSeconds()), now.getMinutes()), now.getHours())
+    const dateWithHour: Date = setHours(
+      setMinutes(setSeconds(selectedDate, now.getSeconds()), now.getMinutes()),
+      now.getHours()
+    )
 
     let values = getValues()
 
