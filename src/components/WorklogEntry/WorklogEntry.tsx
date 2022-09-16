@@ -8,7 +8,9 @@ interface Props {
 }
 
 export default function WorklogEntry(props: Props) {
-  const dateAsString = `${props.worklog.date.getDate()}/${props.worklog.date.getMonth() + 1}/${props.worklog.date.getFullYear()}`
+  const dateAsString = `${props.worklog.date.getDate()}/${
+    props.worklog.date.getMonth() + 1
+  }/${props.worklog.date.getFullYear()}`
   const nRows = props.worklog.description.split(/\r\n|\r|\n/).length
 
   return (

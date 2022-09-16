@@ -50,10 +50,10 @@ export const Worklog: Zod.AnyZodObject = z.object({
   effort: z.number(),
   remainingEffort: z.number(),
 
-  creatorId: z.string(),
+  creatorId: z.string().nullish(),
   creator: z.lazy(() => User).nullish(),
 
-  storyId: z.string(),
+  storyId: z.string().nullish(),
   story: z.lazy(() => Story).nullish(),
 
   createdAt: z.date().nullish(),

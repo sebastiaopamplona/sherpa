@@ -9,11 +9,12 @@ export const worklogRouter = createRouter()
   // CREATE
   .mutation("create", {
     input: Worklog,
-    output: z.object({
-      id: z.string(),
-    }),
+    output: Worklog,
     async resolve({ ctx, input }) {
       const worklog = await prisma.worklog.create({
+        include: {
+          creator: true,
+        },
         data: {
           description: input.description,
           date: input.date,
@@ -25,9 +26,7 @@ export const worklogRouter = createRouter()
         },
       })
 
-      return {
-        id: worklog.id,
-      }
+      return worklog
     },
   })
 
@@ -106,13 +105,14 @@ export const worklogRouter = createRouter()
   // UPDATE
   .mutation("update", {
     input: Worklog,
-    output: z.object({
-      id: z.string(),
-    }),
+    output: Worklog,
     async resolve({ ctx, input }) {
       const worklog = await prisma.worklog.update({
         where: {
           id: input.id as string,
+        },
+        include: {
+          creator: true,
         },
         data: {
           description: input.description,
@@ -121,9 +121,7 @@ export const worklogRouter = createRouter()
         },
       })
 
-      return {
-        id: worklog.id,
-      }
+      return worklog
     },
   })
 

@@ -96,22 +96,6 @@ export default function Backlog() {
           },
           onError: () => {},
         }}
-        onWorklogCreate={{
-          onSuccess: () => {
-            setIsSlideOverOpen(false)
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
-          },
-          onError: () => {},
-        }}
-        onWorklogUpdate={{
-          onSuccess: () => {
-            setIsSlideOverOpen(false)
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
-          },
-          onError: () => {},
-        }}
       />
     </section>
   )

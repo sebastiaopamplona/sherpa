@@ -219,7 +219,6 @@ export default function TimeKeeper() {
         }}
         onWorklogCreate={{
           onSuccess: () => {
-            setIsStoryDetailsOpen(false)
             // FIXME(SP): fetch single story intead of all stories
             stories.refetch()
           },
@@ -227,7 +226,6 @@ export default function TimeKeeper() {
         }}
         onWorklogUpdate={{
           onSuccess: () => {
-            setIsStoryDetailsOpen(false)
             // FIXME(SP): fetch single story intead of all stories
             stories.refetch()
           },
