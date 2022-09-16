@@ -25,6 +25,16 @@ export function extractBasePathWithProjectId(router: NextRouter): string {
   return `/${split[1]}/${split[2]}`
 }
 
+export function pathWithProjSprint(path: string, projectId: string, sprintId: string): string {
+  return pathWithParams(
+    path,
+    new Map([
+      ["projectId", projectId],
+      ["sprintId", sprintId],
+    ])
+  )
+}
+
 export function pathWithParams(path: string, params: Map<string, string | string[] | undefined>): string {
   let newPath: string = path
 

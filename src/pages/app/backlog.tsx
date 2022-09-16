@@ -2,8 +2,7 @@ import { ButtonDefaultCSS, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
-import Layout from "../../components/Layout/Layout"
-import Sidebar from "../../components/Sidebar/Sidebar"
+import Layout from "../../components/Sidebar/Layout"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
 import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryInput } from "../../server/schemas/schemas"
@@ -123,12 +122,7 @@ export default function Backlog() {
 }
 
 Backlog.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <Sidebar />
-      {page}
-    </Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

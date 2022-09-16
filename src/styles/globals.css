@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-  @apply text-gray-800 bg-gray-100;
-} */
+html {
+  @apply h-full;
+}
+
+body {
+  @apply h-full;
+}
 
 ::-webkit-scrollbar {
   -webkit-appearance: none;

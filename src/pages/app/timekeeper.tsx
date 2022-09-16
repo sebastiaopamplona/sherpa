@@ -1,17 +1,13 @@
-import { ArrElement, classNames, pathWithParams, switchSprint } from "../../utils/aux"
+import { ArrElement, classNames, pathWithParams } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
 import { addDays, format, getWeek, isSameDay, setHours, startOfWeek, subDays } from "date-fns"
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 
 import EmptyResourcesV2 from "../../components/EmptyResourcesv2/EmptyResourcesv2"
 import { GetServerSidePropsContext } from "next"
 import { IoTodayOutline } from "react-icons/io5"
-import Layout from "../../components/Layout/Layout"
+import Layout from "../../components/Sidebar/Layout"
 import Link from "next/link"
-import { NoSprint } from "../../server/data/data"
-import Select from "../../components/Select/Select"
-import Sidebar from "../../components/Sidebar/Sidebar"
-import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
 import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryGetForTimekeeperOutput } from "../../server/router/story"
@@ -33,7 +29,6 @@ export default function TimeKeeper() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
 
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
   const stories = trpc.useQuery([
     "story.getForTimekeeper",
     {
@@ -44,27 +39,17 @@ export default function TimeKeeper() {
     },
   ])
 
-  const selectedSprint = useRef<ArrElement<SprintGetByProjectIdOutput>>(
-    ((data) => {
-      if (!data) return NoSprint
-      for (let i = 0; i < data.length; i++) {
-        if (data[i]?.id === sprintId) return data[i]!
-      }
-      return NoSprint
-    })(sprints.data)
-  )
-
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
   const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
   const [worklogDay, setWorklogDay] = useState<Date>()
 
-  if (sprints.isLoading || stories.isLoading) return null
+  if (stories.isLoading) return null
 
   return (
     <section>
       <div className="h-full px-[100px]">
-        {!(sprints.data && sprints.data.length !== 0) ? (
+        {typeof sprintId === "undefined" ? (
           <EmptyResourcesV2>
             <div className="grid grid-cols-1 content-center gap-1">
               <p className="flex items-center justify-center">The current project has no sprints.</p>
@@ -90,9 +75,7 @@ export default function TimeKeeper() {
         ) : !(stories.data && stories.data.length !== 0) ? (
           <EmptyResourcesV2>
             <div className="grid grid-cols-1 content-center gap-1">
-              <p className="flex items-center justify-center">
-                The sprint {selectedSprint.current.title} has no stories.
-              </p>
+              <p className="flex items-center justify-center">The sprint current sprint has no stories.</p>
               <p>
                 Head over to the{" "}
                 <Link
@@ -114,11 +97,8 @@ export default function TimeKeeper() {
           </EmptyResourcesV2>
         ) : (
           <div className={classNames("grid grid-cols-11 content-center gap-[2px]")}>
-            <div className="col-span-11 flex items-center justify-center py-2">
+            <div className="col-span-11 flex items-end justify-end py-2">
               <TimeKeeperNav
-                sprints={sprints.data!}
-                selectedSprint={selectedSprint.current}
-                setSelectedSprint={(s) => switchSprint(s.id, router)}
                 currentDate={currentDate}
                 setCurrentDate={setCurrentDate}
                 setCurrentDayRange={setCurrentDayRange}
@@ -244,43 +224,26 @@ export default function TimeKeeper() {
 }
 
 const TimeKeeperNav: React.FC<{
-  sprints: SprintGetByProjectIdOutput
-  selectedSprint: ArrElement<SprintGetByProjectIdOutput>
-  setSelectedSprint: (e: ArrElement<SprintGetByProjectIdOutput>) => void
   currentDate: Date
   setCurrentDate: (setCurrentDayRanged: Date) => void
   setCurrentDayRange: (ds: Date[]) => void
   onToday: () => void
   onPrevWeek: () => void
   onNextWeek: () => void
-}> = ({
-  sprints,
-  selectedSprint,
-  setSelectedSprint,
-  currentDate,
-  setCurrentDate,
-  setCurrentDayRange,
-  onToday,
-  onPrevWeek,
-  onNextWeek,
-}) => {
+}> = ({ currentDate, setCurrentDate, setCurrentDayRange, onToday, onPrevWeek, onNextWeek }) => {
   return (
     <nav className="relative z-0 inline-flex -space-x-px rounded-md" aria-label="Pagination">
-      <Select
-        entries={sprints}
-        getId={(t) => t.id}
-        getText={(t) => t.title}
-        selectedState={[selectedSprint, setSelectedSprint]}
-      />
+      <div
+        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
+        onClick={onToday}
+      >
+        <span className="sr-only">Today</span>
+        <IoTodayOutline className="h-5 w-5" />
+      </div>
       <div className="pr-2" />
       <div
         className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
-        onClick={
-          onPrevWeek
-          // const newCurrDate = subDays(currentDate, 7)
-          // setCurrentDate(newCurrDate)
-          // setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-        }
+        onClick={onPrevWeek}
       >
         <span className="sr-only">Previous</span>
         <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -293,28 +256,10 @@ const TimeKeeperNav: React.FC<{
       </div>
       <div
         className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
-        onClick={
-          onNextWeek
-          // const newCurrDate = addDays(currentDate, 7)
-          // setCurrentDate(newCurrDate)
-          // setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-        }
+        onClick={onNextWeek}
       >
         <span className="sr-only">Next</span>
         <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-      </div>
-      <div className="pr-2" />
-      <div
-        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
-        onClick={
-          onToday
-          // const newCurrDate = new Date()
-          // setCurrentDate(newCurrDate)
-          // setCurrentDayRange(getWeekBusinessDays(newCurrDate))
-        }
-      >
-        <span className="sr-only">Today</span>
-        <IoTodayOutline className="h-5 w-5" />
       </div>
     </nav>
   )
@@ -376,12 +321,7 @@ const TimeKeeperWorklogCell: React.FC<{
 }
 
 TimeKeeper.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <Sidebar />
-      {page}
-    </Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 const getWeekBusinessDays = (currentDate: Date): Date[] => {
