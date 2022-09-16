@@ -1,4 +1,4 @@
-import { ButtonDefaultCSS, EventWrapper, classNames } from "../../utils/aux"
+import { ButtonDefaultCSS, ButtonDefaultRedCSS, EventWrapper, classNames } from "../../utils/aux"
 import { StoryInput, WorklogInput } from "../../server/schemas/schemas"
 import { setHours, setMinutes, setSeconds } from "date-fns"
 import { useMemo, useState } from "react"
@@ -53,6 +53,7 @@ export default function StoryWorklogs({
   const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog ? isAddingWorklog : false)
   const [worklogs, setWorklogs] = useState<WorklogInput[]>(story ? story.worklogs : [])
   const [editingWorklog, setEditingWorklog] = useState<{ worklog: WorklogInput; idx: number } | undefined>(undefined)
+  const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
   const createWorklogM = trpc.useMutation(["worklog.create"], {
     onSuccess: (data) => {
@@ -71,6 +72,10 @@ export default function StoryWorklogs({
     onError: () => {
       onUpdate?.onError()
     },
+  })
+  const deleteWorklogM = trpc.useMutation(["worklog.deleteById"], {
+    onSuccess: onDelete?.onSuccess,
+    onError: onDelete?.onError,
   })
 
   const { register, getValues, setValue } = useForm<WorklogInput>({
@@ -104,6 +109,10 @@ export default function StoryWorklogs({
     updateWorklogM.mutate(values)
   }
 
+  const handleDeleteWorklog = () => {
+    deleteWorklogM.mutate({ id: editingWorklog?.worklog.id })
+  }
+
   // TODO(SP): use date to insert
   const insertWorklog = (w: WorklogInput, idx: number = -1) => {
     if (idx === -1) {
@@ -117,67 +126,96 @@ export default function StoryWorklogs({
 
   return (
     <div className="p-6">
-      <div
-        className={classNames(
-          isWrittingWorklog ? "" : "hidden",
-          "col-span-6 grid transform grid-cols-6 gap-y-6 gap-x-4 transition duration-1000 ease-in-out "
-        )}
-      >
-        <div className="col-span-2">
-          <DatePicker
-            selectedDateState={[
-              selectedDate,
-              (d: Date) => {
-                setSelectedDate(d)
-              },
-            ]}
-          />
+      <div className={classNames(isWrittingWorklog ? "" : "hidden")}>
+        <div className={"col-span-6 grid transform grid-cols-6 gap-y-6 gap-x-4 transition duration-1000 ease-in-out "}>
+          <div className="col-span-2">
+            <DatePicker
+              selectedDateState={[
+                selectedDate,
+                (d: Date) => {
+                  setSelectedDate(d)
+                },
+              ]}
+            />
+          </div>
+          <div className="col-span-2">
+            <Input
+              label="Worklog effort"
+              register={register("effort", {
+                valueAsNumber: true,
+              })}
+            />
+          </div>
+          <div className="col-span-2">
+            <Input
+              label="Remaining effort"
+              register={register("remainingEffort", {
+                valueAsNumber: true,
+              })}
+            />
+          </div>
+          <div className="col-span-6">
+            <Textarea
+              label="What did you do?"
+              register={register("description")}
+              note="(Markdown will be supported in the future)"
+              nRows={10}
+            />
+          </div>
         </div>
-        <div className="col-span-2">
-          <Input
-            label="Worklog effort"
-            register={register("effort", {
-              valueAsNumber: true,
-            })}
-          />
-        </div>
-        <div className="col-span-2">
-          <Input
-            label="Remaining effort"
-            register={register("remainingEffort", {
-              valueAsNumber: true,
-            })}
-          />
-        </div>
-        <div className="col-span-6">
-          <Textarea
-            label="What did you do?"
-            register={register("description")}
-            note="(Markdown will be supported in the future)"
-            nRows={10}
-          />
-        </div>
-        <div className="col-span-1 col-start-3 inline-flex items-center justify-center">
-          <button
-            className={ButtonDefaultCSS}
-            onClick={() => {
-              if (editingWorklog) insertWorklog(editingWorklog.worklog, editingWorklog.idx)
-              setIsWrittingWorklog(false)
-            }}
+        <div className="flex items-center justify-center py-2">
+          <div className={classNames(isDeleting ? "hidden" : "", "inline-flex items-center justify-center")}>
+            <button
+              className={ButtonDefaultCSS}
+              onClick={() => {
+                if (editingWorklog) insertWorklog(editingWorklog.worklog, editingWorklog.idx)
+                setIsWrittingWorklog(false)
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+          <div className="pr-4" />
+          <div className={classNames(isDeleting ? "hidden" : "", "inline-flex items-center justify-center")}>
+            <button
+              className={ButtonDefaultCSS}
+              onClick={() => {
+                editingWorklog ? handleUpdateWorklog() : handleCreateWorklog()
+                setIsWrittingWorklog(false)
+              }}
+            >
+              Save
+            </button>
+          </div>
+          <div className="pr-4" />
+          <div
+            className={classNames(
+              editingWorklog ? (isDeleting ? "hidden" : "") : "hidden",
+              "inline-flex items-center justify-center"
+            )}
           >
-            Cancel
-          </button>
-        </div>
-        <div className="col-span-1 inline-flex items-center justify-center">
-          <button
-            className={ButtonDefaultCSS}
-            onClick={() => {
-              editingWorklog ? handleUpdateWorklog() : handleCreateWorklog()
-              setIsWrittingWorklog(false)
-            }}
-          >
-            Save
-          </button>
+            <button className={ButtonDefaultRedCSS} onClick={() => setIsDeleting(true)}>
+              Delete
+            </button>
+          </div>
+          <div className={classNames(isDeleting ? "" : "hidden", "inline-flex items-center justify-center")}>
+            <button className={ButtonDefaultCSS} onClick={() => setIsDeleting(false)}>
+              Cancel delete
+            </button>
+          </div>
+          <div className="pr-4" />
+          <div className={classNames(isDeleting ? "" : "hidden", "inline-flex items-center justify-center")}>
+            <button
+              className={ButtonDefaultRedCSS}
+              onClick={() => {
+                handleDeleteWorklog()
+                setIsWrittingWorklog(false)
+                setIsDeleting(false)
+              }}
+            >
+              Confirm delete?
+            </button>
+          </div>
         </div>
       </div>
       <div className={classNames((worklogs && worklogs.length > 0) || isWrittingWorklog ? "hidden" : "")}>

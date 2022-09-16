@@ -231,6 +231,13 @@ export default function TimeKeeper() {
           },
           onError: () => {},
         }}
+        onWorklogDelete={{
+          onSuccess: () => {
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
       />
     </section>
   )

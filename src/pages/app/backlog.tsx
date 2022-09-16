@@ -96,6 +96,27 @@ export default function Backlog() {
           },
           onError: () => {},
         }}
+        onWorklogCreate={{
+          onSuccess: () => {
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onWorklogUpdate={{
+          onSuccess: () => {
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
+        onWorklogDelete={{
+          onSuccess: () => {
+            // FIXME(SP): fetch single story intead of all stories
+            stories.refetch()
+          },
+          onError: () => {},
+        }}
       />
     </section>
   )
