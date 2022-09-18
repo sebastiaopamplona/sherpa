@@ -1,3 +1,4 @@
+import { NoSprint, NoUser } from "../data/data"
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
 
 import { Story } from "../schemas/schemas"
@@ -13,6 +14,7 @@ export const storyRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      console.log("input: ", input)
       const story = await prisma.story.create({
         data: {
           title: input.title,
@@ -21,8 +23,8 @@ export const storyRouter = createRouter()
 
           projectId: input.projectId,
           creatorId: input.creatorId,
-          assigneeId: input.assigneeId,
-          sprintId: input.sprintId,
+          assigneeId: input.assigneeId === NoUser.id ? null : input.assigneeId,
+          sprintId: input.sprintId === NoSprint.id ? null : input.sprintId,
 
           githubId: input.githubId,
           jiraId: input.jiraId,
@@ -148,8 +150,8 @@ export const storyRouter = createRouter()
           description: input.description,
           estimate: input.estimate,
 
-          assigneeId: input.assigneeId,
-          sprintId: input.sprintId,
+          assigneeId: input.assigneeId === NoUser.id ? null : input.assigneeId,
+          sprintId: input.sprintId === NoSprint.id ? null : input.sprintId,
 
           githubId: input.githubId,
           jiraId: input.jiraId,

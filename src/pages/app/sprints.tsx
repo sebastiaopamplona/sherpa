@@ -1,39 +1,23 @@
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { ArrElement, ButtonDefaultCSS, classNames, switchSprint } from "../../utils/aux"
-import { useMemo, useRef, useState } from "react"
+import { ButtonDefaultCSS, classNames } from "../../utils/aux"
+import { useMemo, useState } from "react"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
-import Layout from "../../components/Layout/Layout"
+import Layout from "../../components/Sidebar/Layout"
 import Modal from "../../components/Modal/Modal"
-import { NoSprint } from "../../server/data/data"
-import Select from "../../components/Select/Select"
-import Sidebar from "../../components/Sidebar/Sidebar"
 import SprintForm from "../../components/SprintForm/SprintForm"
-import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
 import { appRouter } from "../../server/createRouter"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { createSSGHelpers } from "@trpc/react/ssg"
 import { getJourndevAuthSession } from "../../server/session"
 import superjson from "superjson"
-import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 
 export default function Dashboard() {
   const router = useRouter()
   const { projectId, sprintId } = router.query
 
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }])
-
-  const selectedSprint = useRef<ArrElement<SprintGetByProjectIdOutput>>(
-    ((data) => {
-      if (!data) return NoSprint
-      for (let i = 0; i < data.length; i++) {
-        if (data[i]?.id === sprintId) return data[i]!
-      }
-      return NoSprint
-    })(sprints.data)
-  )
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
 
   type dummyEntry = {
@@ -53,24 +37,13 @@ export default function Dashboard() {
     return tmp
   }, [])
 
-  if (sprints.isLoading) return null
-
   return (
     <section>
       <div className="h-full px-[300px]">
-        <div className={classNames(sprints.data && sprints.data.length === 0 ? "" : "hidden")}>
+        <div className={classNames(typeof sprintId === "undefined" ? "" : "hidden")}>
           <EmptyResources message="The current project has no sprints. Get started by creating one." />
         </div>
         <nav className="relative z-10 inline-flex w-full items-center justify-center pb-5">
-          <div className={classNames(sprints.data && sprints.data.length === 0 ? "hidden" : "")}>
-            <Select
-              entries={sprints.data!}
-              getId={(t) => t.id}
-              getText={(t) => t.title}
-              selectedState={[selectedSprint.current, (s) => switchSprint(s.id, router)]}
-            />
-          </div>
-          <div className="pr-2" />
           <button
             className={ButtonDefaultCSS}
             onClick={() => {
@@ -80,7 +53,7 @@ export default function Dashboard() {
             Create sprint
           </button>
         </nav>
-        {sprints.data && sprints.data.length > 0 ? (
+        {sprintId ? (
           <div className="grid grid-cols-3 gap-y-2 overflow-hidden bg-white pb-2">
             <div className="col-span-3 flex items-center justify-center">
               <h1 className="text-xl font-semibold">Sprint state overview</h1>
@@ -123,7 +96,6 @@ export default function Dashboard() {
       >
         <SprintForm
           onCreateOrUpdateSuccess={() => {
-            sprints.refetch()
             setIsSprintDetailsOpen(false)
           }}
           onCreateOrUpdateError={() => {
@@ -136,12 +108,7 @@ export default function Dashboard() {
 }
 
 Dashboard.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <Sidebar />
-      {page}
-    </Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

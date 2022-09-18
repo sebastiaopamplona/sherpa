@@ -59,7 +59,11 @@ export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCa
     onError: onDelete?.onError,
   })
 
-  const { reset, register, getValues, setValue } = useForm<StoryInput>({})
+  const { reset, register, getValues, setValue } = useForm<StoryInput>({
+    defaultValues: {
+      estimate: 0,
+    },
+  })
 
   const handleCreateStory = () => {
     let values = getValues()
@@ -142,7 +146,7 @@ export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCa
         </div>
         <div className="col-span-2">
           <Input
-            value={story ? story.estimate : ""}
+            value={story ? story.estimate : 0}
             inputType="number"
             label="Estimate"
             register={register("estimate", { valueAsNumber: true })}

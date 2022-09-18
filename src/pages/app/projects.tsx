@@ -2,12 +2,11 @@ import { ArrElement, ButtonDefaultCSS, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
-import Layout from "../../components/Layout/Layout"
+import Layout from "../../components/Sidebar/Layout"
 import Modal from "../../components/Modal/Modal"
 import ProjectEntry from "../../components/ProjectEntry/ProjectEntry"
 import ProjectForm from "../../components/ProjectForm/ProjectForm"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
-import Sidebar from "../../components/Sidebar/Sidebar"
 import { appRouter } from "../../server/createRouter"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { createSSGHelpers } from "@trpc/react/ssg"
@@ -84,12 +83,7 @@ export default function Projects() {
 }
 
 Projects.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <Sidebar />
-      {page}
-    </Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {

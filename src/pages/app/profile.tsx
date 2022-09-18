@@ -1,7 +1,6 @@
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signIn, useSession } from "next-auth/react"
 
-import Layout from "../../components/Layout/Layout"
-import Sidebar from "../../components/Sidebar/Sidebar"
+import Layout from "../../components/Sidebar/Layout"
 
 export default function Profile() {
   const { data: session, status } = useSession()
@@ -9,7 +8,6 @@ export default function Profile() {
 
   return (
     <section>
-      <h2>Profile</h2>
       <div>
         <p className={`nojs-show ${!session && loading}`}>
           {!session && (
@@ -30,32 +28,17 @@ export default function Profile() {
             <>
               {session.user.image && <span style={{ backgroundImage: `url('${session.user.image}')` }} />}
               <span>
-                <small>Signed in as</small>
-                <br />
-                <strong>{session.user.email ?? session.user.name}</strong>
+                Signed in as <strong>{session.user.email ?? session.user.name}</strong>
               </span>
-              <a
-                href={`/api/auth/signout`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  signOut({ callbackUrl: "/auth/signin" })
-                }}
-              >
-                Sign out
-              </a>
             </>
           )}
         </p>
       </div>
+      <h6 className="italic">(This profile page currently sucks, we are working on making it better.)</h6>
     </section>
   )
 }
 
 Profile.getLayout = function getLayout(page: React.ReactNode) {
-  return (
-    <Layout>
-      <Sidebar />
-      {page}
-    </Layout>
-  )
+  return <Layout>{page}</Layout>
 }

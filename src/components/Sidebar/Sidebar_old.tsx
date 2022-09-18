@@ -9,7 +9,7 @@ import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
 import { useState } from "react"
 
-export default function Sidebar() {
+export default function SidebarOld() {
   const router = useRouter()
   const { data: session, status } = useSession()
   const { projectId, sprintId } = router.query
@@ -77,7 +77,7 @@ export default function Sidebar() {
   if (projects.isLoading) return null
 
   return (
-    <div className="flex min-h-0 w-56 flex-col bg-gray-800">
+    <div className="flex w-56 flex-col bg-gray-800">
       <div className="flex w-56 flex-1 flex-col overflow-y-auto pt-5 pb-4">
         <div className="flex flex-shrink-0 items-center px-4">
           <img
@@ -164,9 +164,4 @@ export default function Sidebar() {
       </div>
     </div>
   )
-}
-
-type project = {
-  id: string
-  name: string
 }
