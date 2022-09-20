@@ -151,8 +151,7 @@ export default function Layout({ children }: Props) {
             <div className="group block w-full flex-shrink-0">
               <div className="flex items-center justify-center">
                 <p className="text-md cursor-pointer font-medium text-gray-300 group-hover:text-gray-200">
-                  {/* TODO(SP): Get version from env */}
-                  Version: 1.0.0
+                  Version: {process.env.SHERPA_VERSION ? process.env.SHERPA_VERSION : "not sure"}
                 </p>
               </div>
               <div className="py-2" />
