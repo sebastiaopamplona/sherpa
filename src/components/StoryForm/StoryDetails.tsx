@@ -1,4 +1,3 @@
-import { ArrElement, EventWrapper } from "../../utils/aux"
 import {
   NoSprint,
   NoUser,
@@ -10,17 +9,18 @@ import {
   StoryTypesArray,
 } from "../../server/data/data"
 import { Story, StoryInput } from "../../server/schemas/schemas"
+import { ArrElement, EventWrapper } from "../../utils/aux"
 
-import Input from "../Input/Input"
-import Select from "../Select/Select"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
 import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
-import Textarea from "../Textarea/Textarea"
 import { UserGetByProjectIdOutput } from "../../server/router/user"
 import { trpc } from "../../utils/trpc"
-import { useForm } from "react-hook-form"
-import { useRouter } from "next/router"
-import { useSession } from "next-auth/react"
-import { useState } from "react"
+import Input from "../Input/Input"
+import Select from "../Select/Select"
+import Textarea from "../Textarea/Textarea"
 
 interface Props {
   story?: StoryInput
@@ -61,7 +61,7 @@ export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCa
 
   const { reset, register, getValues, setValue } = useForm<StoryInput>({
     defaultValues: {
-      estimate: 0,
+      estimate: isCreateMode ? 0 : story.estimate,
     },
   })
 
