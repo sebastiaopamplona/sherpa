@@ -150,7 +150,16 @@ export default function Layout({ children }: Props) {
           <div className="flex flex-shrink-0 bg-gray-700 p-4">
             <div className="group block w-full flex-shrink-0">
               <div className="flex items-center justify-center">
-                <p className="text-md cursor-pointer font-medium text-gray-300 group-hover:text-gray-200">
+                <p
+                  className="text-md cursor-pointer font-medium text-gray-300 group-hover:text-gray-200"
+                  onClick={() => {
+                    window.open(
+                      `https://github.com/sebastiaopamplona/sherpa/releases/tag/${process.env.SHERPA_VERSION}`,
+                      "_blank",
+                      "noopener,noreferrer"
+                    )
+                  }}
+                >
                   Version: {process.env.SHERPA_VERSION ? process.env.SHERPA_VERSION : "not sure"}
                 </p>
               </div>
