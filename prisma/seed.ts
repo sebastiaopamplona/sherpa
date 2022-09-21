@@ -15,9 +15,9 @@ async function seedUsers() {
   }
   const users: user[] = [
     {
-      email: "sebastiaodsrp@gmail.com",
+      email: "admin@sherpa.io",
       password: "secret",
-      name: "Sebastião Pamplona",
+      name: "Sherpa Admin",
       image: "https://avatars.githubusercontent.com/u/27507750?v=4",
     },
     {
@@ -68,7 +68,7 @@ async function seedUsers() {
 
 async function seedProjects() {
   const seb = await prisma.user.findUnique({
-    where: { email: "sebastiaodsrp@gmail.com" },
+    where: { email: "admin@sherpa.io" },
   })
 
   const projects = ["Journdev Demo", "Empty project"]
@@ -214,7 +214,7 @@ async function seedUsersInProjects() {
 
   const usersInProjects: userInProject[] = [
     {
-      email: "sebastiaodsrp@gmail.com",
+      email: "admin@sherpa.io",
       rolesInProjects: [
         {
           role: "admin",
@@ -299,7 +299,7 @@ async function seedSprints() {
 
   const user = await prisma.user.findUnique({
     where: {
-      email: "sebastiaodsrp@gmail.com",
+      email: "admin@sherpa.io",
     },
   })
   const seed = sprintsInProjects.map(async (sip) => {
@@ -367,8 +367,8 @@ async function seedStories() {
       estimate: 8,
 
       projectId: project!.id,
-      creatorEmail: "sebastiaodsrp@gmail.com",
-      assigneeEmail: "sebastiaodsrp@gmail.com",
+      creatorEmail: "admin@sherpa.io",
+      assigneeEmail: "admin@sherpa.io",
       sprintId: sprint!.id,
 
       state: StoryStateEnum.READY,
@@ -401,8 +401,8 @@ async function seedStories() {
       estimate: 16,
 
       projectId: project!.id,
-      creatorEmail: "sebastiaodsrp@gmail.com",
-      assigneeEmail: "sebastiaodsrp@gmail.com",
+      creatorEmail: "admin@sherpa.io",
+      assigneeEmail: "admin@sherpa.io",
       sprintId: sprint!.id,
 
       state: StoryStateEnum.READY,
