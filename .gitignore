@@ -36,5 +36,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 # ide related
-/.vscode
-/.idea
+.vscode
+.idea
