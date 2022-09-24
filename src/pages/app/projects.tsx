@@ -34,6 +34,7 @@ export default function Projects() {
           <button
             className={ButtonDefaultCSS}
             onClick={() => {
+              setCurrentProject(undefined)
               setIsProjectDetailsOpen(true)
             }}
           >
@@ -74,7 +75,14 @@ export default function Projects() {
             setIsProjectDetailsOpen(false)
           }}
           onCreateOrUpdateError={() => {
-            // alert("failed to create sprint")
+            // alert("failed to create project")
+          }}
+          onDeleteSuccess={() => {
+            projects.refetch()
+            setIsProjectDetailsOpen(false)
+          }}
+          onDeleteError={() => {
+            // alert("failed to delete project")
           }}
         />
       </Modal>
