@@ -10,6 +10,7 @@ import { Fragment, useState } from "react"
 import { GiEmptyHourglass, GiFullFolder, GiNotebook, GiSpottedBug, GiSprint } from "react-icons/gi"
 import { Menu, Transition } from "@headlessui/react"
 
+import Image from "next/image"
 import Link from "next/link"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import Select from "../Select/Select"
@@ -114,11 +115,7 @@ export default function Layout({ children }: Props) {
       <div className="hidden bg-gray-800 md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-grow flex-col overflow-y-auto pt-5">
           <div className="flex flex-shrink-0 items-center px-4">
-            <img
-              className="h-8 w-auto "
-              src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-              alt="Workflow"
-            />
+            <Image src="/logo-icon-left.svg" alt="me" width="215" height="50" />
           </div>
           <div className="mt-5 flex flex-grow flex-col">
             <nav className="flex-1 space-y-1 px-2 pb-4">

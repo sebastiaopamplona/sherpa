@@ -3,7 +3,7 @@ import * as Yup from "yup"
 import { ErrorMessage, Field, Formik } from "formik"
 import { getCsrfToken, signIn, useSession } from "next-auth/react"
 
-import { GiGate } from "react-icons/gi"
+import Image from "next/image"
 import { InferGetServerSidePropsType } from "next"
 import InfoBox from "../../components/InfoBox/InfoBox"
 import { classNames } from "../../utils/aux"
@@ -22,12 +22,12 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
   return (
     <>
       {status === "unauthenticated" && (
-        <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-          <div className="flex w-full items-center justify-center pb-4">
-            <GiGate className="h-32 w-32 text-gray-600" aria-hidden="true" />
+        <div className="flex min-h-full flex-col justify-center sm:px-6 lg:px-8">
+          <div className="flex w-full items-center justify-center">
+            <Image src="/logo-black.svg" alt="me" width="420" height="420" />
           </div>
           <div className="flex w-full items-center justify-center pb-4">
-            <h2 className="text-center text-3xl font-extrabold text-gray-600">Sign in to your account</h2>
+            <h2 className="text-center text-xl font-light text-gray-600">Sign in to your account</h2>
           </div>
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             <Formik
@@ -65,7 +65,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                     <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
                     <div className="pb-4">
-                      <label htmlFor="email" className="text-sm font-bold uppercase text-gray-600">
+                      <label htmlFor="email" className="text-sm font-light text-gray-600">
                         Email
                         <Field
                           name="email"
@@ -82,8 +82,8 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                     </div>
 
                     <div className="pb-6">
-                      <label htmlFor="password" className="text-sm font-bold uppercase text-gray-600">
-                        password
+                      <label htmlFor="password" className="text-sm font-light text-gray-600">
+                        Password
                         <Field
                           name="password"
                           aria-label="enter your password"
