@@ -279,7 +279,7 @@ const TimeKeeperEntry: React.FC<{
           onStoryClick(story)
         }}
       >
-        <StoryEntry story={story} showAssignee={false} />
+        <StoryEntry story={story} showAssignee={true} />
       </div>
       {dayRange.map((d) => (
         <TimeKeeperWorklogCell

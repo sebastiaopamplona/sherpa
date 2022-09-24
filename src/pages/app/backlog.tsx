@@ -58,7 +58,7 @@ export default function Backlog() {
                       setIsSlideOverOpen(true)
                     }}
                   >
-                    <StoryEntry story={story} />
+                    <StoryEntry story={story} showAssignee={true} />
                   </li>
                 ))
               ) : (
