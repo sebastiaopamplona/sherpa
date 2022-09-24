@@ -70,7 +70,7 @@ export default function ProjectForm({ project, onCreateOrUpdateSuccess, onCreate
           <button className={ButtonDefaultCSS}>Create project</button>
         </div>
         <div className={classNames(errorMessage === "" ? "hidden" : "flex", "col-span-2 items-center justify-center")}>
-          <div className="rounded-md bg-red-50 p-4">
+          <div className="rounded-sm bg-red-50 p-4">
             <div className="flex">
               <div className="flex-shrink-0">
                 <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />

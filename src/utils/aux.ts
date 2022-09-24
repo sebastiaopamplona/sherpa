@@ -5,19 +5,18 @@ export function classNames(...classes: string[]) {
 }
 
 export function switchProject(projectId: string, router: NextRouter) {
-  window.location.href = pathWithParams(router.pathname, new Map([["projectId", projectId]]))
+  const { sprintId, userId } = router.query
+  window.location.href = pathWithProjSprintUser(router.pathname, projectId, sprintId, userId)
 }
 
 export function switchSprint(sprintId: string, router: NextRouter) {
-  const { projectId } = router.query
+  const { projectId, userId } = router.query
+  window.location.href = pathWithProjSprintUser(router.pathname, projectId, sprintId, userId)
+}
 
-  window.location.href = pathWithParams(
-    router.pathname,
-    new Map([
-      ["projectId", projectId],
-      ["sprintId", sprintId],
-    ])
-  )
+export function switchUser(userId: string, router: NextRouter) {
+  const { projectId, sprintId } = router.query
+  window.location.href = pathWithProjSprintUser(router.pathname, projectId, sprintId, userId)
 }
 
 export function extractBasePathWithProjectId(router: NextRouter): string {
@@ -25,12 +24,18 @@ export function extractBasePathWithProjectId(router: NextRouter): string {
   return `/${split[1]}/${split[2]}`
 }
 
-export function pathWithProjSprint(path: string, projectId: string, sprintId: string): string {
+export function pathWithProjSprintUser(
+  path: string,
+  projectId: string | string[] | undefined,
+  sprintId: string | string[] | undefined,
+  userId: string | string[] | undefined
+): string {
   return pathWithParams(
     path,
     new Map([
-      ["projectId", projectId],
-      ["sprintId", sprintId],
+      ["projectId", projectId as string],
+      ["sprintId", sprintId as string],
+      ["userId", userId as string],
     ])
   )
 }

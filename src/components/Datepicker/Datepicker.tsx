@@ -99,7 +99,7 @@ export default function DatePicker(props: Props) {
           <input
             type="text"
             readOnly
-            className="block w-full rounded-md border-gray-300 font-semibold shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="block w-full rounded-sm border-gray-300 font-semibold shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             placeholder="Select date"
             value={format(selectedDate, "yyyy-MM-dd")}
             onClick={toggleDatepicker}

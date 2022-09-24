@@ -6,7 +6,7 @@ import { useMemo, useState } from "react"
 import EmptyResourcesV2 from "../../components/EmptyResourcesv2/EmptyResourcesv2"
 import { GetServerSidePropsContext } from "next"
 import { IoTodayOutline } from "react-icons/io5"
-import Layout from "../../components/Sidebar/Layout"
+import Layout from "../../components/Layout/Layout"
 import Link from "next/link"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
 import StoryForm from "../../components/StoryForm/StoryForm"
@@ -232,9 +232,9 @@ const TimeKeeperNav: React.FC<{
   onNextWeek: () => void
 }> = ({ currentDate, setCurrentDate, setCurrentDayRange, onToday, onPrevWeek, onNextWeek }) => {
   return (
-    <nav className="relative z-0 inline-flex -space-x-px rounded-md" aria-label="Pagination">
+    <nav className="relative z-0 inline-flex -space-x-px rounded-sm" aria-label="Pagination">
       <div
-        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
+        className="relative inline-flex items-center rounded-sm border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
         onClick={onToday}
       >
         <span className="sr-only">Today</span>

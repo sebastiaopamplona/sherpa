@@ -2,7 +2,7 @@ import { ArrElement, ButtonDefaultCSS, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
-import Layout from "../../components/Sidebar/Layout"
+import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
 import ProjectEntry from "../../components/ProjectEntry/ProjectEntry"
 import ProjectForm from "../../components/ProjectForm/ProjectForm"

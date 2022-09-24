@@ -20,7 +20,7 @@ export default function WorklogEntry(props: Props) {
           readOnly={true}
           value={props.worklog.description}
           rows={Math.min(10, nRows)}
-          className="block w-full resize-none rounded-md border border-gray-100 shadow-sm focus:border-gray-300 focus:ring-gray-300 sm:text-sm"
+          className="block w-full resize-none rounded-sm border border-gray-100 shadow-sm focus:border-gray-300 focus:ring-gray-300 sm:text-sm"
         />
       </div>
       <div className="py-1" />

@@ -17,7 +17,7 @@ export default function Textarea(props: Props) {
           defaultValue={props.value ? props.value : ""}
           rows={props.nRows ? props.nRows : 3}
           maxLength={1500}
-          className="block min-h-[200px] w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className="block min-h-[200px] w-full rounded-sm border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           {...props.register}
         />
       </div>

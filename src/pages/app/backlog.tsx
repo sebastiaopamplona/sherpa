@@ -2,7 +2,7 @@ import { ButtonDefaultCSS, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
-import Layout from "../../components/Sidebar/Layout"
+import Layout from "../../components/Layout/Layout"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
 import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryInput } from "../../server/schemas/schemas"

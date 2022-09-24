@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
-import Layout from "../../components/Sidebar/Layout"
+import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
 import SprintForm from "../../components/SprintForm/SprintForm"
 import { appRouter } from "../../server/createRouter"

@@ -7,7 +7,7 @@ interface Props {
 
 export default function InfoBox({ message, level }: Props) {
   return (
-    <div className="rounded-md bg-red-50 p-4">
+    <div className="rounded-sm bg-red-50 p-4">
       <div className="flex">
         <div className="flex-shrink-0">
           {(() => {

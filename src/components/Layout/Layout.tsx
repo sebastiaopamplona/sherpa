@@ -1,10 +1,10 @@
 import {
   ArrElement,
   classNames,
-  pathWithParams,
-  pathWithProjSprint,
+  pathWithProjSprintUser,
   switchProject,
   switchSprint,
+  switchUser,
 } from "../../utils/aux"
 import { Fragment, useState } from "react"
 import { GiEmptyHourglass, GiFullFolder, GiNotebook, GiSpottedBug, GiSprint } from "react-icons/gi"
@@ -15,6 +15,7 @@ import Link from "next/link"
 import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import Select from "../Select/Select"
 import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
+import { UserGetByProjectIdOutput } from "../../server/router/user"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
@@ -28,13 +29,37 @@ const userNavigation = [
   { name: "Sign out", href: "/api/auth/signout" },
 ]
 
+const navigation = [
+  {
+    name: "Time Keeper",
+    icon: GiEmptyHourglass,
+    href: "/app/timekeeper",
+  },
+  {
+    name: "Sprints",
+    icon: GiSprint,
+    href: "/app/sprints",
+  },
+  {
+    name: "Backlog",
+    icon: GiNotebook,
+    href: "/app/backlog",
+  },
+  {
+    name: "Projects",
+    icon: GiFullFolder,
+    href: "/app/projects",
+  },
+]
+
 export default function Layout({ children }: Props) {
   const router = useRouter()
   const { data: session, status } = useSession()
-  const { projectId, sprintId } = router.query
+  const { projectId, sprintId, userId } = router.query
 
   const [selectedProject, setSelectedProject] = useState<ArrElement<ProjectGetByUserIdOutput>>()
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>()
+  const [selectedUser, setSelectedUser] = useState<ArrElement<UserGetByProjectIdOutput>>()
 
   const projects = trpc.useQuery(["project.getByUserId", { userId: session?.userid as string }], {
     onSuccess: (data) => {
@@ -58,57 +83,19 @@ export default function Layout({ children }: Props) {
     },
   })
 
-  const navigation = [
-    {
-      name: "Time Keeper",
-      icon: GiEmptyHourglass,
-      href: pathWithParams(
-        "/app/timekeeper",
-        new Map([
-          ["projectId", projectId],
-          ["sprintId", sprintId],
-        ])
-      ),
+  const users = trpc.useQuery(["user.getByProjectId", { projectId: selectedProject?.id as string }], {
+    onSuccess: (data) => {
+      data.forEach((u) => {
+        if (u.id === userId) {
+          setSelectedUser(u)
+          return
+        }
+      })
     },
-    {
-      name: "Sprints",
-      icon: GiSprint,
-      href: pathWithParams(
-        "/app/sprints",
-        new Map([
-          ["projectId", projectId],
-          ["sprintId", sprintId],
-        ])
-      ),
-    },
-    {
-      name: "Backlog",
-      icon: GiNotebook,
-      href: pathWithParams(
-        "/app/backlog",
-        new Map([
-          ["projectId", projectId],
-          ["sprintId", sprintId],
-        ])
-      ),
-    },
-    {
-      name: "Projects",
-      icon: GiFullFolder,
-      href: pathWithParams(
-        "/app/projects",
-        new Map([
-          ["projectId", projectId],
-          ["sprintId", sprintId],
-        ])
-      ),
-    },
-  ]
-
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  })
 
   // FIXME(SP): this might lead to super awkward blinking of the layout
-  if (projects.isLoading || sprints.isLoading) return null
+  if (projects.isLoading || sprints.isLoading || users.isLoading) return null
 
   return (
     <div>
@@ -126,7 +113,7 @@ export default function Layout({ children }: Props) {
                     router.asPath.includes(item.href)
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "group flex min-w-fit items-center rounded-md px-2 py-2 text-sm font-medium"
+                    "group flex min-w-fit items-center rounded-sm px-2 py-2 text-sm font-medium"
                   )}
                 >
                   <item.icon
@@ -136,7 +123,7 @@ export default function Layout({ children }: Props) {
                     )}
                     aria-hidden="true"
                   />
-                  <Link href={item.href}>
+                  <Link href={pathWithProjSprintUser(item.href, projectId, sprintId, userId)}>
                     {/* FIXME(SP): anchor inside Link? o.O */}
                     <a className="w-full">{item.name}</a>
                   </Link>
@@ -164,7 +151,7 @@ export default function Layout({ children }: Props) {
               <div className="flex items-center justify-center">
                 <button
                   type="button"
-                  className="inline-flex animate-bounce items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                  className="inline-flex animate-bounce items-center rounded-sm border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                   onClick={() => {
                     window.open(
                       "https://github.com/sebastiaopamplona/sherpa/issues/new",
@@ -226,6 +213,28 @@ export default function Layout({ children }: Props) {
             ) : (
               <></>
             )}
+            {selectedUser ? (
+              <>
+                <div className="flex flex-shrink-0 items-center justify-center text-gray-200">User:</div>
+                <div className="flex flex-shrink-0 items-center justify-center px-4">
+                  <Select
+                    entries={users.data!}
+                    getId={(t) => t.id}
+                    getText={(t) => t.name}
+                    getImage={(t) => t.image}
+                    selectedState={[
+                      selectedUser,
+                      (u) => {
+                        switchUser(u.id, router)
+                      },
+                    ]}
+                  />
+                </div>
+                <div className="p-2" />
+              </>
+            ) : (
+              <></>
+            )}
             <div className="absolute right-[14px] top-[12px] items-center md:ml-6">
               {/* Profile dropdown */}
               <Menu as="div" className="relative ml-3">
@@ -244,11 +253,11 @@ export default function Layout({ children }: Props) {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-sm bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {userNavigation.map((item) => (
                       <Menu.Item key={item.name}>
                         {({ active }) => (
-                          <Link href={pathWithProjSprint(item.href, projectId as string, sprintId as string)}>
+                          <Link href={pathWithProjSprintUser(item.href, projectId, sprintId, userId)}>
                             <p
                               className={classNames(
                                 active ? "bg-gray-100" : "",

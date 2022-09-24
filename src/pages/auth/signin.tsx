@@ -72,7 +72,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                           aria-label="enter your email"
                           aria-required="true"
                           type="text"
-                          className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                          className="block w-full appearance-none rounded-sm border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                         />
                       </label>
 
@@ -89,7 +89,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                           aria-label="enter your password"
                           aria-required="true"
                           type="password"
-                          className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                          className="block w-full appearance-none rounded-sm border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                         />
                       </label>
 
@@ -101,7 +101,7 @@ export default function SignIn({ csrfToken }: InferGetServerSidePropsType<typeof
                     <div className="flex items-center justify-center">
                       <button
                         type="submit"
-                        className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        className="flex w-full justify-center rounded-sm border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                       >
                         {formik.isSubmitting ? "Please wait..." : "Sign In"}
                       </button>
