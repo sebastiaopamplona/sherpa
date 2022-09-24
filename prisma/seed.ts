@@ -429,6 +429,81 @@ async function seedStories() {
         },
       ],
     },
+    {
+      title: "Story C",
+      description: "yada yada yada",
+      estimate: 16,
+
+      projectId: project!.id,
+      creatorEmail: "admin@sherpa.io",
+      assigneeEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+
+      state: StoryStateEnum.NEW,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [],
+    },
+    {
+      title: "Story D",
+      description: "yada yada yada",
+      estimate: 16,
+
+      projectId: project!.id,
+      creatorEmail: "admin@sherpa.io",
+      assigneeEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+
+      state: StoryStateEnum.IN_PROGRESS,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [],
+    },
+    {
+      title: "Story E",
+      description: "yada yada yada",
+      estimate: 16,
+
+      projectId: project!.id,
+      creatorEmail: "admin@sherpa.io",
+      assigneeEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+
+      state: StoryStateEnum.DELIVERED,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [],
+    },
+    {
+      title: "Story F",
+      description: "yada yada yada",
+      estimate: 16,
+
+      projectId: project!.id,
+      creatorEmail: "admin@sherpa.io",
+      assigneeEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+
+      state: StoryStateEnum.IN_REVIEW,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [],
+    },
+    {
+      title: "Story G",
+      description: "yada yada yada",
+      estimate: 16,
+
+      projectId: project!.id,
+      creatorEmail: "admin@sherpa.io",
+      assigneeEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+
+      state: StoryStateEnum.DONE,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [],
+    },
   ]
 
   const seed1 = stories.map(async (s) => {
