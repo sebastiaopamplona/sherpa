@@ -13,9 +13,6 @@ import { worklogRouter } from "./router/worklog"
 export const appRouter = createRouter()
   .transformer(superjson)
   .middleware(async ({ ctx, next, path, type }) => {
-    console.log("path: ", path)
-    console.log("ctx.session: ", ctx.session)
-
     // FIXME: When there's a refresh in the browser, the first time this
     // request is hit the ctx is null resulting in the TRPCError bellow.
     // The second time, the ctx is not null and it works fine.
