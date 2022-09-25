@@ -7,11 +7,8 @@ import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
 import SprintForm from "../../components/SprintForm/SprintForm"
-import { appRouter } from "../../server/createRouter"
 import { checkIfShouldRedirect } from "../../server/aux"
-import { createSSGHelpers } from "@trpc/react/ssg"
 import { getJourndevAuthSession } from "../../server/session"
-import superjson from "superjson"
 import { useRouter } from "next/router"
 
 export default function Dashboard() {
@@ -118,19 +115,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   if (redirect !== null) return redirect
 
-  const ssg = await createSSGHelpers({
-    router: appRouter,
-    // @ts-ignore TODO(SP): this might be a real issue, so far it's not
-    ctx: ctx,
-    transformer: superjson,
-  })
-
-  // Prefetching
-  await ssg.fetchQuery("sprint.getByProjectId", { projectId: projectId as string })
-
   return {
-    props: {
-      trpcState: ssg.dehydrate(),
-    },
+    props: {},
   }
 }

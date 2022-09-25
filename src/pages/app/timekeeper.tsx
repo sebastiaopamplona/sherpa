@@ -12,11 +12,8 @@ import StoryEntry from "../../components/StoryEntry/StoryEntry"
 import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryGetForTimekeeperOutput } from "../../server/router/story"
 import { StoryInput } from "../../server/schemas/schemas"
-import { appRouter } from "../../server/createRouter"
 import { checkIfShouldRedirect } from "../../server/aux"
-import { createSSGHelpers } from "@trpc/react/ssg"
 import { getJourndevAuthSession } from "../../server/session"
-import superjson from "superjson"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 
@@ -344,27 +341,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   if (redirect !== null) return redirect
 
-  const ssg = await createSSGHelpers({
-    router: appRouter,
-    // @ts-ignore TODO(SP): this might be a real issue, so far it's not
-    ctx: ctx,
-    transformer: superjson,
-  })
-
-  const businessDays: Date[] = getWeekBusinessDays(new Date())
-
-  // Prefetching
-  await ssg.fetchQuery("sprint.getByProjectId", { projectId: projectId as string })
-  await ssg.fetchQuery("story.getForTimekeeper", {
-    projectId: projectId as string,
-    sprintId: sprintId as string,
-    startDate: businessDays[0]!,
-    endDate: businessDays[businessDays.length - 1]!,
-  })
-
   return {
-    props: {
-      trpcState: ssg.dehydrate(),
-    },
+    props: {},
   }
 }
