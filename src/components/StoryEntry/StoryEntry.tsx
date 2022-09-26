@@ -36,7 +36,7 @@ export default function StoryEntry({ story, showAssignee }: Props) {
                 : story.state === StoryStateEnum.READY
                 ? "bg-catpuccin-blue-3 text-catpuccin-blue-3-dark"
                 : story.state === StoryStateEnum.IN_PROGRESS
-                ? "bg-catpuccin-yellow-1 text-catpuccin-yellow-1-dark"
+                ? "pulse animate-pulse bg-catpuccin-yellow-1 text-catpuccin-yellow-1-dark"
                 : story.state === StoryStateEnum.DELIVERED
                 ? "bg-catpuccin-blue-1 text-catpuccin-blue-1-dark"
                 : story.state === StoryStateEnum.IN_REVIEW
