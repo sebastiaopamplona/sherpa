@@ -174,9 +174,9 @@ model Worklog {
 }
 
 enum StoryState {
+  IN_PROGRESS
   NEW
   READY
-  IN_PROGRESS
   DELIVERED
   IN_REVIEW
   DONE
