@@ -61,7 +61,7 @@ export default function Layout({ children }: Props) {
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>()
   const [selectedUser, setSelectedUser] = useState<ArrElement<UserGetByProjectIdOutput>>()
 
-  const projects = trpc.useQuery(["project.getByUserId", { userId: session?.userid as string }], {
+  const projects = trpc.useQuery(["project.getByUserId", { userId: userId as string }], {
     onSuccess: (data) => {
       data.forEach((p) => {
         if (p.id === projectId) {
@@ -72,7 +72,7 @@ export default function Layout({ children }: Props) {
     },
   })
 
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: selectedProject?.id as string }], {
+  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {
     onSuccess: (data) => {
       data.forEach((s) => {
         if (s.id === sprintId) {
@@ -83,7 +83,7 @@ export default function Layout({ children }: Props) {
     },
   })
 
-  const users = trpc.useQuery(["user.getByProjectId", { projectId: selectedProject?.id as string }], {
+  const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {
     onSuccess: (data) => {
       data.forEach((u) => {
         if (u.id === userId) {
