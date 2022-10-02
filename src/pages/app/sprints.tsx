@@ -110,12 +110,7 @@ Dashboard.getLayout = function getLayout(page: React.ReactNode) {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getJourndevAuthSession(ctx)
-  const { projectId, sprintId } = ctx.query
   const redirect = await checkIfShouldRedirect("/app/sprints", session!.userid as string, ctx.query)
-
   if (redirect !== null) return redirect
-
-  return {
-    props: {},
-  }
+  return { props: {} }
 }

@@ -1,4 +1,4 @@
-import { ArrElement, classNames, pathWithParams } from "../../utils/aux"
+import { ArrElement, pathWithParams, pathWithProjSprintUser } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
 import { addDays, format, getWeek, isSameDay, setHours, startOfWeek, subDays } from "date-fns"
 import { useMemo, useState } from "react"
@@ -21,7 +21,7 @@ import { useRouter } from "next/router"
 const timekeeperGridCell = "col-span-1 border-2 flex items-center justify-center"
 export default function TimeKeeper() {
   const router = useRouter()
-  const { projectId, sprintId } = router.query
+  const { projectId, sprintId, userId } = router.query
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
@@ -31,6 +31,7 @@ export default function TimeKeeper() {
     {
       projectId: projectId as string,
       sprintId: sprintId as string,
+      assigneeId: userId as string,
       startDate: currentDayRange[0]!,
       endDate: currentDayRange[currentDayRange.length - 1]!,
     },
@@ -72,28 +73,29 @@ export default function TimeKeeper() {
         ) : !(stories.data && stories.data.length !== 0) ? (
           <EmptyResourcesV2>
             <div className="grid grid-cols-1 content-center gap-1">
-              <p className="flex items-center justify-center">The sprint current sprint has no stories.</p>
-              <p>
-                Head over to the{" "}
+              <p className="flex items-center justify-center">
+                The selected user has no stories in the selected sprint.
+              </p>
+              <p className="flex items-center justify-center">
+                Head over to the
                 <Link
-                  href={pathWithParams(
+                  href={pathWithProjSprintUser(
                     "/app/backlog",
-                    new Map([
-                      ["projectId", projectId],
-                      ["sprintId", sprintId],
-                    ])
+                    projectId as string,
+                    sprintId as string,
+                    userId as string
                   )}
                 >
-                  <a className="text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
+                  <a className="px-1 text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
                     backlog page
                   </a>
-                </Link>{" "}
+                </Link>
                 and create one.
               </p>
             </div>
           </EmptyResourcesV2>
         ) : (
-          <div className={classNames("grid grid-cols-11 content-center gap-[2px]")}>
+          <div className={"grid min-w-[1304px] grid-cols-11 content-center gap-[2px]"}>
             <div className="col-span-11 flex items-end justify-end py-2">
               <TimeKeeperNav
                 currentDate={currentDate}
@@ -336,12 +338,7 @@ const getWeekBusinessDays = (currentDate: Date): Date[] => {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getJourndevAuthSession(ctx)
-  const { projectId, sprintId } = ctx.query
   const redirect = await checkIfShouldRedirect("/app/timekeeper", session!.userid as string, ctx.query)
-
   if (redirect !== null) return redirect
-
-  return {
-    props: {},
-  }
+  return { props: {} }
 }

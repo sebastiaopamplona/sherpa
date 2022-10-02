@@ -98,7 +98,7 @@ export default function Layout({ children }: Props) {
   if (projects.isLoading || sprints.isLoading || users.isLoading) return null
 
   return (
-    <div>
+    <div className="min-w-[1792px]">
       <div className="hidden bg-gray-800 md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
         <div className="flex flex-grow flex-col overflow-y-auto pt-5">
           <div className="flex flex-shrink-0 items-center px-4">
@@ -113,7 +113,7 @@ export default function Layout({ children }: Props) {
                     router.asPath.includes(item.href)
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "group flex min-w-fit items-center rounded-sm px-2 py-2 text-sm font-medium"
+                    "group flex min-w-fit items-center rounded-md px-2 py-2 text-sm font-medium"
                   )}
                 >
                   <item.icon
@@ -151,7 +151,7 @@ export default function Layout({ children }: Props) {
               <div className="flex items-center justify-center">
                 <button
                   type="button"
-                  className="inline-flex animate-bounce items-center rounded-sm border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                  className="inline-flex animate-bounce items-center rounded-md border border-transparent bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                   onClick={() => {
                     window.open(
                       "https://github.com/sebastiaopamplona/sherpa/issues/new",
@@ -187,7 +187,6 @@ export default function Layout({ children }: Props) {
                     ]}
                   />
                 </div>
-                <div className="p-2" />
               </>
             ) : (
               <></>
@@ -253,7 +252,7 @@ export default function Layout({ children }: Props) {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-sm bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {userNavigation.map((item) => (
                       <Menu.Item key={item.name}>
                         {({ active }) => (

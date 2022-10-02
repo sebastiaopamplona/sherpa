@@ -1,6 +1,6 @@
+import { Listbox, Transition } from "@headlessui/react"
 import { CheckIcon, SelectorIcon } from "@heroicons/react/solid"
 import { Fragment, useEffect } from "react"
-import { Listbox, Transition } from "@headlessui/react"
 
 import { classNames } from "../../utils/aux"
 
@@ -54,7 +54,7 @@ const Select = <T extends { id: string }>({
               <></>
             )}
             <div className="relative">
-              <Listbox.Button className="relative w-full cursor-default rounded-sm border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+              <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
                 <span className="flex items-center">
                   {getImage ? (
                     <img src={getImage(selected)} alt="" className="h-5 w-5 flex-shrink-0 rounded-full" />
@@ -78,7 +78,7 @@ const Select = <T extends { id: string }>({
                 <Listbox.Options
                   className={classNames(
                     upwards ? "bottom-11" : "",
-                    "absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-sm bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                    "absolute z-10 mt-1 max-h-36 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                   )}
                 >
                   {entries.map((entry: T) => (

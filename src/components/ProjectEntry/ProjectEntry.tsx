@@ -19,7 +19,7 @@ export default function ProjectEntry({ project }: Props) {
           {project.name}
         </p>
         <div className={classNames(project.id === (projectId as string) ? "flex flex-shrink-0" : "hidden")}>
-          <p className="inline-flex rounded-sm bg-green-100 px-2 text-xs font-semibold uppercase leading-5 text-green-800">
+          <p className="inline-flex rounded-md bg-green-100 px-2 text-xs font-semibold uppercase leading-5 text-green-800">
             Current
           </p>
         </div>
