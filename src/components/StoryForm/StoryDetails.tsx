@@ -174,7 +174,7 @@ export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCa
       <div className="absolute inset-x-0 bottom-0 w-full justify-end border-t-[1px] border-gray-200 bg-white px-4 py-4">
         <button
           type="button"
-          className="rounded-sm border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           onClick={() => {
             onCancel()
             reset(Story.default)
@@ -184,7 +184,7 @@ export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCa
         </button>
         <button
           type="button"
-          className="ml-4 inline-flex justify-center rounded-sm border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           onClick={() => {
             isCreateMode ? handleCreateStory() : handleUpdateStory()
           }}
@@ -194,7 +194,7 @@ export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCa
         {!isCreateMode && (
           <button
             type="button"
-            className="ml-4 inline-flex justify-center rounded-sm border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             onClick={() => {
               handleDeleteStory()
             }}

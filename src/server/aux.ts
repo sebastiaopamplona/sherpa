@@ -1,18 +1,18 @@
 import { ParsedUrlQuery } from "querystring"
-import { pathWithParams } from "../utils/aux"
+import { pathWithProjSprintUser } from "../utils/aux"
 import { prisma } from "./db/client"
 
-export async function checkIfShouldRedirect(path: string, userId: string, query: ParsedUrlQuery) {
+export async function checkIfShouldRedirect(path: string, loggedInUserId: string, query: ParsedUrlQuery) {
   let shouldRedirect: boolean = false
 
-  let { projectId, sprintId } = query
+  let { projectId, sprintId, userId } = query
 
   if (typeof projectId === "undefined") {
     shouldRedirect = true
 
     const userRolesProject = await prisma.userRolesInProjects.findMany({
       where: {
-        userId: userId,
+        userId: loggedInUserId,
       },
     })
 
@@ -50,13 +50,7 @@ export async function checkIfShouldRedirect(path: string, userId: string, query:
   if (shouldRedirect) {
     return {
       redirect: {
-        destination: pathWithParams(
-          "/app/timekeeper",
-          new Map([
-            ["projectId", projectId],
-            ["sprintId", sprintId],
-          ])
-        ),
+        destination: pathWithProjSprintUser("/app/timekeeper", projectId, sprintId, userId),
         permanent: false,
       },
     }

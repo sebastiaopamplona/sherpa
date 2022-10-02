@@ -77,6 +77,7 @@ export const storyRouter = createRouter()
     input: z.object({
       projectId: z.string(),
       sprintId: z.string().nullish(),
+      assigneeId: z.string(),
       startDate: z.date(),
       endDate: z.date(),
     }),
@@ -85,6 +86,7 @@ export const storyRouter = createRouter()
         where: {
           projectId: input.projectId,
           sprintId: input.sprintId,
+          assigneeId: input.assigneeId,
         },
         orderBy: {
           state: "asc",

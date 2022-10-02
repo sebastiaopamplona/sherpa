@@ -51,7 +51,6 @@ export default function StoryEntry({ story, showAssignee }: Props) {
           </p>
         </div>
       </div>
-      <div className="py-1" />
       <div className="flex justify-between text-xs">
         <div className="flex">
           <p className="flex items-center text-gray-500">

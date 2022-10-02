@@ -12,6 +12,8 @@ export default function CreateProject() {
           router.push(pathWithParams("/app/timekeeper", new Map([["projectId", projectId]])))
         }}
         onCreateOrUpdateError={() => {}}
+        onDeleteError={() => {}}
+        onDeleteSuccess={() => {}}
       />
     </div>
   )

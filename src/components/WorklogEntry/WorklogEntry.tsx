@@ -14,13 +14,13 @@ export default function WorklogEntry(props: Props) {
   const nRows = props.worklog.description.split(/\r\n|\r|\n/).length
 
   return (
-    <div className="rounded-sm border-2  px-4 pt-4 pb-3 sm:px-6">
+    <div className="rounded-md border-2  px-4 pt-4 pb-3 sm:px-6">
       <div className="flex items-center justify-between">
         <textarea
           readOnly={true}
           value={props.worklog.description}
           rows={Math.min(10, nRows)}
-          className="block w-full resize-none rounded-sm border border-gray-100 shadow-sm focus:border-gray-300 focus:ring-gray-300 sm:text-sm"
+          className="block w-full resize-none rounded-md border border-gray-100 shadow-sm focus:border-gray-300 focus:ring-gray-300 sm:text-sm"
         />
       </div>
       <div className="py-1" />
