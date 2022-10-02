@@ -8,8 +8,8 @@ import { GetServerSidePropsContext } from "next"
 import { IoTodayOutline } from "react-icons/io5"
 import Layout from "../../components/Layout/Layout"
 import Link from "next/link"
+import StoryDetails from "../../components/StoryDetails/StoryDetails"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
-import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryGetForTimekeeperOutput } from "../../server/router/story"
 import { StoryInput } from "../../server/schemas/schemas"
 import { checkIfShouldRedirect } from "../../server/aux"
@@ -174,7 +174,7 @@ export default function TimeKeeper() {
           </div>
         )}
       </div>
-      <StoryForm
+      <StoryDetails
         story={currentStory}
         isAddingWorklog={isAddingWorklog}
         worklogDay={worklogDay}

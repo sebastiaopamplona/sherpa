@@ -1,11 +1,11 @@
+import { EventWrapper, classNames } from "../../utils/aux"
 import { SVGProps, useEffect, useMemo, useState } from "react"
-import { classNames, EventWrapper } from "../../utils/aux"
 
-import { UserIcon } from "@heroicons/react/solid"
-import { StoryInput } from "../../server/schemas/schemas"
 import SlideOver from "../SlideOver/SlideOver"
-import StoryDetails from "./StoryDetails"
-import StoryWorklogs from "./StoryWorklogs"
+import StoryForm from "./StoryForm"
+import { StoryInput } from "../../server/schemas/schemas"
+import { UserIcon } from "@heroicons/react/solid"
+import Worklogs from "./Worklogs"
 
 type Tab = {
   name: string
@@ -30,7 +30,7 @@ interface Props {
   onWorklogDelete?: EventWrapper
 }
 
-export default function StoryForm({
+export default function StoryDetails({
   isOpen,
   onClose,
   story,
@@ -109,7 +109,7 @@ export default function StoryForm({
         </div>
       </div>
       <div className={classNames(selectedTab.name === "Details" ? "" : "hidden")}>
-        <StoryDetails
+        <StoryForm
           story={story}
           onCreate={onStoryCreate}
           onUpdate={onStoryUpdate}
@@ -118,7 +118,7 @@ export default function StoryForm({
         />
       </div>
       <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
-        <StoryWorklogs
+        <Worklogs
           story={story}
           isAddingWorklog={isAddingWorklog}
           worklogDay={worklogDay}
