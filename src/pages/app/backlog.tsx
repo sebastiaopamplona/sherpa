@@ -3,8 +3,8 @@ import { ButtonDefaultCSS, classNames } from "../../utils/aux"
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
+import StoryDetails from "../../components/StoryDetails/StoryDetails"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
-import StoryForm from "../../components/StoryForm/StoryForm"
 import { StoryInput } from "../../server/schemas/schemas"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
@@ -18,7 +18,6 @@ export default function Backlog() {
   const stories = trpc.useQuery(["story.getAll", { projectId: projectId as string }])
 
   const [currentStory, setCurrentStory] = useState<StoryInput>()
-  const [isStoryDetailsModalOpen, setIsStoryDetailsModalOpen] = useState<boolean>(false)
   const [isSlideOverOpen, setIsSlideOverOpen] = useState<boolean>(false)
 
   if (stories.isLoading) return null
@@ -68,7 +67,7 @@ export default function Backlog() {
           </div>
         </div>
       </div>
-      <StoryForm
+      <StoryDetails
         story={currentStory}
         isOpen={isSlideOverOpen}
         onClose={() => {

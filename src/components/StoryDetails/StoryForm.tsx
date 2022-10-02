@@ -32,7 +32,7 @@ interface Props {
   onCancel: () => void
 }
 
-export default function StoryDetails({ story, onCreate, onUpdate, onDelete, onCancel }: Props) {
+export default function StoryForm({ story, onCreate, onUpdate, onDelete, onCancel }: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query

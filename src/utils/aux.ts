@@ -57,8 +57,8 @@ export function pathWithParams(path: string, params: Map<string, string | string
 }
 
 export type EventWrapper = {
-  onSuccess: () => void
-  onError: () => void
+  onSuccess: (data?: any) => void
+  onError: (data?: any) => void
 }
 
 // TODO: move this to a module.css file
