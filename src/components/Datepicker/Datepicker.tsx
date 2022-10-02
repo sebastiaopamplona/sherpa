@@ -1,4 +1,4 @@
-import { addMonths, addYears, format, getDay, getDaysInMonth, isEqual, subMonths, subYears } from "date-fns"
+import { addMonths, addYears, format, getDay, getDaysInMonth, isEqual, isToday, subMonths, subYears } from "date-fns"
 import { useEffect, useState } from "react"
 
 import { classNames } from "../../utils/aux"
@@ -42,9 +42,6 @@ export default function DatePicker(props: Props) {
         break
     }
   }
-
-  const isToday = (date: number) =>
-    isEqual(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), date), selectedDate)
 
   const setDateValue = (date: number) => () => {
     setSelectedDate(new Date(datepickerHeaderDate.getFullYear(), datepickerHeaderDate.getMonth(), date))
@@ -189,7 +186,9 @@ export default function DatePicker(props: Props) {
                         <div
                           onClick={setDateValue(d)}
                           className={`cursor-pointer rounded-full text-center text-sm leading-loose transition duration-100 ease-in-out ${
-                            isToday(d) ? "bg-blue-500 text-white" : "text-gray-700 hover:bg-blue-200"
+                            isToday(new Date(datepickerHeaderDate.getFullYear(), datepickerHeaderDate.getMonth(), d))
+                              ? "bg-blue-500 text-white"
+                              : "text-gray-700 hover:bg-blue-200"
                           }`}
                         >
                           {d}

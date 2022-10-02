@@ -138,13 +138,14 @@ export default function Layout({ children }: Props) {
                   className="text-md cursor-pointer font-medium text-gray-300 group-hover:text-gray-200"
                   onClick={() => {
                     window.open(
-                      `https://github.com/sebastiaopamplona/sherpa/releases/tag/${process.env.SHERPA_VERSION}`,
+                      `https://github.com/sebastiaopamplona/sherpa/releases/tag/${process.env.NEXT_PUBLIC_SHERPA_VERSION}`,
                       "_blank",
                       "noopener,noreferrer"
                     )
                   }}
                 >
-                  Version: {process.env.SHERPA_VERSION ? process.env.SHERPA_VERSION : "not sure"}
+                  Version:{" "}
+                  {process.env.NEXT_PUBLIC_SHERPA_VERSION ? process.env.NEXT_PUBLIC_SHERPA_VERSION : "not sure"}
                 </p>
               </div>
               <div className="py-2" />

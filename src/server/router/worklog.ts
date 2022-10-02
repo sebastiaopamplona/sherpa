@@ -118,6 +118,7 @@ export const worklogRouter = createRouter()
           description: input.description,
           effort: input.effort,
           remainingEffort: input.remainingEffort,
+          date: input.date,
         },
       })
 
