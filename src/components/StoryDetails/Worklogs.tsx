@@ -17,48 +17,15 @@ interface Props {
   onCancel: () => void
 }
 
-export default function Worklogs({
-  story,
-  isAddingWorklog,
-  worklogDay,
-  onCreate,
-  onUpdate,
-  onDelete,
-  onCancel,
-}: Props) {
-  // const remainingEffort = useMemo(() => {
-  //   if (!story) return 0
-
-  //   if (story.worklogs.length === 0) {
-  //     return story.estimate
-  //   } else {
-  //     let worklogSum: number = 0
-  //     story.worklogs.forEach((w: WorklogInput) => (worklogSum += w.effort))
-  //     return story.estimate - worklogSum
-  //   }
-  // }, [story])
-
+export default function Worklogs({ story, isAddingWorklog, worklogDay, onCreate }: Props) {
   const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog ? isAddingWorklog : false)
   const [worklogs, setWorklogs] = useState<WorklogInput[]>(story ? story.worklogs : [])
-  const [editingWorklog, setEditingWorklog] = useState<{ worklog: WorklogInput; idx: number } | undefined>(undefined)
-
-  // TODO(SP): use date to insert
-  const insertWorklog = (w: WorklogInput, idx: number = -1) => {
-    if (idx === -1) {
-      setWorklogs([w, ...worklogs])
-    } else {
-      let tmp: WorklogInput[] = worklogs
-      tmp.splice(idx, 0, w)
-      setWorklogs(tmp)
-    }
-  }
 
   return (
     <div className="p-6">
       <div className={classNames(isWrittingWorklog ? "" : "hidden")}>
         <WorklogForm
-          storyId={story!.id}
-          worklog={editingWorklog?.worklog}
+          storyId={story?.id}
           worklogDay={worklogDay}
           onCreate={{
             onSuccess: (data) => {
@@ -70,10 +37,6 @@ export default function Worklogs({
               onCreate?.onError()
             },
           }}
-          // onCreate={() => {
-          //   onCreate()
-          //   setIsWrittingWorklog(false)
-          // }}
           onCancel={() => {
             setIsWrittingWorklog(false)
           }}
@@ -104,19 +67,7 @@ export default function Worklogs({
           <div className="col-span-6 shadow-sm">
             <ul role="list">
               {worklogs.map((worklog: WorklogInput, idx: number) => (
-                <li
-                  className="cursor-pointer py-1"
-                  key={worklog.id}
-                  onClick={() => {
-                    // alert("hey")
-                    // setEditingWorklog({ worklog: worklog, idx: idx })
-                    // setWorklogs(worklogs.filter((w: WorklogInput) => w.id !== worklog.id))
-                    // // setSelectedDate(worklog.date)
-                    // // setValue("description", worklog.description)
-                    // // setValue("effort", worklog.effort)
-                    // setIsWrittingWorklog(true)
-                  }}
-                >
+                <li className="cursor-pointer py-1" key={worklog.id} onClick={() => {}}>
                   <WorklogEntry worklog={worklog} />
                 </li>
               ))}
