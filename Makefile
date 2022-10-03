@@ -10,12 +10,8 @@ startlocal:
 		-e POSTGRES_PASSWORD=secret \
 		postgres
 	sleep 5
-	npx prisma migrate reset -f
-	npm run dev
-
-startremote:
-	npx prisma migrate reset -f
-	npm run dev
+	SHERPA_DATABASE_URL="postgresql://postgres:secret@localhost:5432/postgres" npx prisma migrate reset -f
+	SHERPA_DATABASE_URL="postgresql://postgres:secret@localhost:5432/postgres" npm run dev
 
 teardown:
 	docker rm -f journdev-local-db
