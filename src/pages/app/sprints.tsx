@@ -8,6 +8,7 @@ import Modal from "../../components/Modal/Modal"
 import SprintForm from "../../components/SprintForm/SprintForm"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
+import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
@@ -64,6 +65,8 @@ const data = [
 export default function Dashboard() {
   const router = useRouter()
   const { projectId, sprintId } = router.query
+
+  const sprintStateBreakdown = trpc.useQuery(["sprint.getStateBreakdown", { sprintId: sprintId as string }])
 
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
 

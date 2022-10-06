@@ -121,6 +121,8 @@ model Sprint {
 
   stories Story[]
 
+  sprintStateBreakdown SprintStateBreakdown[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -173,6 +175,24 @@ model Worklog {
   updatedAt DateTime @updatedAt
 }
 
+model SprintStateBreakdown {
+  id String @id @default(uuid())
+
+  inProgress Int @default(0)
+  new        Int @default(0)
+  ready      Int @default(0)
+  delivered  Int @default(0)
+  inReview   Int @default(0)
+  done       Int @default(0)
+  blocked    Int @default(0)
+  deleted    Int @default(0)
+
+  sprintId String?
+  sprint   Sprint? @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
 enum StoryState {
   IN_PROGRESS
   NEW
@@ -180,6 +200,7 @@ enum StoryState {
   DELIVERED
   IN_REVIEW
   DONE
+  BLOCKED
   DELETED
 }
 

@@ -22,7 +22,7 @@ export default function SlideOver(props: Props) {
         as="div"
         className="pointer-events-none relative z-10"
         onClose={() => {}}
-        onKeyDown={(e) => {
+        onKeyDown={(e: { key: string }) => {
           console.log(e.key)
           if (e.key == "Escape") {
             setIsLeaving(true)

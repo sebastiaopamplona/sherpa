@@ -37,6 +37,7 @@ export const StoryStates: Map<string, string> = new Map([
   [StoryStateEnum.IN_REVIEW, "IN REVIEW"],
   [StoryStateEnum.DELIVERED, "DELIVERED"],
   [StoryStateEnum.DONE, "DONE"],
+  [StoryStateEnum.BLOCKED, "BLOCKED"],
   [StoryStateEnum.DELETED, "DELETED"],
 ])
 
@@ -47,6 +48,7 @@ export const StoryStatesArray: StoryState[] = [
   { id: StoryStateEnum.IN_REVIEW, text: "IN REVIEW" },
   { id: StoryStateEnum.DELIVERED, text: "DELIVERED" },
   { id: StoryStateEnum.DONE, text: "DONE" },
+  { id: StoryStateEnum.BLOCKED, text: "BLOCKED" },
   { id: StoryStateEnum.DELETED, text: "DELETED" },
 ]
 
