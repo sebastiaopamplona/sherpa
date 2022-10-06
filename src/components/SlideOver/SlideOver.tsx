@@ -1,7 +1,8 @@
 import { Dialog, Transition } from "@headlessui/react"
+import { Fragment, useState } from "react"
 
 import { AiFillCloseSquare } from "react-icons/ai"
-import { Fragment } from "react"
+import { classNames } from "../../utils/aux"
 
 interface Props {
   children: React.ReactNode
@@ -13,9 +14,21 @@ interface Props {
 }
 
 export default function SlideOver(props: Props) {
+  const [isLeaving, setIsLeaving] = useState<boolean>(false)
+
   return (
     <Transition.Root show={props.isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={props.onClose}>
+      <Dialog
+        as="div"
+        className="pointer-events-none relative z-10"
+        onClose={() => {}}
+        onKeyDown={(e) => {
+          console.log(e.key)
+          if (e.key == "Escape") {
+            setIsLeaving(true)
+          }
+        }}
+      >
         <div className="fixed inset-0" />
 
         <div className="fixed inset-0 overflow-hidden">
@@ -41,7 +54,9 @@ export default function SlideOver(props: Props) {
                             <button
                               type="button"
                               className="rounded-md bg-indigo-700 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                              onClick={props.onClose}
+                              onClick={() => {
+                                setIsLeaving(true)
+                              }}
                             >
                               <span className="sr-only">Close panel</span>
                               <AiFillCloseSquare className="h-6 w-6" aria-hidden="true" />
@@ -54,7 +69,46 @@ export default function SlideOver(props: Props) {
                       </div>
                     </div>
 
-                    {props.children}
+                    <div
+                      className={classNames(
+                        isLeaving
+                          ? "absolute top-[25%] left-[25%] z-10 w-80 rounded-sm border bg-gray-100 p-4 shadow-lg"
+                          : "hidden"
+                      )}
+                    >
+                      <div className="flex items-center justify-center ">
+                        <p>
+                          You might have <span className="font-semibold">unsaved</span> changes.
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <p>Do you want to leave?</p>
+                      </div>
+                      <div className="py-2" />
+                      <div className="flex items-center justify-center">
+                        <button
+                          type="button"
+                          className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={() => {
+                            setIsLeaving(false)
+                          }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          className="ml-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          onClick={() => {
+                            setIsLeaving(false)
+                            props.onClose()
+                          }}
+                        >
+                          Leave
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>{props.children}</div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
