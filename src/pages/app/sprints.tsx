@@ -1,4 +1,4 @@
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { ButtonDefaultCSS, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
@@ -12,80 +12,15 @@ import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
-const data = [
-  {
-    name: "Day 1",
-    ready: 10,
-    in_progress: 0,
-    done: 0,
-  },
-  {
-    name: "Day 2",
-    ready: 7,
-    in_progress: 3,
-    done: 0,
-  },
-  {
-    name: "Day 3",
-    ready: 6,
-    in_progress: 3,
-    done: 1,
-  },
-  {
-    name: "Day 4",
-    ready: 4,
-    in_progress: 3,
-    done: 3,
-  },
-  {
-    name: "Day 5",
-    ready: 4,
-    in_progress: 3,
-    done: 3,
-  },
-  {
-    name: "Day 6",
-    ready: 2,
-    in_progress: 3,
-    done: 5,
-  },
-  {
-    name: "Day 7",
-  },
-  {
-    name: "Day 8",
-  },
-  {
-    name: "Day 9",
-  },
-  {
-    name: "Day 7",
-  },
-]
 export default function Dashboard() {
   const router = useRouter()
-  const { projectId, sprintId } = router.query
+  const { sprintId } = router.query
 
   const sprintStateBreakdown = trpc.useQuery(["sprint.getStateBreakdown", { sprintId: sprintId as string }])
 
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
 
-  // type dummyEntry = {
-  //   name: string
-  //   ready: number
-  //   started: number
-  //   delivered: number
-  // }
-  // const dummyData = useMemo(() => {
-  //   let tmp: dummyEntry[] = []
-  //   tmp.push({ name: "Day 0", ready: 10, started: 0, delivered: 0 })
-  //   for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 10, started: 0, delivered: 0 })
-  //   for (let i = 0; i < 2 * 8; i++) tmp.push({ name: "", ready: 7, started: 3, delivered: 0 })
-  //   for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 5, started: 3, delivered: 2 })
-  //   for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 2, started: 3, delivered: 5 })
-  //   for (let i = 0; i < 1 * 8; i++) tmp.push({ name: "", ready: 0, started: 0, delivered: 10 })
-  //   return tmp
-  // }, [])
+  if (sprintStateBreakdown.isLoading) return null
 
   return (
     <section>
@@ -113,7 +48,7 @@ export default function Dashboard() {
                 <AreaChart
                   width={500}
                   height={400}
-                  data={data}
+                  data={sprintStateBreakdown.data}
                   margin={{
                     top: 10,
                     right: 30,
@@ -122,12 +57,17 @@ export default function Dashboard() {
                   }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
+                  <XAxis dataKey="day" />
                   <YAxis />
                   <Tooltip />
-                  <Area type="monotone" dataKey="done" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
-                  <Area type="monotone" dataKey="in_progress" stackId="1" stroke="#8884d8" fill="#8884d8" />
-                  <Area type="monotone" dataKey="ready" stackId="1" stroke="#ffc658" fill="#ffc658" />
+                  <Legend verticalAlign="bottom" height={36} />
+                  <Area type="linear" dataKey="done" stackId="1" stroke="#15803d" fill="#4ade80" />
+                  <Area type="linear" dataKey="inReview" stackId="1" stroke="#0f766e" fill="#2dd4bf" />
+                  <Area type="linear" dataKey="delivered" stackId="1" stroke="#0e7490" fill="#22d3ee" />
+                  <Area type="linear" dataKey="inProgress" stackId="1" stroke="#92400e" fill="#fbbf24" />
+                  <Area type="linear" dataKey="ready" stackId="1" stroke="#7e22ce" fill="#e9d5ff" />
+                  <Area type="linear" dataKey="new" stackId="1" stroke="#6d28d9" fill="#a78bfa" />
+                  <Area type="linear" dataKey="blocked" stackId="1" stroke="#be123c" fill="#fb7185" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
