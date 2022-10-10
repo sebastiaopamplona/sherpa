@@ -1,7 +1,7 @@
 import { Sprint, SprintStateBreakdown, SprintStateBreakdownOutput } from "../schemas/schemas"
-import { addBusinessDays, differenceInBusinessDays, isAfter, isBefore, isSameDay } from "date-fns"
-import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+import { addBusinessDays, differenceInBusinessDays, format, isAfter } from "date-fns"
 
+import { StoryState as StoryStateEnum } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
@@ -25,6 +25,8 @@ export const sprintRouter = createRouter()
           creatorId: input.creatorId,
         },
       })
+
+      updateSprintStateBreakdown(sprint.id)
 
       return {
         id: sprint.id,
@@ -94,62 +96,27 @@ export const sprintRouter = createRouter()
         },
       })
 
-      const today = new Date("2022-10-04")
+      const today = new Date()
       const sprintDays = differenceInBusinessDays(sprint.endAt, sprint.startAt) + 1
-
-      // 1. iterate sprintStateBreakdowns
-
-      let curr = { i: 0, date: sprint.startAt }
-      let out = new Array<SprintStateBreakdownOutput>(sprintDays)
+      let sprintStoryStateMap = new Map<string, SprintStateBreakdownOutput>()
       for (const s of sprintStateBreakdown) {
-        if (isAfter(s.createdAt, curr.date)) {
-          curr.i = Math.min(curr.i + 1, out.length - 1)
-          curr.date = addBusinessDays(curr.date, 1)
-        }
-
-        out[curr.i] = {
-          idx: curr.i,
-          inProgress: s.inProgress,
-          new: s.new,
-          ready: s.ready,
-          delivered: s.delivered,
-          inReview: s.inReview,
-          done: s.done,
-          blocked: s.blocked,
-          deleted: s.deleted,
-        }
+        sprintStoryStateMap.set(dateAsKey(s.createdAt), { ...s })
       }
 
-      console.log("1 out:", out)
-
-      const lastAdded = out[curr.i]
-
-      // 2. iterate until today, cloning last breakdown
-
-      for (let i = curr.i + 2; i < out.length && (isBefore(curr.date, today) || isSameDay(curr.date, today)); i++) {
-        out[i] = lastAdded
-        out[i].idx = 88 + i
-        curr.i++
-        curr.date = addBusinessDays(curr.date, 1)
-      }
-
-      // 3. iterate intil endAt, setting null
-
-      for (let i = curr.i; i < out.length; i++) {
-        out[i] = {
-          idx: i,
-          inProgress: null,
-          new: null,
-          ready: null,
-          delivered: null,
-          inReview: null,
-          done: null,
-          blocked: null,
-          deleted: null,
+      let out = new Array<SprintStateBreakdownOutput>()
+      let lastState: SprintStateBreakdownOutput | undefined
+      let d: number = 0
+      for (; d < sprintDays && !isAfter(addBusinessDays(sprint.startAt, d), today); d++) {
+        const key: string = dateAsKey(addBusinessDays(sprint.startAt, d))
+        if (sprintStoryStateMap.has(key)) {
+          lastState = sprintStoryStateMap.get(key)
         }
+        out.push({ day: datePretty(addBusinessDays(sprint.startAt, d)), ...lastState! })
       }
 
-      console.log("out:", out)
+      for (let i = d; i < sprintDays; i++) {
+        out.push({ day: datePretty(addBusinessDays(sprint.startAt, i)) })
+      }
 
       return out
     },
@@ -177,6 +144,69 @@ export const sprintRouter = createRouter()
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })
+
+const dateAsKey: (d: Date) => string = (d) => {
+  return format(d, "dd/MM")
+}
+
+const datePretty: (d: Date) => string = (d) => {
+  return `${format(d, "eeeeee")}, ${format(d, "d/M")}`
+}
+
+export const updateSprintStateBreakdown: (sprintId: string) => void = async (sprintId) => {
+  type StoryStateCount = Array<{ state: string; count: bigint }>
+  const count = await prisma.$queryRaw`
+          SELECT
+            "public"."Story"."state", COUNT("public"."Story"."id")
+          FROM
+            "public"."Story"
+          WHERE
+            "public"."Story"."sprintId" = ${sprintId}
+          GROUP BY "public"."Story"."state"`
+
+  let sbd: SprintStateBreakdownOutput = {
+    sprintId: sprintId,
+    createdAt: new Date(),
+  }
+
+  for (const c of count as StoryStateCount) {
+    switch (c.state) {
+      case StoryStateEnum.IN_PROGRESS:
+        sbd.inProgress = Number(c.count)
+        break
+      case StoryStateEnum.NEW:
+        sbd.new = Number(c.count)
+        break
+      case StoryStateEnum.READY:
+        sbd.ready = Number(c.count)
+        break
+      case StoryStateEnum.DELIVERED:
+        sbd.delivered = Number(c.count)
+        break
+      case StoryStateEnum.IN_REVIEW:
+        sbd.inReview = Number(c.count)
+        break
+      case StoryStateEnum.DONE:
+        sbd.done = Number(c.count)
+        break
+      case StoryStateEnum.BLOCKED:
+        sbd.blocked = Number(c.count)
+        break
+    }
+  }
+
+  const sbdStored = await prisma.sprintStateBreakdown.create({ data: { ...sbd } })
+  await prisma.sprintStateBreakdown.deleteMany({
+    where: {
+      id: {
+        not: sbdStored.id,
+      },
+      createdAt: {
+        gte: setHours(setMinutes(setSeconds(new Date(), 0), 0), 0),
+      },
+    },
+  })
+}
 
 export type SprintCreateOutput = inferMutationOutput<"sprint.create">
 export type SprintGetAllOutput = inferQueryOutput<"sprint.getAll">

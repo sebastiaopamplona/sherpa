@@ -2,8 +2,10 @@ import { NoSprint, NoUser } from "../data/data"
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
 
 import { Story } from "../schemas/schemas"
+import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
+import { updateSprintStateBreakdown } from "./sprint"
 import { z } from "zod"
 
 export const storyRouter = createRouter()
@@ -14,7 +16,6 @@ export const storyRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
-      console.log("input: ", input)
       const story = await prisma.story.create({
         data: {
           title: input.title,
@@ -33,6 +34,10 @@ export const storyRouter = createRouter()
           type: input.type,
         },
       })
+
+      if (input.sprintId !== NoSprint.id) {
+        updateSprintStateBreakdown(input.sprintId)
+      }
 
       return {
         id: story.id,
@@ -145,26 +150,32 @@ export const storyRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
-      console.log("input: ", input)
       const story = await prisma.story.update({
         where: {
           id: input.id as string,
         },
         data: {
-          title: input.title,
-          description: input.description,
-          estimate: input.estimate,
+          title: input.title ? input.title : undefined,
+          description: input.description ? input.description : undefined,
+          estimate: input.estimate ? input.estimate : undefined,
 
-          assigneeId: input.assigneeId === NoUser.id ? null : input.assigneeId,
-          sprintId: input.sprintId === NoSprint.id ? null : input.sprintId,
+          assigneeId: input.assigneeId ? (input.assigneeId === NoUser.id ? null : input.assigneeId) : undefined,
+          sprintId: input.sprintId ? (input.sprintId === NoSprint.id ? null : input.sprintId) : undefined,
 
-          githubId: input.githubId,
-          jiraId: input.jiraId,
+          githubId: input.githubId ? input.githubId : undefined,
+          jiraId: input.jiraId ? input.jiraId : undefined,
 
-          state: input.state,
-          type: input.type,
+          state: input.state ? input.state : undefined,
+          type: input.type ? input.type : undefined,
         },
       })
+
+      if (!story) throw new TRPCError({ code: "NOT_FOUND" })
+
+      // state has changed or story was moved to another sprint
+      if (input.state || (story.sprintId && input.sprintId !== NoSprint.id)) {
+        updateSprintStateBreakdown(story.sprintId!)
+      }
 
       return {
         id: story.id,
@@ -178,11 +189,15 @@ export const storyRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
-      await prisma.story.delete({
+      const story = await prisma.story.delete({
         where: {
           id: input.id,
         },
       })
+
+      if (story.sprintId) {
+        updateSprintStateBreakdown(story.sprintId)
+      }
     },
   })
 
