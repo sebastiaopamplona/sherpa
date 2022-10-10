@@ -77,7 +77,20 @@ export default function StoryForm({ story, onCreate, onUpdate, onDelete, onCance
     let values = getValues()
     values.id = story!.id
 
-    updateStoryM.mutate(values)
+    let updatedFields: StoryInput = {
+      id: story!.id,
+      title: values.title != story!.title ? values.title : null,
+      description: values.description != story!.description ? values.description : null,
+      estimate: values.estimate != story!.estimate ? values.estimate : null,
+      state: values.state != story!.state ? values.state : null,
+      type: values.type != story!.type ? values.type : null,
+      githubId: values.githubId != story!.githubId ? values.githubId : null,
+      jiraId: values.jiraId != story!.jiraId ? values.jiraId : null,
+      assigneeId: values.assigneeId != story!.assigneeId ? values.assigneeId : null,
+      sprintId: values.sprintId != story!.sprintId ? values.sprintId : null,
+    }
+
+    updateStoryM.mutate(updatedFields)
   }
 
   const handleDeleteStory = () => {

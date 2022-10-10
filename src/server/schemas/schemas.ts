@@ -66,11 +66,11 @@ export type WorklogInput = z.infer<typeof Worklog>
 export const Story: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
 
-  title: z.string().default(""),
-  description: z.string(),
-  estimate: z.number(),
-  state: z.enum(["NEW", "READY", "IN_PROGRESS", "DELIVERED", "IN_REVIEW", "DONE", "DELETED"]),
-  type: z.enum(["DEVELOPMENT", "DOCUMENTATION", "BUG_FIXING", "MAINTENANCE", "SUPPORT"]),
+  title: z.string().default("").nullish(),
+  description: z.string().nullish(),
+  estimate: z.number().nullish(),
+  state: z.enum(["NEW", "READY", "IN_PROGRESS", "DELIVERED", "IN_REVIEW", "DONE", "BLOCKED", "DELETED"]).nullish(),
+  type: z.enum(["DEVELOPMENT", "DOCUMENTATION", "BUG_FIXING", "MAINTENANCE", "SUPPORT"]).nullish(),
 
   githubId: z.string().nullish(),
   jiraId: z.string().nullish(),
@@ -114,3 +114,17 @@ export const User: Zod.AnyZodObject = z.object({
 })
 export const Users = z.array(User)
 export type UserInput = z.infer<typeof User>
+
+export const SprintStateBreakdown: Zod.AnyZodObject = z.object({
+  day: z.string(),
+
+  inProgress: z.number().nullish(),
+  new: z.number().nullish(),
+  ready: z.number().nullish(),
+  delivered: z.number().nullish(),
+  inReview: z.number().nullish(),
+  done: z.number().nullish(),
+  blocked: z.number().nullish(),
+  deleted: z.number().nullish(),
+})
+export type SprintStateBreakdownOutput = z.infer<typeof SprintStateBreakdown>

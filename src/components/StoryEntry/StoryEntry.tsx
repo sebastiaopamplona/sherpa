@@ -32,17 +32,19 @@ export default function StoryEntry({ story, showAssignee }: Props) {
           <p
             className={classNames(
               story.state === StoryStateEnum.NEW
-                ? "bg-catpuccin-purple-1 text-catpuccin-purple-1-dark"
+                ? "bg-violet-400 text-violet-700"
                 : story.state === StoryStateEnum.READY
-                ? "bg-catpuccin-blue-3 text-catpuccin-blue-3-dark"
+                ? "bg-purple-200 text-purple-700"
                 : story.state === StoryStateEnum.IN_PROGRESS
-                ? "pulse animate-pulse bg-catpuccin-yellow-1 text-catpuccin-yellow-1-dark"
+                ? "pulse animate-pulse bg-amber-400 text-amber-800"
                 : story.state === StoryStateEnum.DELIVERED
-                ? "bg-catpuccin-blue-1 text-catpuccin-blue-1-dark"
+                ? "bg-cyan-400 text-cyan-700"
                 : story.state === StoryStateEnum.IN_REVIEW
-                ? "bg-catpuccin-blue-2 text-catpuccin-blue-2-dark"
+                ? "bg-teal-400 text-teal-700"
                 : story.state === StoryStateEnum.DONE
-                ? "bg-catpuccin-green-1 text-catpuccin-green-1-dark"
+                ? "bg-green-400 text-green-700"
+                : story.state === StoryStateEnum.BLOCKED
+                ? "bg-rose-400 text-rose-700"
                 : "",
               "inline-flex rounded-sm px-2 text-xs font-semibold uppercase leading-5"
             )}

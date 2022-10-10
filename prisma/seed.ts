@@ -1,8 +1,8 @@
 import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as StoryTypeEnum } from "@prisma/client"
-import { addDays, setHours, subDays } from "date-fns"
 
 import { DefaultPrismaClient } from "../src/server/db/client"
 import bcrypt from "bcrypt"
+import { setHours } from "date-fns"
 
 const prisma = DefaultPrismaClient()
 
@@ -71,7 +71,7 @@ async function seedProjects() {
     where: { email: "admin@sherpa.io" },
   })
 
-  const projects = ["Journdev Demo", "Empty project"]
+  const projects = ["Sherpa Demo", "Empty project"]
   const seed = projects.map(async (p) => {
     await prisma.project.create({
       data: {
@@ -218,7 +218,7 @@ async function seedUsersInProjects() {
       rolesInProjects: [
         {
           role: "admin",
-          project: "Journdev Demo",
+          project: "Sherpa Demo",
         },
         {
           role: "admin",
@@ -231,7 +231,7 @@ async function seedUsersInProjects() {
       rolesInProjects: [
         {
           role: "editor",
-          project: "Journdev Demo",
+          project: "Sherpa Demo",
         },
         {
           role: "browser",
@@ -284,16 +284,10 @@ async function seedSprints() {
   }
   const sprintsInProjects: sprintInProject[] = [
     {
-      sprint: "Sprint 01 (complete)",
-      project: "Journdev Demo",
-      startAt: subDays(new Date(), 21),
-      endAt: subDays(new Date(), 8),
-    },
-    {
-      sprint: "Sprint 02 (ongoing)",
-      project: "Journdev Demo",
-      startAt: subDays(new Date(), 7),
-      endAt: addDays(new Date(), 7),
+      sprint: "Sprint 01",
+      project: "Sherpa Demo",
+      startAt: new Date("2022-09-28"),
+      endAt: new Date("2022-10-11"),
     },
   ]
 
@@ -327,13 +321,13 @@ async function seedSprints() {
 async function seedStories() {
   const project = await prisma.project.findUnique({
     where: {
-      name: "Journdev Demo",
+      name: "Sherpa Demo",
     },
   })
 
   const sprint = await prisma.sprint.findFirst({
     where: {
-      title: "Sprint 01 (complete)",
+      title: "Sprint 01",
     },
   })
 
@@ -360,132 +354,185 @@ async function seedStories() {
     remainingEffort: number
   }
 
+  type stateBreakdown = {
+    sprintId: string
+
+    inProgress: number
+    new: number
+    ready: number
+    delivered: number
+    inReview: number
+    done: number
+    blocked: number
+    deleted: number
+
+    createdAt: Date
+  }
+
+  const common = {
+    projectId: project!.id,
+    sprintId: sprint!.id,
+    description: "yada yada yada",
+    creatorEmail: "admin@sherpa.io",
+    assigneeEmail: "admin@sherpa.io",
+  }
+
   const stories: story[] = [
     {
-      title: "Story A",
-      description: "yada yada yada",
-      estimate: 8,
+      ...common,
+      title: "Story F",
+      estimate: 16,
 
-      projectId: project!.id,
-      creatorEmail: "admin@sherpa.io",
-      assigneeEmail: "admin@sherpa.io",
-      sprintId: sprint!.id,
+      state: StoryStateEnum.DONE,
+      type: StoryTypeEnum.MAINTENANCE,
 
-      state: StoryStateEnum.NEW,
+      worklogs: [
+        {
+          description: "yada",
+          date: setHours(new Date("2022-09-28"), 1),
+          effort: 8,
+          remainingEffort: 1,
+        },
+        {
+          description: "yada",
+          date: setHours(new Date("2022-09-29"), 1),
+          effort: 2,
+          remainingEffort: 1,
+        },
+      ],
+    },
+    {
+      ...common,
+      title: "Story E",
+      estimate: 16,
+
+      state: StoryStateEnum.IN_REVIEW,
       type: StoryTypeEnum.DEVELOPMENT,
 
       worklogs: [
         {
           description: "yada",
-          date: setHours(subDays(new Date(), 20), 1),
+          date: setHours(new Date("2022-09-29"), 1),
+          effort: 2,
+          remainingEffort: 1,
+        },
+        {
+          description: "yada",
+          date: setHours(new Date("2022-09-29"), 1),
+          effort: 4,
+          remainingEffort: 2,
+        },
+      ],
+    },
+    {
+      ...common,
+      title: "Story A",
+      estimate: 8,
+
+      state: StoryStateEnum.DELIVERED,
+      type: StoryTypeEnum.DEVELOPMENT,
+
+      worklogs: [
+        {
+          description: "yada",
+          date: setHours(new Date("2022-09-30"), 1),
           effort: 2,
           remainingEffort: 6,
         },
         {
           description: "yada",
-          date: setHours(subDays(new Date(), 19), 1),
+          date: setHours(new Date("2022-09-30"), 1),
           effort: 4,
           remainingEffort: 2,
         },
         {
           description: "yada",
-          date: setHours(subDays(new Date(), 18), 1),
+          date: setHours(new Date("2022-09-30"), 1),
           effort: 2,
           remainingEffort: 0,
         },
       ],
     },
     {
+      ...common,
       title: "Story B",
-      description: "yada yada yada",
       estimate: 16,
 
-      projectId: project!.id,
-      creatorEmail: "admin@sherpa.io",
-      assigneeEmail: "admin@sherpa.io",
-      sprintId: sprint!.id,
-
-      state: StoryStateEnum.READY,
+      state: StoryStateEnum.IN_PROGRESS,
       type: StoryTypeEnum.DEVELOPMENT,
 
       worklogs: [
         {
           description: "yada",
-          date: setHours(subDays(new Date(), 18), 1),
-          effort: 6,
-          remainingEffort: 10,
-        },
-        {
-          description: "yada",
-          date: setHours(subDays(new Date(), 17), 1),
+          date: setHours(new Date("2022-10-03"), 1),
           effort: 8,
           remainingEffort: 2,
         },
         {
           description: "yada",
-          date: setHours(subDays(new Date(), 16), 1),
+          date: setHours(new Date("2022-10-04"), 1),
           effort: 2,
-          remainingEffort: 0,
+          remainingEffort: 1,
         },
       ],
     },
     {
+      ...common,
       title: "Story C",
-      description: "yada yada yada",
       estimate: 16,
 
-      projectId: project!.id,
-      creatorEmail: "admin@sherpa.io",
-      assigneeEmail: "admin@sherpa.io",
-      sprintId: sprint!.id,
-
-      state: StoryStateEnum.IN_PROGRESS,
+      state: StoryStateEnum.READY,
       type: StoryTypeEnum.DEVELOPMENT,
 
       worklogs: [],
     },
     {
-      title: "Story D",
-      description: "yada yada yada",
-      estimate: 16,
-
-      projectId: project!.id,
-      creatorEmail: "admin@sherpa.io",
-      assigneeEmail: "admin@sherpa.io",
-      sprintId: sprint!.id,
-
-      state: StoryStateEnum.DELIVERED,
-      type: StoryTypeEnum.DEVELOPMENT,
-
-      worklogs: [],
-    },
-    {
-      title: "Story E",
-      description: "yada yada yada",
-      estimate: 16,
-
-      projectId: project!.id,
-      creatorEmail: "admin@sherpa.io",
-      assigneeEmail: "admin@sherpa.io",
-      sprintId: sprint!.id,
-
-      state: StoryStateEnum.IN_REVIEW,
-      type: StoryTypeEnum.DEVELOPMENT,
-
-      worklogs: [],
-    },
-    {
+      ...common,
       title: "Story F",
-      description: "yada yada yada",
       estimate: 16,
 
-      projectId: project!.id,
-      creatorEmail: "admin@sherpa.io",
-      assigneeEmail: "admin@sherpa.io",
-      sprintId: sprint!.id,
+      state: StoryStateEnum.READY,
+      type: StoryTypeEnum.BUG_FIXING,
 
-      state: StoryStateEnum.DONE,
-      type: StoryTypeEnum.DEVELOPMENT,
+      worklogs: [],
+    },
+    {
+      ...common,
+      title: "Story G",
+      estimate: 16,
+
+      state: StoryStateEnum.READY,
+      type: StoryTypeEnum.BUG_FIXING,
+
+      worklogs: [],
+    },
+    {
+      ...common,
+      title: "Story H",
+      estimate: 16,
+
+      state: StoryStateEnum.READY,
+      type: StoryTypeEnum.DOCUMENTATION,
+
+      worklogs: [],
+    },
+    {
+      ...common,
+      title: "Story I",
+      estimate: 16,
+
+      state: StoryStateEnum.READY,
+      type: StoryTypeEnum.SUPPORT,
+
+      worklogs: [],
+    },
+    {
+      ...common,
+      title: "Story J",
+      estimate: 16,
+
+      state: StoryStateEnum.READY,
+      type: StoryTypeEnum.SUPPORT,
 
       worklogs: [],
     },
@@ -536,6 +583,101 @@ async function seedStories() {
   })
 
   await Promise.all(seed1)
+
+  const stateBreakdowns: stateBreakdown[] = [
+    {
+      sprintId: sprint!.id,
+
+      inProgress: 0,
+      new: 0,
+      ready: stories.length,
+      delivered: 0,
+      inReview: 0,
+      done: 0,
+      blocked: 0,
+      deleted: 0,
+
+      createdAt: new Date("2022-09-28"),
+    },
+    {
+      sprintId: sprint!.id,
+
+      inProgress: 1,
+      new: 0,
+      ready: stories.length - 1,
+      delivered: 0,
+      inReview: 0,
+      done: 0,
+      blocked: 0,
+      deleted: 0,
+
+      createdAt: new Date("2022-09-28"),
+    },
+    {
+      sprintId: sprint!.id,
+
+      inProgress: 1,
+      new: 0,
+      ready: stories.length - 2,
+      delivered: 1,
+      inReview: 0,
+      done: 0,
+      blocked: 0,
+      deleted: 0,
+
+      createdAt: new Date("2022-09-29"),
+    },
+    {
+      sprintId: sprint!.id,
+
+      inProgress: 1,
+      new: 0,
+      ready: stories.length - 2,
+      delivered: 0,
+      inReview: 1,
+      done: 0,
+      blocked: 0,
+      deleted: 0,
+
+      createdAt: new Date("2022-09-30"),
+    },
+    {
+      sprintId: sprint!.id,
+
+      inProgress: 1,
+      new: 0,
+      ready: stories.length - 3,
+      delivered: 1,
+      inReview: 1,
+      done: 0,
+      blocked: 0,
+      deleted: 0,
+
+      createdAt: new Date("2022-09-30"),
+    },
+  ]
+
+  const seed3 = stateBreakdowns.map(async (s) => {
+    await prisma.sprintStateBreakdown.create({
+      data: {
+        sprintId: s.sprintId,
+
+        inProgress: s.inProgress,
+        new: s.new,
+        ready: s.ready,
+        delivered: s.delivered,
+        inReview: s.inReview,
+        done: s.done,
+        blocked: s.blocked,
+        deleted: s.deleted,
+
+        createdAt: s.createdAt,
+      },
+    })
+  })
+
+  await Promise.all(seed3)
+
   console.log("Stories seeded")
 }
 
