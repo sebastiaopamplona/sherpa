@@ -33,9 +33,11 @@ export const appRouter = createRouter()
       logColor = FgRed
     }
 
-    console.log(
-      `${logColor}{"path": "${path}", "type": "${type}", "duration": "${durationMs}ms", "ok": "${result.ok}"}\x1b[0m`
-    )
+    if (process.env.DEBUG) {
+      console.log(
+        `${logColor}{"path": "${path}", "type": "${type}", "duration": "${durationMs}ms", "ok": "${result.ok}"}\x1b[0m`
+      )
+    }
 
     return result
   })

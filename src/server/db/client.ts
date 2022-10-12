@@ -27,14 +27,16 @@ export function DefaultPrismaClient(): PrismaClient {
   })
 
   prismaClient.$on("query", (e) => {
-    let logColor: string = FgWhite
-    if (e.duration > 200 && e.duration < 300) {
-      logColor = FgYellow
-    } else if (e.duration > 300) {
-      logColor = FgRed
-    }
+    if (process.env.DEBUG) {
+      let logColor: string = FgWhite
+      if (e.duration > 200 && e.duration < 300) {
+        logColor = FgYellow
+      } else if (e.duration > 300) {
+        logColor = FgRed
+      }
 
-    console.log(`${logColor}{"query": "${e.query}", "params": "${e.params}", "duration": "${e.duration}ms"}\x1b[0m`)
+      console.log(`${logColor}{"query": "${e.query}", "params": "${e.params}", "duration": "${e.duration}ms"}\x1b[0m`)
+    }
   })
 
   return prismaClient
