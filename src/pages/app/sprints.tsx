@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   return (
     <section>
-      <div className="h-full px-[300px]">
+      <div className="h-full px-[200px]">
         <div className={classNames(typeof sprintId === "undefined" ? "" : "hidden")}>
           <EmptyResources message="The current project has no sprints. Get started by creating one." />
         </div>
