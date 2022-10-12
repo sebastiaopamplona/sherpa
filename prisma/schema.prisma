@@ -175,6 +175,7 @@ model Story {
   sprint   Sprint? @relation(fields: [sprintId], references: [id], onDelete: SetNull)
 
   worklogs Worklog[]
+  storyLogs SprintActionLog[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
