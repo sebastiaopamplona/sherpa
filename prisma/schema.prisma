@@ -12,6 +12,26 @@ datasource db {
   url      = env("SHERPA_DATABASE_URL")
 }
 
+
+model SprintActionLog {
+  id String @id @default(uuid())
+
+  userId String 
+  user User @relation(name: "author", fields: [userId], references: [id], onDelete: Cascade) // TODO(EP): onDelete might not be NoAction
+
+  sprintId String
+  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  storyId String
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade) // TODO(EP): onDelete might not be NoAction
+
+  // TODO(EP): eventualy will need to add:
+  // storyAssigneeId String
+  // storyAssignee Story @relation(name: "storyAssignee", fields: [storyAssigneeId], references: [assigneeId], onDelete: NoAction)
+
+  type SprintActionLogType
+}
+
 model User {
   id String @id @default(uuid())
 
@@ -27,6 +47,7 @@ model User {
   createdProjects Project[]
   worklogs        Worklog[]
   userProjectCapacity UserProjectCapacity[]
+  sprintActionsLogs  SprintActionLog[]   @relation(name: "author")
 
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
@@ -124,6 +145,7 @@ model Sprint {
   stories Story[]
 
   sprintStateBreakdown SprintStateBreakdown[]
+  sprintActionsLogs SprintActionLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -230,4 +252,10 @@ enum StoryType {
   BUG_FIXING
   MAINTENANCE
   SUPPORT
+}
+
+enum SprintActionLogType {
+  STORY
+  WORKLOG
+  SPRINT
 }

@@ -1,4 +1,10 @@
-import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as StoryTypeEnum } from "@prisma/client"
+import {
+  SprintActionLogType,
+  StoryState,
+  StoryState as StoryStateEnum,
+  StoryType,
+  StoryType as StoryTypeEnum,
+} from "@prisma/client"
 import { addBusinessDays, setHours } from "date-fns"
 
 import { DefaultPrismaClient } from "../src/server/db/client"
@@ -683,6 +689,111 @@ async function seedStories() {
   console.log("Stories seeded")
 }
 
+async function seedSprintActionsLogs() {
+  const sprint = await prisma.sprint.findFirst({
+    where: {
+      title: "Sprint 01 (complete)",
+    },
+  })
+
+  const storyA = await prisma.story.findFirst({
+    where: {
+      title: "Story A",
+    },
+  })
+
+  const storyB = await prisma.story.findFirst({
+    where: {
+      title: "Story B",
+    },
+  })
+
+  const storyC = await prisma.story.findFirst({
+    where: {
+      title: "Story C",
+    },
+  })
+
+  const storyD = await prisma.story.findFirst({
+    where: {
+      title: "Story D",
+    },
+  })
+
+  const storyE = await prisma.story.findFirst({
+    where: {
+      title: "Story E",
+    },
+  })
+
+  type sprintActionLog = {
+    authorEmail: string
+    sprintId: string
+    storyId: string
+
+    type: SprintActionLogType
+  }
+
+  const sprintActionsLogs: sprintActionLog[] = [
+    {
+      authorEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+      storyId: storyA!.id,
+
+      type: SprintActionLogType.STORY,
+    },
+    {
+      authorEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+      storyId: storyB!.id,
+
+      type: SprintActionLogType.STORY,
+    },
+    {
+      authorEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+      storyId: storyC!.id,
+
+      type: SprintActionLogType.STORY,
+    },
+    {
+      authorEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+      storyId: storyD!.id,
+
+      type: SprintActionLogType.STORY,
+    },
+    {
+      authorEmail: "admin@sherpa.io",
+      sprintId: sprint!.id,
+      storyId: storyE!.id,
+
+      type: SprintActionLogType.STORY,
+    },
+  ]
+
+  const seed = sprintActionsLogs.map(async (s) => {
+    const author = await prisma.user.findUnique({
+      where: {
+        email: s.authorEmail,
+      },
+    })
+
+    const sprintActionLog = await prisma.sprintActionLog.create({
+      data: {
+        userId: author!.id,
+        sprintId: s.sprintId,
+        storyId: s.storyId,
+
+        type: s.type,
+      },
+    })
+  })
+
+  await Promise.all(seed)
+  console.log("SprintActionsLogs seeded")
+}
+
 async function main() {
   await seedRoles()
   await seedPermissions()
@@ -694,6 +805,7 @@ async function main() {
     await seedUsersInProjects()
     await seedSprints()
     await seedStories()
+    await seedSprintActionsLogs()
   }
 }
 
