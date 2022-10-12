@@ -1,8 +1,10 @@
 import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as StoryTypeEnum } from "@prisma/client"
+import { addBusinessDays, setHours } from "date-fns"
 
 import { DefaultPrismaClient } from "../src/server/db/client"
 import bcrypt from "bcrypt"
-import { setHours } from "date-fns"
+
+const sprintStart = new Date("2022-10-05")
 
 const prisma = DefaultPrismaClient()
 
@@ -286,8 +288,8 @@ async function seedSprints() {
     {
       sprint: "Sprint 01",
       project: "Sherpa Demo",
-      startAt: new Date("2022-09-28"),
-      endAt: new Date("2022-10-11"),
+      startAt: sprintStart,
+      endAt: addBusinessDays(sprintStart, 10),
     },
   ]
 
@@ -389,13 +391,13 @@ async function seedStories() {
       worklogs: [
         {
           description: "yada",
-          date: setHours(new Date("2022-09-28"), 1),
+          date: setHours(addBusinessDays(sprintStart, 0), 1),
           effort: 8,
           remainingEffort: 1,
         },
         {
           description: "yada",
-          date: setHours(new Date("2022-09-29"), 1),
+          date: setHours(addBusinessDays(sprintStart, 1), 1),
           effort: 2,
           remainingEffort: 1,
         },
@@ -412,13 +414,13 @@ async function seedStories() {
       worklogs: [
         {
           description: "yada",
-          date: setHours(new Date("2022-09-29"), 1),
+          date: setHours(addBusinessDays(sprintStart, 1), 1),
           effort: 2,
           remainingEffort: 1,
         },
         {
           description: "yada",
-          date: setHours(new Date("2022-09-29"), 1),
+          date: setHours(addBusinessDays(sprintStart, 1), 1),
           effort: 4,
           remainingEffort: 2,
         },
@@ -435,19 +437,19 @@ async function seedStories() {
       worklogs: [
         {
           description: "yada",
-          date: setHours(new Date("2022-09-30"), 1),
+          date: setHours(addBusinessDays(sprintStart, 2), 1),
           effort: 2,
           remainingEffort: 6,
         },
         {
           description: "yada",
-          date: setHours(new Date("2022-09-30"), 1),
+          date: setHours(addBusinessDays(sprintStart, 2), 1),
           effort: 4,
           remainingEffort: 2,
         },
         {
           description: "yada",
-          date: setHours(new Date("2022-09-30"), 1),
+          date: setHours(addBusinessDays(sprintStart, 2), 1),
           effort: 2,
           remainingEffort: 0,
         },
@@ -464,13 +466,13 @@ async function seedStories() {
       worklogs: [
         {
           description: "yada",
-          date: setHours(new Date("2022-10-03"), 1),
+          date: setHours(addBusinessDays(sprintStart, 3), 1),
           effort: 8,
           remainingEffort: 2,
         },
         {
           description: "yada",
-          date: setHours(new Date("2022-10-04"), 1),
+          date: setHours(addBusinessDays(sprintStart, 4), 1),
           effort: 2,
           remainingEffort: 1,
         },
@@ -597,7 +599,7 @@ async function seedStories() {
       blocked: 0,
       deleted: 0,
 
-      createdAt: new Date("2022-09-28"),
+      createdAt: addBusinessDays(sprintStart, 0),
     },
     {
       sprintId: sprint!.id,
@@ -611,7 +613,7 @@ async function seedStories() {
       blocked: 0,
       deleted: 0,
 
-      createdAt: new Date("2022-09-28"),
+      createdAt: addBusinessDays(sprintStart, 0),
     },
     {
       sprintId: sprint!.id,
@@ -625,7 +627,7 @@ async function seedStories() {
       blocked: 0,
       deleted: 0,
 
-      createdAt: new Date("2022-09-29"),
+      createdAt: addBusinessDays(sprintStart, 1),
     },
     {
       sprintId: sprint!.id,
@@ -639,7 +641,7 @@ async function seedStories() {
       blocked: 0,
       deleted: 0,
 
-      createdAt: new Date("2022-09-30"),
+      createdAt: addBusinessDays(sprintStart, 2),
     },
     {
       sprintId: sprint!.id,
@@ -653,7 +655,7 @@ async function seedStories() {
       blocked: 0,
       deleted: 0,
 
-      createdAt: new Date("2022-09-30"),
+      createdAt: addBusinessDays(sprintStart, 2),
     },
   ]
 
