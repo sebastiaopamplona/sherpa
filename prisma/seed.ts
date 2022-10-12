@@ -692,7 +692,7 @@ async function seedStories() {
 async function seedSprintActionsLogs() {
   const sprint = await prisma.sprint.findFirst({
     where: {
-      title: "Sprint 01 (complete)",
+      title: "Sprint 01",
     },
   })
 
@@ -716,13 +716,13 @@ async function seedSprintActionsLogs() {
 
   const storyD = await prisma.story.findFirst({
     where: {
-      title: "Story D",
+      title: "Story E",
     },
   })
 
   const storyE = await prisma.story.findFirst({
     where: {
-      title: "Story E",
+      title: "Story F",
     },
   })
 

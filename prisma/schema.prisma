@@ -30,6 +30,9 @@ model SprintActionLog {
   // storyAssignee Story @relation(name: "storyAssignee", fields: [storyAssigneeId], references: [assigneeId], onDelete: NoAction)
 
   type SprintActionLogType
+
+  createdAt DateTime  @default(now())
+  deletedAt DateTime? @updatedAt
 }
 
 model User {
@@ -210,7 +213,7 @@ model SprintStateBreakdown {
   blocked    Int @default(0)
   deleted    Int @default(0)
 
-  sprintId String? @unique
+  sprintId String? // @unique  FIXME: should this be unique?
   sprint   Sprint? @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
