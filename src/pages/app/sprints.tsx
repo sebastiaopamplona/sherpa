@@ -1,5 +1,4 @@
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { ButtonDefaultCSS, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
@@ -7,6 +6,7 @@ import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
 import SprintForm from "../../components/SprintForm/SprintForm"
 import { checkIfShouldRedirect } from "../../server/aux"
+import { classNames } from "../../utils/aux"
 import { getJourndevAuthSession } from "../../server/session"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
@@ -30,7 +30,7 @@ export default function Dashboard() {
         </div>
         <nav className="relative z-10 inline-flex w-full items-center justify-center pb-5">
           <button
-            className={ButtonDefaultCSS}
+            className="s-btn-base s-btn-default"
             onClick={() => {
               setIsSprintDetailsOpen(true)
             }}

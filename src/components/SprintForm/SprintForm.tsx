@@ -1,4 +1,3 @@
-import { ButtonDefaultCSS } from "../../utils/aux"
 import DatePicker from "../Datepicker/Datepicker"
 import Input from "../Input/Input"
 import { SprintInput } from "../../server/schemas/schemas"
@@ -71,7 +70,7 @@ export default function SprintForm({ onCreateOrUpdateSuccess, onCreateOrUpdateEr
             </div>
             <div className="mt-6 grid grid-cols-6 gap-y-6 gap-x-4">
               <div className="col-span-6 inline-flex items-center justify-center">
-                <button className={ButtonDefaultCSS}>Create sprint</button>
+                <button className="s-btn-base s-btn-default">Create sprint</button>
               </div>
             </div>
           </div>

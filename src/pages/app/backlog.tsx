@@ -1,5 +1,3 @@
-import { ButtonDefaultCSS, classNames } from "../../utils/aux"
-
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
@@ -7,6 +5,7 @@ import StoryDetails from "../../components/StoryDetails/StoryDetails"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
 import { StoryInput } from "../../server/schemas/schemas"
 import { checkIfShouldRedirect } from "../../server/aux"
+import { classNames } from "../../utils/aux"
 import { getJourndevAuthSession } from "../../server/session"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
@@ -31,7 +30,7 @@ export default function Backlog() {
         <div className="grid grid-cols-3 gap-y-6 overflow-hidden bg-white pb-2">
           <div className="col-span-1 col-start-2 mt-1 flex items-center justify-center">
             <button
-              className={ButtonDefaultCSS}
+              className="s-btn-base s-btn-default"
               onClick={() => {
                 setCurrentStory(undefined)
                 setIsSlideOverOpen(true)

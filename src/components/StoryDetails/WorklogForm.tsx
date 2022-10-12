@@ -1,4 +1,4 @@
-import { ButtonDefaultCSS, ButtonDefaultRedCSS, CrudEventWrapper, classNames } from "../../utils/aux"
+import { CrudEventWrapper, classNames } from "../../utils/aux"
 import { setHours, setMinutes, setSeconds } from "date-fns"
 
 import DatePicker from "../Datepicker/Datepicker"
@@ -51,7 +51,7 @@ export default function WorklogForm({ storyId, worklog, worklogDay, crudEventWra
     return setHours(setMinutes(setSeconds(selectedDate, now.getSeconds()), now.getMinutes()), now.getHours())
   }
 
-  const { register, getValues, setValue, reset } = useForm<WorklogInput>({
+  const { register, getValues, reset } = useForm<WorklogInput>({
     defaultValues: {
       description: worklog ? worklog.description : "",
       effort: worklog ? worklog.effort : 0,
@@ -127,7 +127,7 @@ export default function WorklogForm({ storyId, worklog, worklogDay, crudEventWra
       <div className="flex items-center justify-center py-2">
         <div className={classNames(isDeleting ? "hidden" : "", "inline-flex items-center justify-center")}>
           <button
-            className={ButtonDefaultCSS}
+            className="s-btn-base s-btn-default"
             onClick={() => {
               reset()
               onCancel()
@@ -139,7 +139,7 @@ export default function WorklogForm({ storyId, worklog, worklogDay, crudEventWra
         <div className="pr-4" />
         <div className={classNames(isDeleting ? "hidden" : "", "inline-flex items-center justify-center")}>
           <button
-            className={ButtonDefaultCSS}
+            className="s-btn-base s-btn-default"
             onClick={() => {
               isCreateMode ? handleCreateWorklog() : handleUpdateWorklog()
             }}
@@ -154,19 +154,19 @@ export default function WorklogForm({ storyId, worklog, worklogDay, crudEventWra
             "inline-flex items-center justify-center"
           )}
         >
-          <button className={ButtonDefaultRedCSS} onClick={() => setIsDeleting(true)}>
+          <button className="s-btn-base s-btn-red" onClick={() => setIsDeleting(true)}>
             Delete
           </button>
         </div>
         <div className={classNames(isDeleting ? "" : "hidden", "inline-flex items-center justify-center")}>
-          <button className={ButtonDefaultCSS} onClick={() => setIsDeleting(false)}>
+          <button className="s-btn-base s-btn-default" onClick={() => setIsDeleting(false)}>
             Cancel delete
           </button>
         </div>
         <div className="pr-4" />
         <div className={classNames(isDeleting ? "" : "hidden", "inline-flex items-center justify-center")}>
           <button
-            className={ButtonDefaultRedCSS}
+            className="s-btn-base s-btn-red"
             onClick={() => {
               handleDeleteWorklog()
             }}

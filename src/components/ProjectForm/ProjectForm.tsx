@@ -1,4 +1,4 @@
-import { ArrElement, ButtonDefaultCSS, classNames } from "../../utils/aux"
+import { ArrElement, classNames } from "../../utils/aux"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import Input from "../Input/Input"
@@ -90,7 +90,7 @@ export default function ProjectForm({
           />
         </div>
         <div className="col-span-2 flex items-center justify-center">
-          <button className={ButtonDefaultCSS}>Create Project</button>
+          <button className="s-btn-base s-btn-default">Create Project</button>
           {!isCreateMode && (
             <button
               type="button"

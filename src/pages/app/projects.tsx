@@ -1,4 +1,4 @@
-import { ArrElement, ButtonDefaultCSS, classNames } from "../../utils/aux"
+import { ArrElement, classNames } from "../../utils/aux"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
@@ -29,7 +29,7 @@ export default function Projects() {
         </div>
         <nav className="relative z-10 inline-flex w-full items-center justify-center pb-5">
           <button
-            className={ButtonDefaultCSS}
+            className="s-btn-base s-btn-default"
             onClick={() => {
               setCurrentProject(undefined)
               setIsProjectDetailsOpen(true)

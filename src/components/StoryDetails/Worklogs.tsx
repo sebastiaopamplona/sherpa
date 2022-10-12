@@ -1,4 +1,4 @@
-import { ButtonDefaultCSS, CrudEventWrapper, classNames } from "../../utils/aux"
+import { CrudEventWrapper, classNames } from "../../utils/aux"
 import { StoryInput, WorklogInput } from "../../server/schemas/schemas"
 
 import WorklogEntry from "../WorklogEntry/WorklogEntry"
@@ -46,7 +46,7 @@ export default function Worklogs({ story, crudEventWrapper, isAddingWorklog, wor
       <div className="mb-3 grid grid-cols-6 gap-y-6 gap-x-4">
         <div className="col-span-6 inline-flex items-center justify-center">
           <button
-            className={classNames(isWrittingWorklog ? "hidden" : "", ButtonDefaultCSS)}
+            className={classNames(isWrittingWorklog ? "hidden" : "", "s-btn-base s-btn-default")}
             onClick={() => setIsWrittingWorklog(true)}
           >
             New worklog
