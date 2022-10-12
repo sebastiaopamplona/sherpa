@@ -61,13 +61,13 @@ export default function Dashboard() {
                   <YAxis />
                   <Tooltip />
                   <Legend verticalAlign="bottom" height={36} />
-                  <Area type="linear" dataKey="done" stackId="1" stroke="#15803d" fill="#4ade80" />
-                  <Area type="linear" dataKey="inReview" stackId="1" stroke="#0f766e" fill="#2dd4bf" />
-                  <Area type="linear" dataKey="delivered" stackId="1" stroke="#0e7490" fill="#22d3ee" />
-                  <Area type="linear" dataKey="inProgress" stackId="1" stroke="#92400e" fill="#fbbf24" />
-                  <Area type="linear" dataKey="ready" stackId="1" stroke="#7e22ce" fill="#e9d5ff" />
-                  <Area type="linear" dataKey="new" stackId="1" stroke="#6d28d9" fill="#a78bfa" />
-                  <Area type="linear" dataKey="blocked" stackId="1" stroke="#be123c" fill="#fb7185" />
+                  <Area type="monotone" dataKey="done" stackId="1" stroke="#4ade80" fill="#4ade80" />
+                  <Area type="monotone" dataKey="inReview" stackId="1" stroke="#2dd4bf" fill="#2dd4bf" />
+                  <Area type="monotone" dataKey="delivered" stackId="1" stroke="#22d3ee" fill="#22d3ee" />
+                  <Area type="monotone" dataKey="inProgress" stackId="1" stroke="#fbbf24" fill="#fbbf24" />
+                  <Area type="monotone" dataKey="ready" stackId="1" stroke="#e9d5ff" fill="#e9d5ff" />
+                  <Area type="monotone" dataKey="new" stackId="1" stroke="#a78bfa" fill="#a78bfa" />
+                  <Area type="monotone" dataKey="blocked" stackId="1" stroke="#fb7185" fill="#fb7185" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
