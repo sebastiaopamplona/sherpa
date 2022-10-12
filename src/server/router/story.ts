@@ -93,9 +93,7 @@ export const storyRouter = createRouter()
           sprintId: input.sprintId,
           assigneeId: input.assigneeId,
         },
-        orderBy: {
-          state: "asc",
-        },
+        orderBy: [{ state: "asc" }, { title: "asc" }],
         include: {
           assignee: true,
           creator: true,
