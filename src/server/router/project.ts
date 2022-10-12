@@ -14,9 +14,6 @@ export const projectRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
-      // TODO(SP): handle project name conflict with error returned from prisma
-      // because of the unique(name) constraint
-
       const projectCountByName = await prisma.project.count({
         where: {
           name: input.name,
