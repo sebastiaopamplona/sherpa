@@ -1,6 +1,6 @@
-import { ArrElement, pathWithParams, pathWithProjSprintUser } from "../../utils/aux"
+import { ArrElement, classNames, pathWithParams, pathWithProjSprintUser } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
-import { addDays, format, getWeek, isSameDay, setHours, startOfWeek, subDays } from "date-fns"
+import { addDays, format, getWeek, isSameDay, isToday, setHours, startOfWeek, subDays } from "date-fns"
 import { useMemo, useState } from "react"
 
 import EmptyResourcesV2 from "../../components/EmptyResourcesv2/EmptyResourcesv2"
@@ -123,36 +123,20 @@ export default function TimeKeeper() {
             </div>
             <div className="col-span-6 h-6 rounded-sm"></div>
             {currentDayRange.map((d) => (
-              <div key={d.toUTCString()} className={`text-sm font-semibold ${timekeeperGridCell}`}>
+              <div
+                key={d.toUTCString()}
+                className={classNames(isToday(d) ? "bg-slate-200" : "", "text-sm font-semibold", timekeeperGridCell)}
+              >
                 {`${format(d, "eeeeee")}, ${format(d, "d/M")}`}
               </div>
             ))}
-            {/* 
-          // TODO: uncomment when we handle capacity
-          <div className="col-span-6 h-6 rounded-sm"></div>
-          <div className={timekeeperGridCell}></div>
-          <div className={timekeeperGridCell}></div>
-          <div className={timekeeperGridCell}></div>
-          <div className={timekeeperGridCell}></div>
-          <div className={timekeeperGridCell}></div>
-          */}
-            {/* {stories.data?.map((story) => (
-            <TimeKeeperEntry
-              key={story.id}
-              story={story}
-              dayRange={currentDayRange}
-              onStoryClick={(story: StoryType) => {
-                setCurrentStory(story)
-                setIsStoryDetailsOpen(true)
-              }}
-              onWorklogCellClick={(story: StoryType, date: Date) => {
-                setCurrentStory(story)
-                setIsAddingWorklog(true)
-                setWorklogDay(date)
-                setIsStoryDetailsOpen(true)
-              }}
-            />
-          ))} */}
+            {/* <div className="col-span-6 h-6 rounded-sm"></div>
+            <div className={timekeeperGridCell}></div>
+            <div className={timekeeperGridCell}></div>
+            <div className={timekeeperGridCell}></div>
+            <div className={timekeeperGridCell}></div>
+            <div className={timekeeperGridCell}></div> */}
+
             {stories.data?.map((story) => (
               <TimeKeeperEntry
                 key={story.id}
@@ -300,7 +284,7 @@ const TimeKeeperWorklogCell: React.FC<{
 
   return (
     <div
-      className={` hover:cursor-pointer hover:bg-slate-100 ${timekeeperGridCell}`}
+      className={classNames("hover:cursor-pointer hover:bg-slate-100", timekeeperGridCell)}
       onClick={() => {
         onWorklogCellClick(story)
       }}
