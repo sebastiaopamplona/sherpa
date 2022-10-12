@@ -1,4 +1,4 @@
-import { ButtonDefaultCSS, ButtonDefaultRedCSS, EventWrapper, classNames } from "../../utils/aux"
+import { ButtonDefaultCSS, ButtonDefaultRedCSS, CrudEventWrapper, classNames } from "../../utils/aux"
 import { setHours, setMinutes, setSeconds } from "date-fns"
 
 import DatePicker from "../Datepicker/Datepicker"
@@ -15,15 +15,11 @@ interface Props {
   storyId: string
   worklog?: WorklogInput
   worklogDay?: Date
-
-  onCreate?: EventWrapper
-  onUpdate?: EventWrapper
-  onDelete?: EventWrapper
-
+  crudEventWrapper: CrudEventWrapper
   onCancel: () => void
 }
 
-export default function WorklogForm({ storyId, worklog, worklogDay, onCreate, onUpdate, onDelete, onCancel }: Props) {
+export default function WorklogForm({ storyId, worklog, worklogDay, crudEventWrapper, onCancel }: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
@@ -35,23 +31,19 @@ export default function WorklogForm({ storyId, worklog, worklogDay, onCreate, on
 
   const createWorklogM = trpc.useMutation(["worklog.create"], {
     onSuccess: (data) => {
-      onCreate?.onSuccess(data)
+      if (crudEventWrapper?.onCreate?.onSuccess) crudEventWrapper?.onCreate?.onSuccess(data)
     },
-    onError: () => {
-      onCreate?.onError()
-    },
+    onError: crudEventWrapper?.onCreate?.onError,
   })
   const updateWorklogM = trpc.useMutation(["worklog.update"], {
     onSuccess: (data) => {
-      onUpdate?.onSuccess(data)
+      if (crudEventWrapper?.onUpdate?.onSuccess) crudEventWrapper?.onUpdate?.onSuccess(data)
     },
-    onError: () => {
-      onUpdate?.onError()
-    },
+    onError: crudEventWrapper?.onUpdate?.onError,
   })
   const deleteWorklogM = trpc.useMutation(["worklog.deleteById"], {
-    onSuccess: onDelete?.onSuccess,
-    onError: onDelete?.onError,
+    onSuccess: crudEventWrapper?.onDelete?.onSuccess,
+    onError: crudEventWrapper?.onDelete?.onError,
   })
 
   const dateWithHour = (): Date => {

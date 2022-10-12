@@ -29,12 +29,13 @@ export default function WorklogEntry({ worklog, showAssignee }: Props) {
           onCancel={() => {
             setIsEditing(false)
           }}
-          onUpdate={{
-            onSuccess: (data) => {
-              setIsEditing(false)
-              setCurrWorklog(data as WorklogInput)
+          crudEventWrapper={{
+            onUpdate: {
+              onSuccess: (data) => {
+                setIsEditing(false)
+                setCurrWorklog(data as WorklogInput)
+              },
             },
-            onError: () => {},
           }}
         />
       ) : (

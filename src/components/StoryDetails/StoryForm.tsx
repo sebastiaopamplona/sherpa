@@ -1,4 +1,4 @@
-import { ArrElement, EventWrapper } from "../../utils/aux"
+import { ArrElement, CrudEventWrapper } from "../../utils/aux"
 import {
   NoSprint,
   NoUser,
@@ -24,15 +24,11 @@ import { useState } from "react"
 
 interface Props {
   story?: StoryInput
-
-  onCreate?: EventWrapper
-  onUpdate?: EventWrapper
-  onDelete?: EventWrapper
-
+  crudEventWrapper?: CrudEventWrapper
   onCancel: () => void
 }
 
-export default function StoryForm({ story, onCreate, onUpdate, onDelete, onCancel }: Props) {
+export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
@@ -47,16 +43,16 @@ export default function StoryForm({ story, onCreate, onUpdate, onDelete, onCance
   const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {})
   const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {})
   const createStoryM = trpc.useMutation(["story.create"], {
-    onSuccess: onCreate?.onSuccess,
-    onError: onCreate?.onError,
+    onSuccess: crudEventWrapper?.onCreate?.onSuccess,
+    onError: crudEventWrapper?.onCreate?.onError,
   })
   const updateStoryM = trpc.useMutation(["story.update"], {
-    onSuccess: onUpdate?.onSuccess,
-    onError: onUpdate?.onError,
+    onSuccess: crudEventWrapper?.onUpdate?.onSuccess,
+    onError: crudEventWrapper?.onUpdate?.onError,
   })
   const deleteStoryM = trpc.useMutation(["story.deleteById"], {
-    onSuccess: onDelete?.onSuccess,
-    onError: onDelete?.onError,
+    onSuccess: crudEventWrapper?.onDelete?.onSuccess,
+    onError: crudEventWrapper?.onDelete?.onError,
   })
 
   const { reset, register, getValues, setValue } = useForm<StoryInput>({

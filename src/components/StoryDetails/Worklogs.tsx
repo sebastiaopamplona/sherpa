@@ -1,4 +1,4 @@
-import { ButtonDefaultCSS, EventWrapper, classNames } from "../../utils/aux"
+import { ButtonDefaultCSS, CrudEventWrapper, classNames } from "../../utils/aux"
 import { StoryInput, WorklogInput } from "../../server/schemas/schemas"
 
 import WorklogEntry from "../WorklogEntry/WorklogEntry"
@@ -9,15 +9,11 @@ interface Props {
   story?: StoryInput
   isAddingWorklog?: boolean
   worklogDay?: Date
-
-  onCreate?: EventWrapper
-  onUpdate?: EventWrapper
-  onDelete?: EventWrapper
-
+  crudEventWrapper?: CrudEventWrapper
   onCancel: () => void
 }
 
-export default function Worklogs({ story, isAddingWorklog, worklogDay, onCreate }: Props) {
+export default function Worklogs({ story, crudEventWrapper, isAddingWorklog, worklogDay }: Props) {
   const [isWrittingWorklog, setIsWrittingWorklog] = useState<boolean>(isAddingWorklog ? isAddingWorklog : false)
   const [worklogs, setWorklogs] = useState<WorklogInput[]>(story ? story.worklogs : [])
 
@@ -27,14 +23,14 @@ export default function Worklogs({ story, isAddingWorklog, worklogDay, onCreate 
         <WorklogForm
           storyId={story?.id}
           worklogDay={worklogDay}
-          onCreate={{
-            onSuccess: (data) => {
-              onCreate?.onSuccess()
-              setWorklogs([data, ...worklogs])
-              setIsWrittingWorklog(false)
-            },
-            onError: () => {
-              onCreate?.onError()
+          crudEventWrapper={{
+            onCreate: {
+              onSuccess: (data) => {
+                if (crudEventWrapper?.onCreate?.onSuccess) crudEventWrapper?.onCreate?.onSuccess(data)
+                setWorklogs([data, ...worklogs])
+                setIsWrittingWorklog(false)
+              },
+              onError: crudEventWrapper?.onCreate?.onError,
             },
           }}
           onCancel={() => {

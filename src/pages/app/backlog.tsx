@@ -73,47 +73,43 @@ export default function Backlog() {
         onClose={() => {
           setIsSlideOverOpen(false)
         }}
-        onStoryCreate={{
-          onSuccess: () => {
-            setIsSlideOverOpen(false)
-            stories.refetch()
+        storyCrudEventWrapper={{
+          onCreate: {
+            onSuccess: () => {
+              setIsSlideOverOpen(false)
+              stories.refetch()
+            },
           },
-          onError: () => {},
+          onUpdate: {
+            onSuccess: () => {
+              setIsSlideOverOpen(false)
+              stories.refetch()
+            },
+          },
+          onDelete: {
+            onSuccess: () => {
+              setIsSlideOverOpen(false)
+              stories.refetch()
+            },
+          },
         }}
-        onStoryUpdate={{
-          onSuccess: () => {
-            setIsSlideOverOpen(false)
-            stories.refetch()
+        // FIXME(SP): fetch single story intead of all stories
+        worklogCrudEventWrapper={{
+          onCreate: {
+            onSuccess: () => {
+              stories.refetch()
+            },
           },
-          onError: () => {},
-        }}
-        onStoryDelete={{
-          onSuccess: () => {
-            setIsSlideOverOpen(false)
-            stories.refetch()
+          onUpdate: {
+            onSuccess: () => {
+              stories.refetch()
+            },
           },
-          onError: () => {},
-        }}
-        onWorklogCreate={{
-          onSuccess: () => {
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
+          onDelete: {
+            onSuccess: () => {
+              stories.refetch()
+            },
           },
-          onError: () => {},
-        }}
-        onWorklogUpdate={{
-          onSuccess: () => {
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
-          },
-          onError: () => {},
-        }}
-        onWorklogDelete={{
-          onSuccess: () => {
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
-          },
-          onError: () => {},
         }}
       />
     </section>

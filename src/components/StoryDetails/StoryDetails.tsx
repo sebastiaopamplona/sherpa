@@ -1,4 +1,4 @@
-import { EventWrapper, classNames } from "../../utils/aux"
+import { CrudEventWrapper, classNames } from "../../utils/aux"
 import { SVGProps, useEffect, useMemo, useState } from "react"
 
 import SlideOver from "../SlideOver/SlideOver"
@@ -15,33 +15,22 @@ type Tab = {
 
 interface Props {
   isOpen: boolean
-  onClose: () => void
-
   story?: StoryInput
   isAddingWorklog?: boolean
   worklogDay?: Date
-
-  onStoryCreate?: EventWrapper
-  onStoryUpdate?: EventWrapper
-  onStoryDelete?: EventWrapper
-
-  onWorklogCreate?: EventWrapper
-  onWorklogUpdate?: EventWrapper
-  onWorklogDelete?: EventWrapper
+  storyCrudEventWrapper?: CrudEventWrapper
+  worklogCrudEventWrapper?: CrudEventWrapper
+  onClose: () => void
 }
 
 export default function StoryDetails({
   isOpen,
-  onClose,
   story,
   isAddingWorklog,
   worklogDay,
-  onStoryCreate,
-  onStoryUpdate,
-  onStoryDelete,
-  onWorklogCreate,
-  onWorklogUpdate,
-  onWorklogDelete,
+  storyCrudEventWrapper,
+  worklogCrudEventWrapper,
+  onClose,
 }: Props) {
   const tabs = useMemo(
     () => [
@@ -109,22 +98,14 @@ export default function StoryDetails({
         </div>
       </div>
       <div className={classNames(selectedTab.name === "Details" ? "" : "hidden")}>
-        <StoryForm
-          story={story}
-          onCreate={onStoryCreate}
-          onUpdate={onStoryUpdate}
-          onDelete={onStoryDelete}
-          onCancel={onClose}
-        />
+        <StoryForm story={story} crudEventWrapper={storyCrudEventWrapper} onCancel={onClose} />
       </div>
       <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
         <Worklogs
           story={story}
           isAddingWorklog={isAddingWorklog}
           worklogDay={worklogDay}
-          onCreate={onWorklogCreate}
-          onUpdate={onWorklogUpdate}
-          onDelete={onWorklogDelete}
+          crudEventWrapper={worklogCrudEventWrapper}
           onCancel={onClose}
         />
       </div>
