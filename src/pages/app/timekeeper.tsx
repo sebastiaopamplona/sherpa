@@ -182,40 +182,31 @@ export default function TimeKeeper() {
         onClose={() => {
           setIsStoryDetailsOpen(false)
         }}
-        onStoryCreate={{
-          onSuccess: () => {
-            setIsStoryDetailsOpen(false)
-            stories.refetch()
+        // FIXME(SP): fetch single story intead of all stories
+        storyCrudEventWrapper={{
+          onCreate: {
+            onSuccess: () => {
+              setIsStoryDetailsOpen(false)
+              stories.refetch()
+            },
           },
-          onError: () => {},
+          onUpdate: {
+            onSuccess: () => {
+              setIsStoryDetailsOpen(false)
+              stories.refetch()
+            },
+          },
+          onDelete: {
+            onSuccess: stories.refetch,
+          },
         }}
-        onStoryUpdate={{
-          onSuccess: () => {
-            setIsStoryDetailsOpen(false)
-            stories.refetch()
+        worklogCrudEventWrapper={{
+          onCreate: {
+            onSuccess: stories.refetch,
           },
-          onError: () => {},
-        }}
-        onWorklogCreate={{
-          onSuccess: () => {
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
+          onUpdate: {
+            onSuccess: stories.refetch,
           },
-          onError: () => {},
-        }}
-        onWorklogUpdate={{
-          onSuccess: () => {
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
-          },
-          onError: () => {},
-        }}
-        onWorklogDelete={{
-          onSuccess: () => {
-            // FIXME(SP): fetch single story intead of all stories
-            stories.refetch()
-          },
-          onError: () => {},
         }}
       />
     </section>
