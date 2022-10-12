@@ -1,5 +1,14 @@
 import { Sprint, SprintStateBreakdown, SprintStateBreakdownOutput } from "../schemas/schemas"
-import { addBusinessDays, differenceInBusinessDays, format, isAfter, setHours, setMinutes, setSeconds } from "date-fns"
+import {
+  addBusinessDays,
+  differenceInBusinessDays,
+  format,
+  isAfter,
+  isSameDay,
+  setHours,
+  setMinutes,
+  setSeconds,
+} from "date-fns"
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
 
 import { StoryState as StoryStateEnum } from "@prisma/client"
@@ -107,7 +116,12 @@ export const sprintRouter = createRouter()
       let out = new Array<SprintStateBreakdownOutput>()
       let lastState: SprintStateBreakdownOutput | undefined
       let d: number = 0
-      for (; d < sprintDays && !isAfter(addBusinessDays(sprint.startAt, d), today); d++) {
+      for (
+        ;
+        (d < sprintDays && !isAfter(addBusinessDays(sprint.startAt, d), today)) ||
+        isSameDay(addBusinessDays(sprint.startAt, d), today);
+        d++
+      ) {
         const key: string = dateAsKey(addBusinessDays(sprint.startAt, d))
         if (sprintStoryStateMap.has(key)) {
           lastState = sprintStoryStateMap.get(key)
