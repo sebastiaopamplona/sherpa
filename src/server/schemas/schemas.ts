@@ -128,3 +128,15 @@ export const SprintStateBreakdown: Zod.AnyZodObject = z.object({
   deleted: z.number().nullish(),
 })
 export type SprintStateBreakdownOutput = z.infer<typeof SprintStateBreakdown>
+
+export const SprintActionLog: Zod.AnyZodObject = z.object({
+  id: z.string().nullish(),
+
+  userId: z.string().nullish(),
+  sprintId: z.string().nullish(),
+  storyId: z.string().nullish(),
+
+  createdAt: z.date().nullish(),
+  deletedAt: z.date().nullish(),
+})
+export type SprintActionLogOutput = z.infer<typeof SprintActionLog>

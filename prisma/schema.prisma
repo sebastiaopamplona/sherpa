@@ -30,6 +30,9 @@ model SprintActionLog {
   // storyAssignee Story @relation(name: "storyAssignee", fields: [storyAssigneeId], references: [assigneeId], onDelete: NoAction)
 
   type SprintActionLogType
+
+  createdAt DateTime  @default(now())
+  deletedAt DateTime? @updatedAt
 }
 
 model User {

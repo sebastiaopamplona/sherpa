@@ -18,9 +18,6 @@ CREATE TABLE "SprintActionLog" (
     CONSTRAINT "SprintActionLog_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "SprintStateBreakdown_sprintId_key" ON "SprintStateBreakdown"("sprintId");
-
 -- AddForeignKey
 ALTER TABLE "SprintActionLog" ADD CONSTRAINT "SprintActionLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
