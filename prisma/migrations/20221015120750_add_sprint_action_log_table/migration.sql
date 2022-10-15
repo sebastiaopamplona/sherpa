@@ -1,11 +1,5 @@
-/*
-  Warnings:
-
-  - A unique constraint covering the columns `[sprintId]` on the table `SprintStateBreakdown` will be added. If there are existing duplicate values, this will fail.
-
-*/
 -- CreateEnum
-CREATE TYPE "SprintActionlogType" AS ENUM ('STORY', 'WORKLOG', 'SPRINT');
+CREATE TYPE "SprintActionLogType" AS ENUM ('STORY', 'WORKLOG', 'SPRINT');
 
 -- CreateTable
 CREATE TABLE "SprintActionLog" (
@@ -13,7 +7,11 @@ CREATE TABLE "SprintActionLog" (
     "userId" TEXT NOT NULL,
     "sprintId" TEXT NOT NULL,
     "storyId" TEXT NOT NULL,
-    "type" "SprintActionlogType" NOT NULL,
+    "storyAssigneeId" TEXT,
+    "storyState" "StoryState",
+    "type" "SprintActionLogType" NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "SprintActionLog_pkey" PRIMARY KEY ("id")
 );
