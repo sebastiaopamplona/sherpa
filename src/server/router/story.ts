@@ -1,11 +1,11 @@
 import { NoSprint, NoUser } from "../data/data"
+import { SprintActionLogReg, Story } from "../schemas/schemas"
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+import { registerSprintActionLog, updateSprintStateBreakdown } from "./sprint"
 
-import { Story } from "../schemas/schemas"
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
-import { updateSprintStateBreakdown } from "./sprint"
 import { z } from "zod"
 
 export const storyRouter = createRouter()
@@ -37,6 +37,15 @@ export const storyRouter = createRouter()
 
       if (input.sprintId !== NoSprint.id) {
         updateSprintStateBreakdown(input.sprintId)
+
+        let sal: SprintActionLogReg = {
+          userId: input.creatorId,
+          sprintId: input.sprintId,
+          storyId: story.id,
+
+          type: "STORY",
+        }
+        registerSprintActionLog(sal)
       }
 
       return {
@@ -93,7 +102,9 @@ export const storyRouter = createRouter()
           sprintId: input.sprintId,
           assigneeId: input.assigneeId,
         },
-        orderBy: [{ state: "asc" }, { title: "asc" }],
+        orderBy: {
+          state: "asc",
+        },
         include: {
           assignee: true,
           creator: true,
@@ -168,11 +179,31 @@ export const storyRouter = createRouter()
         },
       })
 
+      console.log(input)
+
       if (!story) throw new TRPCError({ code: "NOT_FOUND" })
 
-      // state has changed or story was moved to another sprint
-      if (input.state || (story.sprintId && input.sprintId !== NoSprint.id)) {
+      // story was moved to another sprint
+      if (story.sprintId && input.sprintId !== NoSprint.id) {
         updateSprintStateBreakdown(story.sprintId!)
+      }
+
+      // state has changed or assignee has changed (FIXME: this will change in the future, ex.: a story may be assigned to multiple users)
+      if (input.state || input.assigneeId) {
+        console.log("if statement")
+        updateSprintStateBreakdown(story.sprintId!)
+
+        let sal: SprintActionLogReg = {
+          userId: story.creatorId,
+          sprintId: story.sprintId,
+          storyId: story.id,
+
+          storyAssigneeId: input.assigneeId,
+          storyState: input.state,
+
+          type: "STORY",
+        }
+        registerSprintActionLog(sal)
       }
 
       return {

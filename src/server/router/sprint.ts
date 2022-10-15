@@ -1,4 +1,4 @@
-import { Sprint, SprintActionLogOutput, SprintStateBreakdown, SprintStateBreakdownOutput } from "../schemas/schemas"
+import { Sprint, SprintActionLogReg, SprintStateBreakdown, SprintStateBreakdownOutput } from "../schemas/schemas"
 import {
   addBusinessDays,
   differenceInBusinessDays,
@@ -223,20 +223,20 @@ export const updateSprintStateBreakdown: (sprintId: string) => void = async (spr
   })
 }
 
-export const registerSprintActionLog: (authorId: string, sprintId: string, storyId: string) => void = async (
-  authorId,
-  sprintId,
-  storyId
-) => {
-  let sal: SprintActionLogOutput = {
-    userId: authorId,
-    sprintId: sprintId,
-    storyId: storyId,
+export const registerSprintActionLog: (sal: SprintActionLogReg) => void = async (sal) => {
+  const salStored = await prisma.sprintActionLog.create({
+    data: {
+      userId: sal.userId,
+      sprintId: sal.sprintId,
+      storyId: sal.storyId,
 
-    createdAt: new Date(),
-  }
+      storyAssigneeId: sal.storyAssigneeId,
+      storyState: sal.storyState,
 
-  const salStored = await prisma.sprintActionLog.create({ data: { ...sal } })
+      type: sal.type,
+      createdAt: sal.createdAt,
+    },
+  })
 }
 
 export type SprintCreateOutput = inferMutationOutput<"sprint.create">

@@ -17,17 +17,17 @@ model SprintActionLog {
   id String @id @default(uuid())
 
   userId String 
-  user User @relation(name: "author", fields: [userId], references: [id], onDelete: Cascade) // TODO(EP): onDelete might not be NoAction
+  user User @relation(name: "author", fields: [userId], references: [id], onDelete: Cascade)
 
   sprintId String
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 
   storyId String
-  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade) // TODO(EP): onDelete might not be NoAction
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade) 
 
-  // TODO(EP): eventualy will need to add:
-  // storyAssigneeId String
-  // storyAssignee Story @relation(name: "storyAssignee", fields: [storyAssigneeId], references: [assigneeId], onDelete: NoAction)
+  storyAssigneeId String?
+  
+  storyState StoryState?
 
   type SprintActionLogType
 
@@ -213,7 +213,7 @@ model SprintStateBreakdown {
   blocked    Int @default(0)
   deleted    Int @default(0)
 
-  sprintId String? // @unique  FIXME: should this be unique?
+  sprintId String?
   sprint   Sprint? @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
