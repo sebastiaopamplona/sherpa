@@ -5,6 +5,7 @@ import { User } from "../schemas/schemas"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
+import { NoSprint, NoUser } from "../data/data"
 
 export const userRouter = createRouter()
   // CREATE
@@ -14,6 +15,10 @@ export const userRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      if (input.name === NoUser.name) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: `The name '${NoUser.name}' is reserved.` })
+      }
+
       throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
     },
   })

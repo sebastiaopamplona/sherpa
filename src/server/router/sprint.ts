@@ -16,6 +16,7 @@ import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
+import { NoSprint } from "../data/data"
 
 export const sprintRouter = createRouter()
   // CREATE
@@ -25,6 +26,10 @@ export const sprintRouter = createRouter()
       id: z.string(),
     }),
     async resolve({ ctx, input }) {
+      if (input.title === NoSprint.title) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: `The title '${NoSprint.title}' is reserved.` })
+      }
+
       const sprint = await prisma.sprint.create({
         data: {
           title: input.title,

@@ -53,7 +53,7 @@ export const StoryStatesArray: StoryState[] = [
 ]
 
 export const NoUser = {
-  id: "",
+  id: "no_user",
   name: "Unassigned",
   image: "https://static.thenounproject.com/png/55168-200.png",
 }

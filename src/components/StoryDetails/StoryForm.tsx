@@ -68,7 +68,6 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
 
     createStoryM.mutate(values)
   }
-
   const handleUpdateStory = () => {
     let values = getValues()
     values.id = story!.id
@@ -88,7 +87,6 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
 
     updateStoryM.mutate(updatedFields)
   }
-
   const handleDeleteStory = () => {
     deleteStoryM.mutate({ id: story!.id })
   }
@@ -134,7 +132,7 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
         <div className="col-span-3">
           <Select
             label="Assigned to"
-            entries={users.data!}
+            entries={[NoUser, ...users.data!]}
             register={(value: string) => setValue("assigneeId", value)}
             getId={(t) => t.id}
             getText={(t) => t.name}
@@ -146,8 +144,8 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
           <Select
             label="Sprint"
             note="(Optional)"
+            entries={[NoSprint, ...sprints.data!]}
             register={(value: string) => setValue("sprintId", value)}
-            entries={sprints.data!}
             getId={(t) => t.id}
             getText={(t) => t.title}
             selectedState={[selectedSprint, setSelectedSprint]}
