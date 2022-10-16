@@ -26,7 +26,7 @@ model User {
   assignedStories Story[]               @relation(name: "assignee")
   createdProjects Project[]
   worklogs        Worklog[]
-  UserRelatedCapacity UserRelatedCapacity[]
+  userProjectCapacity UserProjectCapacity[]
 
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
@@ -84,7 +84,7 @@ model Project {
   users   UserRolesInProjects[]
   stories Story[]
   sprints Sprint[]
-  UserRelatedCapacity UserRelatedCapacity[]
+  userProjectCapacity UserProjectCapacity[]
 
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
@@ -195,14 +195,18 @@ model SprintStateBreakdown {
   createdAt DateTime @default(now())
 }
 
-model UserRelatedCapacity {
+model UserProjectCapacity {
   id        String   @id @default(uuid())
+
   capacity  Int      @default(0)
   date      DateTime
+
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   projectId String
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
