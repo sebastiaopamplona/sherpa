@@ -38,3 +38,4 @@ yarn-error.log*
 # ide related
 .vscode/
 .idea/
+.history/
