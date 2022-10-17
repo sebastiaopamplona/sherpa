@@ -169,6 +169,68 @@ export const projectRouter = createRouter()
     },
   })
 
+  // CREATE user capacity
+  .mutation("createUserCapacity", {
+    input: z.object({
+      userId: z.string(),
+      projectId: z.string(),
+      capacity: z.number(),
+      date: z.date(),
+    }),
+    output: z.object({
+      projectId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const m = await prisma.userProjectCapacity.create({
+        data: {
+          projectId: input.projectId,
+          userId: input.userId,
+          date: input.date,
+          capacity: input.capacity,
+        },
+      })
+
+      return {
+        projectId: m.projectId,
+      }
+    },
+  })
+
+  // UPDATE user capacity
+  .mutation("updateUserCapacity", {
+    input: z.object({
+      userId: z.string(),
+      projectId: z.string(),
+      capacity: z.number(),
+      date: z.date(),
+    }),
+    output: z.object({
+      projectId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const m = await prisma.userProjectCapacity.update({
+        where: {
+          projectId_userId_date: {
+            projectId: input.projectId,
+            userId: input.userId,
+            date: input.date,
+          },
+        },
+        data: {
+          capacity: input.capacity,
+        },
+      })
+
+      if (!m) {
+        throw new TRPCError({ code: "NOT_FOUND", message: `Capacity not found!` })
+      }
+
+      return {
+        projectId: m.projectId,
+      }
+    },
+  })
+
 export type ProjectCreateOutput = inferMutationOutput<"project.create">
 export type ProjectGetAllOutput = inferQueryOutput<"project.getAll">
 export type ProjectGetByIdOutput = inferQueryOutput<"project.getById">
