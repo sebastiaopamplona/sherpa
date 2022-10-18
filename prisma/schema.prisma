@@ -16,8 +16,8 @@ datasource db {
 model SprintActionLog {
   id String @id @default(uuid())
 
-  userId String 
-  user User @relation(name: "author", fields: [userId], references: [id], onDelete: Cascade)
+  authorId String 
+  user User @relation(name: "author", fields: [authorId], references: [id], onDelete: Cascade)
 
   sprintId String
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
@@ -25,11 +25,7 @@ model SprintActionLog {
   storyId String
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade) 
 
-  storyAssigneeId String?
-  
-  storyState StoryState?
-
-  type SprintActionLogType
+  description SprintActionLogDescription
 
   createdAt DateTime  @default(now())
   deletedAt DateTime? @updatedAt
@@ -258,8 +254,9 @@ enum StoryType {
   SUPPORT
 }
 
-enum SprintActionLogType {
-  STORY
-  WORKLOG
-  SPRINT
+enum SprintActionLogDescription {
+  STORY_CREATED
+  STORY_ASSIGNEE_CHANGED
+  STORY_STATE_CHANGED
+  STORY_DELETED
 }

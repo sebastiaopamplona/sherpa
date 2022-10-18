@@ -1,4 +1,10 @@
-import { Sprint, SprintActionLogReg, SprintStateBreakdown, SprintStateBreakdownOutput } from "../schemas/schemas"
+import {
+  Sprint,
+  SprintActionLog,
+  SprintActionLogReg,
+  SprintStateBreakdown,
+  SprintStateBreakdownOutput,
+} from "../schemas/schemas"
 import {
   addBusinessDays,
   differenceInBusinessDays,
@@ -11,12 +17,12 @@ import {
 } from "date-fns"
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
 
+import { NoSprint } from "../data/data"
 import { StoryState as StoryStateEnum } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
-import { NoSprint } from "../data/data"
 
 export const sprintRouter = createRouter()
   // CREATE
@@ -141,6 +147,23 @@ export const sprintRouter = createRouter()
       return out
     },
   })
+  .query("getActionsLogs", {
+    input: z.object({
+      sprintId: z.string(),
+    }),
+    output: z.array(SprintActionLog),
+    async resolve({ ctx, input }) {
+      let sprintActionsLogs = await prisma.sprintActionLog.findMany({
+        orderBy: {
+          createdAt: "asc",
+        },
+        where: {
+          sprintId: input.sprintId,
+        },
+      })
+      return sprintActionsLogs
+    },
+  })
 
   // UPDATE
   .mutation("update", {
@@ -231,14 +254,11 @@ export const updateSprintStateBreakdown: (sprintId: string) => void = async (spr
 export const registerSprintActionLog: (sal: SprintActionLogReg) => void = async (sal) => {
   const salStored = await prisma.sprintActionLog.create({
     data: {
-      userId: sal.userId,
+      authorId: sal.authorId,
       sprintId: sal.sprintId,
       storyId: sal.storyId,
 
-      storyAssigneeId: sal.storyAssigneeId,
-      storyState: sal.storyState,
-
-      type: sal.type,
+      description: sal.description,
       createdAt: sal.createdAt,
     },
   })

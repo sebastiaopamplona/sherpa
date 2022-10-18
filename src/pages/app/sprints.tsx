@@ -4,6 +4,7 @@ import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
+import SprintActionLogEntry from "../../components/SprintActionLogEntry/sprintActionLogEntry"
 import SprintForm from "../../components/SprintForm/SprintForm"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { classNames } from "../../utils/aux"
@@ -17,10 +18,11 @@ export default function Dashboard() {
   const { sprintId } = router.query
 
   const sprintStateBreakdown = trpc.useQuery(["sprint.getStateBreakdown", { sprintId: sprintId as string }])
+  const sprintActionsLogs = trpc.useQuery(["sprint.getActionsLogs", { sprintId: sprintId as string }])
 
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
 
-  if (sprintStateBreakdown.isLoading) return null
+  if (sprintStateBreakdown.isLoading || sprintActionsLogs.isLoading) return null
 
   return (
     <section>
@@ -75,6 +77,19 @@ export default function Dashboard() {
         ) : (
           <></>
         )}
+        <div className="flow-root">
+          <ul role="list" className="-mb-8">
+            {sprintActionsLogs.data ? (
+              sprintActionsLogs.data.map((sprintActionLog) => (
+                <li key={sprintActionLog.id}>
+                  <SprintActionLogEntry sprintActionLog={sprintActionLog} />
+                </li>
+              ))
+            ) : (
+              <></>
+            )}
+          </ul>
+        </div>
       </div>
       <Modal
         isOpen={isSprintsDetailsOpen}

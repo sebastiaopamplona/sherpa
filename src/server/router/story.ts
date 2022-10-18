@@ -43,7 +43,7 @@ export const storyRouter = createRouter()
           sprintId: input.sprintId,
           storyId: story.id,
 
-          type: "STORY",
+          description: "STORY_CREATED",
         }
         registerSprintActionLog(sal)
       }
@@ -179,32 +179,39 @@ export const storyRouter = createRouter()
         },
       })
 
-      console.log(input)
-
       if (!story) throw new TRPCError({ code: "NOT_FOUND" })
+
+      let sprintStateUpdate = false
+      let sprintActionLogRegister = false
+
+      let sal: SprintActionLogReg = {
+        authorId: story.creatorId,
+        sprintId: story.sprintId,
+        storyId: story.id,
+      }
 
       // story was moved to another sprint
       if (story.sprintId && input.sprintId !== NoSprint.id) {
-        updateSprintStateBreakdown(story.sprintId!)
+        sprintStateUpdate = true
       }
 
-      // state has changed or assignee has changed (FIXME: this will change in the future, ex.: a story may be assigned to multiple users)
-      if (input.state || input.assigneeId) {
-        console.log("if statement")
-        updateSprintStateBreakdown(story.sprintId!)
+      // state has changed
+      if (input.state) {
+        sprintStateUpdate = true
 
-        let sal: SprintActionLogReg = {
-          userId: story.creatorId,
-          sprintId: story.sprintId,
-          storyId: story.id,
-
-          storyAssigneeId: input.assigneeId,
-          storyState: input.state,
-
-          type: "STORY",
-        }
-        registerSprintActionLog(sal)
+        sal.description = "STORY_STATE_CHANGED"
+        sprintActionLogRegister = true
       }
+
+      // assignee has changed (FIXME: this will change in the future, ex.: a story may be assigned to multiple users)
+      if (input.assigneeId) {
+        sal.description = "STORY_ASSIGNEE_CHANGED"
+
+        sprintActionLogRegister = true
+      }
+
+      sprintStateUpdate ? updateSprintStateBreakdown(story.sprintId!) : {}
+      sprintActionLogRegister ? registerSprintActionLog(sal) : {}
 
       return {
         id: story.id,
