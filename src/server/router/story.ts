@@ -43,7 +43,11 @@ export const storyRouter = createRouter()
           sprintId: input.sprintId,
           storyId: story.id,
 
+<<<<<<< HEAD
           description: "STORY_CREATED",
+=======
+          type: "STORY",
+>>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
         }
         registerSprintActionLog(sal)
       }
@@ -179,8 +183,11 @@ export const storyRouter = createRouter()
         },
       })
 
+      console.log(input)
+
       if (!story) throw new TRPCError({ code: "NOT_FOUND" })
 
+<<<<<<< HEAD
       let sprintStateUpdate = false
       let sprintActionLogRegister = false
 
@@ -213,6 +220,31 @@ export const storyRouter = createRouter()
       sprintStateUpdate ? updateSprintStateBreakdown(story.sprintId!) : {}
       sprintActionLogRegister ? registerSprintActionLog(sal) : {}
 
+=======
+      // story was moved to another sprint
+      if (story.sprintId && input.sprintId !== NoSprint.id) {
+        updateSprintStateBreakdown(story.sprintId!)
+      }
+
+      // state has changed or assignee has changed (FIXME: this will change in the future, ex.: a story may be assigned to multiple users)
+      if (input.state || input.assigneeId) {
+        console.log("if statement")
+        updateSprintStateBreakdown(story.sprintId!)
+
+        let sal: SprintActionLogReg = {
+          userId: story.creatorId,
+          sprintId: story.sprintId,
+          storyId: story.id,
+
+          storyAssigneeId: input.assigneeId,
+          storyState: input.state,
+
+          type: "STORY",
+        }
+        registerSprintActionLog(sal)
+      }
+
+>>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
       return {
         id: story.id,
       }

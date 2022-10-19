@@ -130,11 +130,22 @@ export const SprintStateBreakdown: Zod.AnyZodObject = z.object({
 export type SprintStateBreakdownOutput = z.infer<typeof SprintStateBreakdown>
 
 export const SprintActionLog: Zod.AnyZodObject = z.object({
+<<<<<<< HEAD
   authorId: z.string().nullish(),
   sprintId: z.string().nullish(),
   storyId: z.string().nullish(),
 
   description: z.enum(["STORY_CREATED", "STORY_ASSIGNEE_CHANGED", "STORY_STATE_CHANGED", "STORY_DELETED"]),
+=======
+  userId: z.string().nullish(),
+  sprintId: z.string().nullish(),
+  storyId: z.string().nullish(),
+
+  storyAssigneeId: z.string().nullish(),
+  storyState: z.enum(["NEW", "READY", "IN_PROGRESS", "DELIVERED", "IN_REVIEW", "DONE", "BLOCKED", "DELETED"]).nullish(),
+
+  type: z.enum(["STORY", "WORKLOG", "SPRINT"]),
+>>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
 
   createdAt: z.date().nullish(),
 })
