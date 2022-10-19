@@ -16,13 +16,8 @@ datasource db {
 model SprintActionLog {
   id String @id @default(uuid())
 
-<<<<<<< HEAD
   authorId String 
   user User @relation(name: "author", fields: [authorId], references: [id], onDelete: Cascade)
-=======
-  userId String 
-  user User @relation(name: "author", fields: [userId], references: [id], onDelete: Cascade)
->>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
 
   sprintId String
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
@@ -30,15 +25,7 @@ model SprintActionLog {
   storyId String
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade) 
 
-<<<<<<< HEAD
   description SprintActionLogDescription
-=======
-  storyAssigneeId String?
-  
-  storyState StoryState?
-
-  type SprintActionLogType
->>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
 
   createdAt DateTime  @default(now())
   deletedAt DateTime? @updatedAt
@@ -58,10 +45,7 @@ model User {
   assignedStories Story[]               @relation(name: "assignee")
   createdProjects Project[]
   worklogs        Worklog[]
-<<<<<<< HEAD
   userProjectCapacity UserProjectCapacity[]
-=======
->>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
   sprintActionsLogs  SprintActionLog[]   @relation(name: "author")
 
   createdAt           DateTime              @default(now())
@@ -270,16 +254,9 @@ enum StoryType {
   SUPPORT
 }
 
-<<<<<<< HEAD
 enum SprintActionLogDescription {
   STORY_CREATED
   STORY_ASSIGNEE_CHANGED
   STORY_STATE_CHANGED
   STORY_DELETED
-=======
-enum SprintActionLogType {
-  STORY
-  WORKLOG
-  SPRINT
->>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
 }

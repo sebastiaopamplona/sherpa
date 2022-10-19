@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   Sprint,
   SprintActionLog,
@@ -6,9 +5,6 @@ import {
   SprintStateBreakdown,
   SprintStateBreakdownOutput,
 } from "../schemas/schemas"
-=======
-import { Sprint, SprintActionLogReg, SprintStateBreakdown, SprintStateBreakdownOutput } from "../schemas/schemas"
->>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
 import {
   addBusinessDays,
   differenceInBusinessDays,
@@ -258,22 +254,11 @@ export const updateSprintStateBreakdown: (sprintId: string) => void = async (spr
 export const registerSprintActionLog: (sal: SprintActionLogReg) => void = async (sal) => {
   const salStored = await prisma.sprintActionLog.create({
     data: {
-<<<<<<< HEAD
       authorId: sal.authorId,
       sprintId: sal.sprintId,
       storyId: sal.storyId,
 
       description: sal.description,
-=======
-      userId: sal.userId,
-      sprintId: sal.sprintId,
-      storyId: sal.storyId,
-
-      storyAssigneeId: sal.storyAssigneeId,
-      storyState: sal.storyState,
-
-      type: sal.type,
->>>>>>> a6bdabb5b6fbc04bc08fe423abadcabab47b157e
       createdAt: sal.createdAt,
     },
   })
