@@ -134,7 +134,8 @@ export const SprintActionLog: Zod.AnyZodObject = z.object({
   sprintId: z.string().nullish(),
   storyId: z.string().nullish(),
 
-  description: z.enum(["STORY_CREATED", "STORY_ASSIGNEE_CHANGED", "STORY_STATE_CHANGED", "STORY_DELETED"]),
+  type: z.enum(["STORY_CREATED", "STORY_ASSIGNEE_CHANGED", "STORY_STATE_CHANGED", "STORY_DELETED"]),
+  description: z.string().nullish(),
 
   createdAt: z.date().nullish(),
 })

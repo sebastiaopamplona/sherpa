@@ -1,7 +1,8 @@
 import { NoSprint, NoUser } from "../data/data"
 import { SprintActionLogReg, Story } from "../schemas/schemas"
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
-import { registerSprintActionLog, updateSprintStateBreakdown } from "./sprint"
+import { BuildSprintActionLogDescription, registerSprintActionLog, updateSprintStateBreakdown } from "./sprint"
+import { SprintActionLogType as SprintActionLogTypeEnum } from "@prisma/client"
 
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
@@ -38,12 +39,21 @@ export const storyRouter = createRouter()
       if (input.sprintId !== NoSprint.id) {
         updateSprintStateBreakdown(input.sprintId)
 
+        const actionLogDesc = await BuildSprintActionLogDescription(
+          SprintActionLogTypeEnum.STORY_CREATED,
+          // ctx.session?.user?.id as string,
+          input.assigneeId,
+          input.sprintId,
+          story.id
+        )
+
         let sal: SprintActionLogReg = {
-          userId: input.creatorId,
+          authorId: input.creatorId,
           sprintId: input.sprintId,
           storyId: story.id,
 
-          description: "STORY_CREATED",
+          type: SprintActionLogTypeEnum.STORY_CREATED,
+          description: actionLogDesc,
         }
         registerSprintActionLog(sal)
       }

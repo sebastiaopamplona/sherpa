@@ -12,20 +12,20 @@ datasource db {
   url      = env("SHERPA_DATABASE_URL")
 }
 
-
 model SprintActionLog {
   id String @id @default(uuid())
 
-  authorId String 
-  user User @relation(name: "author", fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  user     User   @relation(name: "author", fields: [authorId], references: [id], onDelete: Cascade)
 
   sprintId String
-  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  sprint   Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 
   storyId String
-  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade) 
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
-  description SprintActionLogDescription
+  type        SprintActionLogType
+  description String
 
   createdAt DateTime  @default(now())
   deletedAt DateTime? @updatedAt
@@ -39,18 +39,18 @@ model User {
   password String
   image    String
 
-  createdSprints  Sprint[]
-  roleInProjects  UserRolesInProjects[]
-  createdStories  Story[]               @relation(name: "creator")
-  assignedStories Story[]               @relation(name: "assignee")
-  createdProjects Project[]
-  worklogs        Worklog[]
+  createdSprints      Sprint[]
+  roleInProjects      UserRolesInProjects[]
+  createdStories      Story[]               @relation(name: "creator")
+  assignedStories     Story[]               @relation(name: "assignee")
+  createdProjects     Project[]
+  worklogs            Worklog[]
   userProjectCapacity UserProjectCapacity[]
-  sprintActionsLogs  SprintActionLog[]   @relation(name: "author")
+  sprintActionsLogs   SprintActionLog[]     @relation(name: "author")
 
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  deletedAt           DateTime?             @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @updatedAt
 }
 
 model Role {
@@ -101,14 +101,14 @@ model Project {
   creatorId String
   creator   User   @relation(fields: [creatorId], references: [id], onDelete: SetNull)
 
-  users   UserRolesInProjects[]
-  stories Story[]
-  sprints Sprint[]
+  users               UserRolesInProjects[]
+  stories             Story[]
+  sprints             Sprint[]
   userProjectCapacity UserProjectCapacity[]
 
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  deletedAt           DateTime?             @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? @updatedAt
 }
 
 model UserRolesInProjects {
@@ -144,7 +144,7 @@ model Sprint {
   stories Story[]
 
   sprintStateBreakdown SprintStateBreakdown[]
-  sprintActionsLogs SprintActionLog[]
+  sprintActionsLogs    SprintActionLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -173,7 +173,7 @@ model Story {
   sprintId String?
   sprint   Sprint? @relation(fields: [sprintId], references: [id], onDelete: SetNull)
 
-  worklogs Worklog[]
+  worklogs  Worklog[]
   storyLogs SprintActionLog[]
 
   createdAt DateTime  @default(now())
@@ -218,16 +218,16 @@ model SprintStateBreakdown {
 }
 
 model UserProjectCapacity {
-  id        String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  capacity  Int      @default(0)
-  date      DateTime
+  capacity Int      @default(0)
+  date     DateTime
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -254,9 +254,11 @@ enum StoryType {
   SUPPORT
 }
 
-enum SprintActionLogDescription {
+enum SprintActionLogType {
   STORY_CREATED
   STORY_ASSIGNEE_CHANGED
   STORY_STATE_CHANGED
   STORY_DELETED
+
+  @@map("SprintActionLogType")
 }

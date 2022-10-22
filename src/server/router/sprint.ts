@@ -5,6 +5,7 @@ import {
   SprintStateBreakdown,
   SprintStateBreakdownOutput,
 } from "../schemas/schemas"
+import { SprintActionLogType as SprintActionLogTypeEnum, StoryState as StoryStateEnum } from "@prisma/client"
 import {
   addBusinessDays,
   differenceInBusinessDays,
@@ -18,7 +19,6 @@ import {
 import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
 
 import { NoSprint } from "../data/data"
-import { StoryState as StoryStateEnum } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
@@ -258,6 +258,7 @@ export const registerSprintActionLog: (sal: SprintActionLogReg) => void = async 
       sprintId: sal.sprintId,
       storyId: sal.storyId,
 
+      type: sal.type,
       description: sal.description,
       createdAt: sal.createdAt,
     },
@@ -270,3 +271,38 @@ export type SprintGetByIdOutput = inferQueryOutput<"sprint.getById">
 export type SprintGetByProjectIdOutput = inferQueryOutput<"sprint.getByProjectId">
 export type SprintUpdateOutput = inferMutationOutput<"sprint.update">
 export type SprintDeleteByIdOutput = inferMutationOutput<"sprint.deleteById">
+
+export const BuildSprintActionLogDescription: (
+  type: SprintActionLogTypeEnum,
+  authorId: string,
+  sprintId: string,
+  storyId: string,
+  oldStoryState?: string,
+  oldAssigneeId?: string
+) => Promise<string> = async (type, authorId, sprintId, storyId, oldStoryState, oldAssigneeId) => {
+  const author = await prisma.user.findUnique({ where: { id: authorId } })
+  if (!author) throw new TRPCError({ code: "NOT_FOUND", message: `Author with id ${authorId} not found` })
+
+  const sprint = await prisma.sprint.findUnique({ where: { id: sprintId } })
+  if (!sprint) throw new TRPCError({ code: "NOT_FOUND", message: `Sprint with id ${sprintId} not found` })
+
+  const story = await prisma.story.findUnique({ where: { id: storyId }, include: { assignee: true } })
+  if (!story) throw new TRPCError({ code: "NOT_FOUND", message: `Story with id ${storyId} not found` })
+
+  switch (type) {
+    case SprintActionLogTypeEnum.STORY_CREATED:
+      return `${author.name} created story ${story.title}`
+    case SprintActionLogTypeEnum.STORY_DELETED:
+      return `${author.name} delete story ${story.title}`
+    case SprintActionLogTypeEnum.STORY_ASSIGNEE_CHANGED:
+      const oldAssignee = await prisma.user.findUnique({ where: { id: oldAssigneeId } })
+      if (!oldAssignee)
+        throw new TRPCError({ code: "NOT_FOUND", message: `Old assignee with id ${oldAssigneeId} not found` })
+
+      return `${author.name} assigned story ${story.title} from ${oldAssignee.name} to ${story.assignee}`
+    case SprintActionLogTypeEnum.STORY_STATE_CHANGED:
+      return `${author.name} changed story ${story.title} state from ${oldStoryState} to ${story.state}`
+    default:
+      throw new TRPCError({ code: "BAD_REQUEST", message: `Unexpected sprint action log type ${type}` })
+  }
+}
