@@ -9,7 +9,7 @@ import {
   setMinutes,
   setSeconds,
 } from "date-fns"
-import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+import { inferQueryOutput } from "../../pages/_app"
 
 import { StoryState as StoryStateEnum } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
@@ -190,5 +190,4 @@ export const updateSprintStateBreakdown: (sprintId: string) => void = async (spr
   })
 }
 
-export type SprintCreateOutput = inferMutationOutput<"sprint.create">
 export type SprintGetByProjectIdOutput = inferQueryOutput<"sprint.getByProjectId">

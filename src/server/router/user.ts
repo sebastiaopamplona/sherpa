@@ -1,11 +1,8 @@
-import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+import { inferQueryOutput } from "../../pages/_app"
 
-import { TRPCError } from "@trpc/server"
-import { User } from "../schemas/schemas"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
-import { NoSprint, NoUser } from "../data/data"
 
 export const userRouter = createRouter().query("getByProjectId", {
   input: z.object({
