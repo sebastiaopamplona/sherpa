@@ -1,7 +1,7 @@
 import { ArrElement, classNames, pathWithParams, pathWithProjSprintUser } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
 import { addDays, format, getWeek, isSameDay, isToday, setHours, startOfWeek, subDays } from "date-fns"
-import { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 
 import EmptyResourcesV2 from "../../components/EmptyResourcesv2/EmptyResourcesv2"
 import { GetServerSidePropsContext } from "next"
@@ -16,9 +16,13 @@ import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
+import Input from "../../components/Input/Input"
+import { useForm } from "react-hook-form"
+import { ProjectGetUserCapacityOutput, ProjectSetUserCapacityInput } from "../../server/router/project"
 
 // TODO: move this to a module.css
 const timekeeperGridCell = "col-span-1 border-2 flex items-center justify-center"
+
 export default function TimeKeeper() {
   const router = useRouter()
   const { projectId, sprintId, userId } = router.query
@@ -37,12 +41,22 @@ export default function TimeKeeper() {
     },
   ])
 
+  const capacities = trpc.useQuery([
+    "project.getUserCapacity",
+    {
+      projectId: projectId as string,
+      userId: userId as string,
+      startDate: currentDayRange[0]!,
+      endDate: currentDayRange[currentDayRange.length - 1]!,
+    },
+  ])
+
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
   const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
   const [worklogDay, setWorklogDay] = useState<Date>()
 
-  if (stories.isLoading) return null
+  if (stories.isLoading || capacities.isLoading) return null
 
   return (
     <section>
@@ -130,12 +144,19 @@ export default function TimeKeeper() {
                 {`${format(d, "eeeeee")}, ${format(d, "d/M")}`}
               </div>
             ))}
-            {/* <div className="col-span-6 h-6 rounded-sm"></div>
-            <div className={timekeeperGridCell}></div>
-            <div className={timekeeperGridCell}></div>
-            <div className={timekeeperGridCell}></div>
-            <div className={timekeeperGridCell}></div>
-            <div className={timekeeperGridCell}></div> */}
+            <div className="col-span-6 h-6 rounded-sm"></div>
+            {capacities.data?.map((cap, i) => (
+              <div key={cap.date.toString()}>
+                <TimeKeeperCapacityCell
+                  projectId={projectId as string}
+                  userId={userId as string}
+                  capacity={cap}
+                  onCapacityUpdate={() => {
+                    capacities.refetch()
+                  }}
+                />
+              </div>
+            ))}
 
             {stories.data?.map((story) => (
               <TimeKeeperEntry
@@ -266,6 +287,50 @@ const TimeKeeperEntry: React.FC<{
         />
       ))}
     </>
+  )
+}
+
+const TimeKeeperCapacityCell: React.FC<{
+  projectId: string
+  userId: string
+  capacity: ArrElement<ProjectGetUserCapacityOutput>
+  onCapacityUpdate: (story: StoryInput) => void
+}> = ({ projectId, userId, capacity, onCapacityUpdate }) => {
+  const { register, getValues } = useForm<ProjectSetUserCapacityInput>()
+
+  const setCapacityM = trpc.useMutation(["project.setUserCapacity"], {
+    onSuccess: onCapacityUpdate,
+  })
+
+  const handleSetCapacity = () => {
+    setCapacityM.mutate({
+      projectId: projectId,
+      userId: userId,
+      date: capacity.date,
+      capacity: getValues("capacity"),
+    })
+  }
+
+  return (
+    <div
+      className={classNames(timekeeperGridCell)}
+      onKeyDown={(e: { key: string }) => {
+        if (e.key == "Enter") {
+          handleSetCapacity()
+        }
+      }}
+    >
+      <div className={"font shadow-n rou hidden border-none"} />
+      <Input
+        value={capacity ? capacity.capacity : 0}
+        inputType={"number"}
+        classNames={
+          "text-center font-medium hover:cursor-pointer hover:bg-slate-100 block w-full h-full rounded-none border-none text-sm shadow-none focus:border-none focus:ring-0"
+        }
+        register={register("capacity", { valueAsNumber: true })}
+        onBlur={handleSetCapacity}
+      />
+    </div>
   )
 }
 
