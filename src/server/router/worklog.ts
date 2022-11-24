@@ -1,5 +1,3 @@
-import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
-
 import { Worklog } from "../schemas/schemas"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
@@ -139,11 +137,3 @@ export const worklogRouter = createRouter()
       })
     },
   })
-
-export type WorklogCreateOutput = inferMutationOutput<"worklog.create">
-export type WorklogGetAllOutput = inferQueryOutput<"worklog.getAll">
-export type WorklogGetByIdOutput = inferQueryOutput<"worklog.getById">
-export type WorklogGetByStoryIdOutput = inferQueryOutput<"worklog.getByStoryId">
-export type WorklogGetByCreatorIdOutput = inferQueryOutput<"worklog.getByCreatorId">
-export type WorklogUpdateOutput = inferMutationOutput<"worklog.update">
-export type WorklogDeleteByIdOutput = inferMutationOutput<"worklog.deleteById">

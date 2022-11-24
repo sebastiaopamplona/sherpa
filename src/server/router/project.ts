@@ -1,10 +1,12 @@
 import { Project, Projects } from "../schemas/schemas"
-import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+import { inferMutationInput, inferMutationOutput, inferQueryInput, inferQueryOutput } from "../../pages/_app"
 
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
+import { addBusinessDays, addDays, differenceInCalendarDays, differenceInDays, isSameDay } from "date-fns"
+import { UserProjectCapacity } from "@prisma/client"
 
 export const projectRouter = createRouter()
   // CREATE
@@ -169,54 +171,85 @@ export const projectRouter = createRouter()
     },
   })
 
-  // CREATE user capacity
-  .mutation("createUserCapacity", {
+  .query("getUserCapacity", {
     input: z.object({
       userId: z.string(),
       projectId: z.string(),
-      capacity: z.number(),
-      date: z.date(),
+      startDate: z.date(),
+      endDate: z.date(),
     }),
-    output: z.object({
-      projectId: z.string(),
-    }),
+    output: z
+      .object({
+        date: z.date(),
+        capacity: z.number(),
+      })
+      .array(),
     async resolve({ ctx, input }) {
-      const m = await prisma.userProjectCapacity.create({
-        data: {
+      let capacities = await prisma.userProjectCapacity.findMany({
+        where: {
           projectId: input.projectId,
           userId: input.userId,
-          date: input.date,
-          capacity: input.capacity,
+          date: {
+            gte: input.startDate,
+            lte: input.endDate,
+          },
+        },
+        orderBy: {
+          date: "asc",
         },
       })
 
-      return {
-        projectId: m.projectId,
+      let res: Array<{ date: Date; capacity: number }> = []
+      const nDays = differenceInCalendarDays(input.endDate, input.startDate) + 1
+      for (let i = 0; i < nDays; i++) {
+        let cap: number = 0
+        let day: Date = addBusinessDays(input.startDate, i)
+
+        if (capacities.length > 0) {
+          const peek = capacities[0]!
+          if (isSameDay(peek.date, day)) {
+            capacities = capacities.slice(1)
+            cap = peek.capacity
+          }
+        }
+
+        res.push({
+          date: day,
+          capacity: cap,
+        })
       }
+
+      return res
     },
   })
 
   // UPDATE user capacity
-  .mutation("updateUserCapacity", {
+  .mutation("setUserCapacity", {
     input: z.object({
       userId: z.string(),
       projectId: z.string(),
-      capacity: z.number(),
       date: z.date(),
+      capacity: z.number().gte(0).lte(24),
     }),
     output: z.object({
       projectId: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const m = await prisma.userProjectCapacity.update({
+      const m = await prisma.userProjectCapacity.upsert({
         where: {
-          projectId_userId_date: {
-            projectId: input.projectId,
+          userId_projectId_date: {
             userId: input.userId,
+            projectId: input.projectId,
             date: input.date,
           },
         },
-        data: {
+        update: {
+          capacity: input.capacity,
+        },
+        create: {
+          userId: input.userId,
+          projectId: input.projectId,
+          date: input.date,
           capacity: input.capacity,
         },
       })
@@ -226,14 +259,11 @@ export const projectRouter = createRouter()
       }
 
       return {
-        projectId: m.projectId,
+        projectId: m.projectId!,
       }
     },
   })
 
-export type ProjectCreateOutput = inferMutationOutput<"project.create">
-export type ProjectGetAllOutput = inferQueryOutput<"project.getAll">
-export type ProjectGetByIdOutput = inferQueryOutput<"project.getById">
+export type ProjectGetUserCapacityOutput = inferQueryOutput<"project.getUserCapacity">
+export type ProjectSetUserCapacityInput = inferMutationInput<"project.setUserCapacity">
 export type ProjectGetByUserIdOutput = inferQueryOutput<"project.getByUserId">
-export type ProjectUpdateOutput = inferMutationOutput<"project.update">
-export type ProjectDeleteByIdOutput = inferMutationOutput<"project.deleteById">

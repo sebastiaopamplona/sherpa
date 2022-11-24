@@ -9,7 +9,7 @@ import {
   setMinutes,
   setSeconds,
 } from "date-fns"
-import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+import { inferQueryOutput } from "../../pages/_app"
 
 import { StoryState as StoryStateEnum } from "@prisma/client"
 import { TRPCError } from "@trpc/server"
@@ -50,21 +50,6 @@ export const sprintRouter = createRouter()
   })
 
   // READ
-  .query("getAll", {
-    async resolve({ ctx, input }) {
-      // TODO:
-      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
-    },
-  })
-  .query("getById", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ ctx, input }) {
-      // TODO:
-      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
-    },
-  })
   .query("getByProjectId", {
     input: z.object({
       projectId: z.string(),
@@ -142,29 +127,6 @@ export const sprintRouter = createRouter()
     },
   })
 
-  // UPDATE
-  .mutation("update", {
-    input: Sprint,
-    output: z.object({
-      id: z.string(),
-    }),
-    async resolve({ ctx, input }) {
-      // TODO:
-      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
-    },
-  })
-
-  // DELETE
-  .mutation("deleteById", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ ctx, input }) {
-      // TODO:
-      throw new TRPCError({ code: "METHOD_NOT_SUPPORTED" })
-    },
-  })
-
 const dateAsKey: (d: Date) => string = (d) => {
   return format(d, "dd/MM")
 }
@@ -228,9 +190,4 @@ export const updateSprintStateBreakdown: (sprintId: string) => void = async (spr
   })
 }
 
-export type SprintCreateOutput = inferMutationOutput<"sprint.create">
-export type SprintGetAllOutput = inferQueryOutput<"sprint.getAll">
-export type SprintGetByIdOutput = inferQueryOutput<"sprint.getById">
 export type SprintGetByProjectIdOutput = inferQueryOutput<"sprint.getByProjectId">
-export type SprintUpdateOutput = inferMutationOutput<"sprint.update">
-export type SprintDeleteByIdOutput = inferMutationOutput<"sprint.deleteById">

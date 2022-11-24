@@ -1,5 +1,5 @@
 import { NoSprint, NoUser } from "../data/data"
-import { inferMutationOutput, inferQueryOutput } from "../../pages/_app"
+import { inferQueryOutput } from "../../pages/_app"
 
 import { Story } from "../schemas/schemas"
 import { TRPCError } from "@trpc/server"
@@ -199,9 +199,5 @@ export const storyRouter = createRouter()
     },
   })
 
-export type StoryCreateOutput = inferMutationOutput<"story.create">
-export type StoryGetAllOutput = inferQueryOutput<"story.getAll">
 export type StoryGetByIdOutput = inferQueryOutput<"story.getById">
 export type StoryGetForTimekeeperOutput = inferQueryOutput<"story.getForTimekeeper">
-export type StoryUpdateOutput = inferMutationOutput<"story.update">
-export type StoryDeleteByIdOutput = inferMutationOutput<"story.deleteById">

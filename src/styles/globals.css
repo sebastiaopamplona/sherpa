@@ -10,6 +10,14 @@ body {
   @apply h-full overflow-x-hidden;
 }
 
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 ::-webkit-scrollbar {
   -webkit-appearance: none;
   width: 6px;
