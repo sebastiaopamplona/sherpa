@@ -113,8 +113,6 @@ export default function TimeKeeper() {
             <div className="col-span-11 flex items-end justify-end py-2">
               <TimeKeeperNav
                 currentDate={currentDate}
-                setCurrentDate={setCurrentDate}
-                setCurrentDayRange={setCurrentDayRange}
                 onToday={() => {
                   const newCurrDate = new Date()
                   setCurrentDate(newCurrDate)
@@ -220,12 +218,10 @@ export default function TimeKeeper() {
 
 const TimeKeeperNav: React.FC<{
   currentDate: Date
-  setCurrentDate: (setCurrentDayRanged: Date) => void
-  setCurrentDayRange: (ds: Date[]) => void
   onToday: () => void
   onPrevWeek: () => void
   onNextWeek: () => void
-}> = ({ currentDate, setCurrentDate, setCurrentDayRange, onToday, onPrevWeek, onNextWeek }) => {
+}> = ({ currentDate, onToday, onPrevWeek, onNextWeek }) => {
   return (
     <nav className="relative z-0 inline-flex -space-x-px rounded-sm" aria-label="Pagination">
       <div
@@ -303,12 +299,15 @@ const TimeKeeperCapacityCell: React.FC<{
   })
 
   const handleSetCapacity = () => {
-    setCapacityM.mutate({
-      projectId: projectId,
-      userId: userId,
-      date: capacity.date,
-      capacity: getValues("capacity"),
-    })
+    const cap: number = getValues("capacity")
+    if (!isNaN(cap)) {
+      setCapacityM.mutate({
+        projectId: projectId,
+        userId: userId,
+        date: capacity.date,
+        capacity: cap,
+      })
+    }
   }
 
   return (
