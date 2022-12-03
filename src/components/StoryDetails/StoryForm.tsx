@@ -20,7 +20,7 @@ import { trpc } from "../../utils/trpc"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface Props {
   story?: StoryInput
@@ -91,6 +91,23 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
     deleteStoryM.mutate({ id: story!.id })
   }
 
+  useEffect(() => {
+    // NOTE(SP): This is a bit ugly...
+    // Got the idea from here https://github.com/react-hook-form/react-hook-form/issues/456
+    // Find a cleaner way to do it
+
+    setValue("id", story?.id)
+    setValue("title", story?.title)
+    setValue("description", story?.description)
+    setValue("estimate", story?.estimate)
+    setValue("state", story?.state)
+    setValue("type", story?.type)
+    setValue("githubId", story?.githubId)
+    setValue("jiraId", story?.jiraId)
+    setValue("assigneeId", story?.assigneeId)
+    setValue("sprintId", story?.sprintId)
+  }, [story])
+
   if (users.isLoading || sprints.isLoading) return null
 
   return (
@@ -98,12 +115,11 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
       {/* content */}
       <div className="grid grid-cols-6 gap-3 overflow-y-auto p-6">
         <div className="col-span-6">
-          <Input value={story ? story.title : ""} label="Title" register={register("title")} />
+          <Input label="Title" register={register("title")} />
         </div>
         <div className="col-span-6">
           <Textarea
             label="Description"
-            value={story ? story.description : ""}
             register={register("description")}
             note="(Markdown will be supported in the future)"
             nRows={15}
@@ -152,28 +168,13 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
           />
         </div>
         <div className="col-span-2">
-          <Input
-            value={story ? story.estimate : 0}
-            inputType="number"
-            label="Estimate"
-            register={register("estimate", { valueAsNumber: true })}
-          />
+          <Input inputType="number" label="Estimate" register={register("estimate", { valueAsNumber: true })} />
         </div>
         <div className="col-span-2">
-          <Input
-            label="GitHub Issue Number"
-            value={story ? story.githubId : ""}
-            note="(Optional)"
-            register={register("githubId")}
-          />
+          <Input label="GitHub Issue Number" note="(Optional)" register={register("githubId")} />
         </div>
         <div className="col-span-2">
-          <Input
-            label="Jira Ticket ID"
-            value={story ? story.jiraId : ""}
-            note="(Optional)"
-            register={register("jiraId")}
-          />
+          <Input label="Jira Ticket ID" note="(Optional)" register={register("jiraId")} />
         </div>
       </div>
 
