@@ -1,10 +1,10 @@
 import { StoryState, StoryState as StoryStateEnum, StoryType, StoryType as StoryTypeEnum } from "@prisma/client"
-import { addBusinessDays, setHours } from "date-fns"
+import { addBusinessDays, isWednesday, setHours, subDays } from "date-fns"
 
 import { DefaultPrismaClient } from "../src/server/db/client"
 import bcrypt from "bcrypt"
 
-const sprintStart = new Date("2022-10-05")
+let sprintStart: Date
 
 const prisma = DefaultPrismaClient()
 
@@ -383,6 +383,7 @@ async function seedStories() {
     {
       ...common,
       title: "Story F",
+      description: "Description (F)",
       estimate: 16,
 
       state: StoryStateEnum.DONE,
@@ -406,10 +407,11 @@ async function seedStories() {
     {
       ...common,
       title: "Story E",
-      estimate: 16,
+      description: "Description (E)",
+      estimate: 8,
 
       state: StoryStateEnum.IN_REVIEW,
-      type: StoryTypeEnum.DEVELOPMENT,
+      type: StoryTypeEnum.DOCUMENTATION,
 
       worklogs: [
         {
@@ -429,6 +431,7 @@ async function seedStories() {
     {
       ...common,
       title: "Story A",
+      description: "Description (A)",
       estimate: 8,
 
       state: StoryStateEnum.DELIVERED,
@@ -458,7 +461,8 @@ async function seedStories() {
     {
       ...common,
       title: "Story B",
-      estimate: 16,
+      description: "Description (B)",
+      estimate: 24,
 
       state: StoryStateEnum.IN_PROGRESS,
       type: StoryTypeEnum.DEVELOPMENT,
@@ -481,7 +485,8 @@ async function seedStories() {
     {
       ...common,
       title: "Story C",
-      estimate: 16,
+      description: "Description (C)",
+      estimate: 4,
 
       state: StoryStateEnum.READY,
       type: StoryTypeEnum.DEVELOPMENT,
@@ -491,7 +496,8 @@ async function seedStories() {
     {
       ...common,
       title: "Story F",
-      estimate: 16,
+      description: "Description (F)",
+      estimate: 4,
 
       state: StoryStateEnum.READY,
       type: StoryTypeEnum.BUG_FIXING,
@@ -501,37 +507,8 @@ async function seedStories() {
     {
       ...common,
       title: "Story G",
-      estimate: 16,
-
-      state: StoryStateEnum.READY,
-      type: StoryTypeEnum.BUG_FIXING,
-
-      worklogs: [],
-    },
-    {
-      ...common,
-      title: "Story H",
-      estimate: 16,
-
-      state: StoryStateEnum.READY,
-      type: StoryTypeEnum.DOCUMENTATION,
-
-      worklogs: [],
-    },
-    {
-      ...common,
-      title: "Story I",
-      estimate: 16,
-
-      state: StoryStateEnum.READY,
-      type: StoryTypeEnum.SUPPORT,
-
-      worklogs: [],
-    },
-    {
-      ...common,
-      title: "Story J",
-      estimate: 16,
+      description: "Description (G)",
+      estimate: 8,
 
       state: StoryStateEnum.READY,
       type: StoryTypeEnum.SUPPORT,
@@ -684,6 +661,12 @@ async function seedStories() {
 }
 
 async function main() {
+  let d: Date = subDays(new Date(), 4)
+  while (!isWednesday(d)) {
+    d = subDays(d, 1)
+  }
+  sprintStart = d
+
   await seedRoles()
   await seedPermissions()
   await seedRoleToPermissions()

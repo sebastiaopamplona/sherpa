@@ -16,7 +16,7 @@ import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
 import { prisma } from "../db/client"
 import { z } from "zod"
-import { NoSprint } from "../data/data"
+import { NoSprint, StoryStatesSorterDoneToBlocked } from "../data/data"
 
 export const sprintRouter = createRouter()
   // CREATE
@@ -126,6 +126,149 @@ export const sprintRouter = createRouter()
       return out
     },
   })
+  .query("getUserBreakdown", {
+    input: z.object({
+      projectId: z.string(),
+      sprintId: z.string(),
+    }),
+    output: z.array(
+      z.object({
+        user: z.object({
+          id: z.string(),
+          name: z.string(),
+          image: z.string(),
+          capacity: z.number(),
+        }),
+        stories: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            estimate: z.number(),
+            investedEffort: z.number(),
+            remainingEffort: z.number(),
+            totalEffort: z.number(),
+            type: z.string(),
+            state: z.string(),
+          })
+        ),
+      })
+    ),
+    async resolve({ ctx, input }) {
+      const sprint = await prisma.sprint.findUnique({
+        where: {
+          id: input.sprintId,
+        },
+      })
+
+      if (typeof sprint === null) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Sprint not found." })
+      }
+
+      const users = await prisma.user.findMany({
+        orderBy: {
+          name: "asc",
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          userProjectCapacity: {
+            where: {
+              projectId: input.projectId,
+              date: {
+                gte: sprint!.startAt,
+                lte: sprint!.endAt,
+              },
+            },
+            select: {
+              capacity: true,
+            },
+          },
+          assignedStories: {
+            select: {
+              id: true,
+              title: true,
+              estimate: true,
+              type: true,
+              state: true,
+              worklogs: {
+                orderBy: {
+                  createdAt: "asc",
+                },
+                select: {
+                  createdAt: true,
+                  effort: true,
+                  remainingEffort: true,
+                },
+              },
+            },
+            where: {
+              sprintId: input.sprintId,
+            },
+          },
+        },
+        where: {
+          roleInProjects: {
+            some: {
+              projectId: input.projectId,
+            },
+          },
+        },
+      })
+
+      if (typeof users === "undefined") {
+        throw new TRPCError({ code: "NOT_FOUND", message: "No users found" })
+      }
+
+      type user = {
+        id: string
+        name: string
+        image: string
+        capacity: number
+      }
+
+      let usersParsed: Array<{ user: user; stories: Array<UserBreakdownStory> }> = []
+      users.map((u) => {
+        let stories: Array<UserBreakdownStory> = []
+
+        u.assignedStories.map((s) => {
+          let investedEffort: number = 0
+          s.worklogs.map((w) => (investedEffort += w.effort))
+
+          let remainingEffort: number = s.estimate
+          if (s.worklogs.length > 0) remainingEffort = s.worklogs[s.worklogs.length - 1]!.remainingEffort
+
+          stories.push({
+            id: s.id,
+            title: s.title,
+            estimate: s.estimate,
+            investedEffort: investedEffort,
+            remainingEffort: remainingEffort,
+            totalEffort: investedEffort + remainingEffort,
+            type: s.type,
+            state: s.state,
+          })
+        })
+
+        let capacity: number = 0
+        u.userProjectCapacity.map((c) => (capacity += c.capacity))
+
+        usersParsed.push({
+          user: {
+            id: u.id,
+            name: u.name,
+            image: u.image,
+            capacity: capacity,
+          },
+          stories: stories.sort((s1, s2) =>
+            StoryStatesSorterDoneToBlocked.get(s1.state)! > StoryStatesSorterDoneToBlocked.get(s2.state)! ? 1 : -1
+          ),
+        })
+      })
+
+      return usersParsed
+    },
+  })
 
 const dateAsKey: (d: Date) => string = (d) => {
   return format(d, "dd/MM")
@@ -191,3 +334,15 @@ export const updateSprintStateBreakdown: (sprintId: string) => void = async (spr
 }
 
 export type SprintGetByProjectIdOutput = inferQueryOutput<"sprint.getByProjectId">
+export type SprintGetUserBreakdownOutput = inferQueryOutput<"sprint.getUserBreakdown">
+
+export type UserBreakdownStory = {
+  id: string
+  title: string
+  estimate: number
+  investedEffort: number
+  remainingEffort: number
+  totalEffort: number
+  type: string
+  state: string
+}
