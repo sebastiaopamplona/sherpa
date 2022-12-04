@@ -8,6 +8,7 @@ import {
   setHours,
   setMinutes,
   setSeconds,
+  subDays,
 } from "date-fns"
 import { inferQueryOutput } from "../../pages/_app"
 
@@ -176,7 +177,7 @@ export const sprintRouter = createRouter()
             where: {
               projectId: input.projectId,
               date: {
-                gte: sprint!.startAt,
+                gte: subDays(sprint!.startAt, 1),
                 lte: sprint!.endAt,
               },
             },
