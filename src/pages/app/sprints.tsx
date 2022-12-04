@@ -137,11 +137,14 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
             <div className="col-span-3 flex h-96 items-center justify-center py-2">
-              {userStoriesBreakdown.data?.map((u, idx) => (
-                <div key={`${u.user.id}-${idx}`}>
-                  <UserStoryBreakdown u={u} />
-                </div>
-              ))}
+              {userStoriesBreakdown.data?.map(
+                (u, idx) =>
+                  u.stories.length > 0 && (
+                    <div key={`${u.user.id}-${idx}`}>
+                      <UserStoryBreakdown u={u} />
+                    </div>
+                  )
+              )}
             </div>
           </div>
         ) : (
@@ -212,7 +215,7 @@ const UserStoryBreakdown: React.FC<{ u: ArrElement<SprintGetUserBreakdownOutput>
             Commitment
           </text>
           <text
-            x={125}
+            x={120}
             y={115}
             textAnchor="middle"
             dominantBaseline="middle"
@@ -225,7 +228,7 @@ const UserStoryBreakdown: React.FC<{ u: ArrElement<SprintGetUserBreakdownOutput>
           <text x={150} y={115} textAnchor="middle" dominantBaseline="middle" className="text-xl">
             {`/`}
           </text>
-          <text x={175} y={115} textAnchor="middle" dominantBaseline="middle" className="text-xl font-bold">
+          <text x={180} y={115} textAnchor="middle" dominantBaseline="middle" className="text-xl font-bold">
             {u.user.capacity}h
           </text>
           <text x={150} y={140} textAnchor="middle" dominantBaseline="middle">
