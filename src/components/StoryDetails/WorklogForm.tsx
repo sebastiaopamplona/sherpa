@@ -29,19 +29,19 @@ export default function WorklogForm({ storyId, worklog, worklogDay, crudEventWra
   const [selectedDate, setSelectedDate] = useState(worklogDay ? worklogDay : new Date())
   const [isDeleting, setIsDeleting] = useState<boolean>(false)
 
-  const createWorklogM = trpc.useMutation(["worklog.create"], {
+  const createWorklogM = trpc.worklog.create.useMutation({
     onSuccess: (data) => {
       if (crudEventWrapper?.onCreate?.onSuccess) crudEventWrapper?.onCreate?.onSuccess(data)
     },
     onError: crudEventWrapper?.onCreate?.onError,
   })
-  const updateWorklogM = trpc.useMutation(["worklog.update"], {
+  const updateWorklogM = trpc.worklog.update.useMutation({
     onSuccess: (data) => {
       if (crudEventWrapper?.onUpdate?.onSuccess) crudEventWrapper?.onUpdate?.onSuccess(data)
     },
     onError: crudEventWrapper?.onUpdate?.onError,
   })
-  const deleteWorklogM = trpc.useMutation(["worklog.deleteById"], {
+  const deleteWorklogM = trpc.worklog.deleteById.useMutation({
     onSuccess: crudEventWrapper?.onDelete?.onSuccess,
     onError: crudEventWrapper?.onDelete?.onError,
   })

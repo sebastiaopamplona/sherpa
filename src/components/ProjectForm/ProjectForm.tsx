@@ -2,7 +2,7 @@ import { ArrElement, classNames } from "../../utils/aux"
 import { SubmitHandler, useForm } from "react-hook-form"
 
 import Input from "../Input/Input"
-import { ProjectGetByUserIdOutput } from "../../server/router/project"
+import { ProjectGetByUserIdOutput } from "../../server/trpc/router/project"
 import Textarea from "../Textarea/Textarea"
 import { XCircleIcon } from "@heroicons/react/solid"
 import { trpc } from "../../utils/trpc"
@@ -38,7 +38,7 @@ export default function ProjectForm({
 
   const isCreateMode = typeof project === "undefined"
 
-  const createProjectM = trpc.useMutation(["project.create"], {
+  const createProjectM = trpc.project.create.useMutation({
     onSuccess: (data) => {
       onCreateOrUpdateSuccess(data.id)
     },
@@ -48,7 +48,7 @@ export default function ProjectForm({
     },
   })
 
-  const deleteProjectM = trpc.useMutation(["project.deleteById"], {
+  const deleteProjectM = trpc.project.deleteById.useMutation({
     onSuccess: () => {
       onDeleteSuccess()
     },

@@ -6,7 +6,7 @@ import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
 import ProjectEntry from "../../components/ProjectEntry/ProjectEntry"
 import ProjectForm from "../../components/ProjectForm/ProjectForm"
-import { ProjectGetByUserIdOutput } from "../../server/router/project"
+import { ProjectGetByUserIdOutput } from "../../server/trpc/router/project"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
 import { trpc } from "../../utils/trpc"
@@ -16,7 +16,7 @@ import { useState } from "react"
 export default function Projects() {
   const session = useSession()
 
-  const projects = trpc.useQuery(["project.getByUserId", { userId: session?.data?.userid as string }])
+  const projects = trpc.project.getByUserId.useQuery({ userId: session?.data?.userid as string })
 
   const [currentProject, setCurrentProject] = useState<ArrElement<ProjectGetByUserIdOutput>>()
   const [isProjectDetailsOpen, setIsProjectDetailsOpen] = useState<boolean>(false)

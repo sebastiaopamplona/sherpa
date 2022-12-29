@@ -14,7 +14,7 @@ import { useState } from "react"
 export default function Backlog() {
   const router = useRouter()
   const { projectId } = router.query
-  const stories = trpc.useQuery(["story.getAll", { projectId: projectId as string }])
+  const stories = trpc.story.getAll.useQuery({ projectId: projectId as string })
 
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isSlideOverOpen, setIsSlideOverOpen] = useState<boolean>(false)

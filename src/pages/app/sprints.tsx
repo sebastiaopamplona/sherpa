@@ -12,20 +12,20 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
+import { ArrElement, classNames } from "../../utils/aux"
+import { SprintGetUserBreakdownOutput, UserBreakdownStory } from "../../server/trpc/router/sprint"
+import { useMemo, useState } from "react"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
 import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
 import SprintForm from "../../components/SprintForm/SprintForm"
+import { StoryStatesColors } from "../../server/data/data"
 import { checkIfShouldRedirect } from "../../server/aux"
-import { ArrElement, classNames } from "../../utils/aux"
 import { getJourndevAuthSession } from "../../server/session"
 import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
-import { useMemo, useState } from "react"
-import { SprintGetUserBreakdownOutput, UserBreakdownStory } from "../../server/router/sprint"
-import { StoryStatesColors } from "../../server/data/data"
 
 const hoverUnderCapStories = (props: any) => {
   const { innerRadius, outerRadius, payload } = props
@@ -77,11 +77,11 @@ export default function Dashboard() {
   const router = useRouter()
   const { projectId, sprintId } = router.query
 
-  const sprintStateBreakdown = trpc.useQuery(["sprint.getStateBreakdown", { sprintId: sprintId as string }])
-  const userStoriesBreakdown = trpc.useQuery([
-    "sprint.getUserBreakdown",
-    { projectId: projectId as string, sprintId: sprintId as string },
-  ])
+  const sprintStateBreakdown = trpc.sprint.getStateBreakdown.useQuery({ sprintId: sprintId as string })
+  const userStoriesBreakdown = trpc.sprint.getUserBreakdown.useQuery({
+    projectId: projectId as string,
+    sprintId: sprintId as string,
+  })
 
   const [isSprintsDetailsOpen, setIsSprintDetailsOpen] = useState<boolean>(false)
 

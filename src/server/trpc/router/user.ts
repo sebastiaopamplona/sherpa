@@ -1,5 +1,6 @@
 import { protectedProcedure, router } from "../trpc"
 
+import { RouterOutputs } from "../../../utils/trpc"
 import { prisma } from "../../db/client"
 import { z } from "zod"
 
@@ -29,4 +30,5 @@ export const userRouter = router({
       return users
     }),
 })
-// export type UserGetByProjectIdOutput = inferQueryOutput<"user.getByProjectId">
+
+export type UserGetByProjectIdOutput = RouterOutputs["user"]["getByProjectId"]

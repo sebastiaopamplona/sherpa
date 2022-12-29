@@ -1,24 +1,24 @@
 import { ArrElement, classNames, pathWithParams, pathWithProjSprintUser } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
+import { ProjectGetUserCapacityOutput, ProjectSetUserCapacityInput } from "../../server/trpc/router/project"
+import React, { useMemo, useState } from "react"
 import { addDays, format, getWeek, isSameDay, isToday, setHours, startOfWeek, subDays } from "date-fns"
-import React, { useEffect, useMemo, useState } from "react"
 
 import EmptyResourcesV2 from "../../components/EmptyResourcesv2/EmptyResourcesv2"
 import { GetServerSidePropsContext } from "next"
+import Input from "../../components/Input/Input"
 import { IoTodayOutline } from "react-icons/io5"
 import Layout from "../../components/Layout/Layout"
 import Link from "next/link"
 import StoryDetails from "../../components/StoryDetails/StoryDetails"
 import StoryEntry from "../../components/StoryEntry/StoryEntry"
-import { StoryGetForTimekeeperOutput } from "../../server/router/story"
+import { StoryGetForTimekeeperOutput } from "../../server/trpc/router/story"
 import { StoryInput } from "../../server/schemas/schemas"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
 import { trpc } from "../../utils/trpc"
-import { useRouter } from "next/router"
-import Input from "../../components/Input/Input"
 import { useForm } from "react-hook-form"
-import { ProjectGetUserCapacityOutput, ProjectSetUserCapacityInput } from "../../server/router/project"
+import { useRouter } from "next/router"
 
 // TODO: move this to a module.css
 const timekeeperGridCell = "col-span-1 border-2 flex items-center justify-center"
@@ -30,26 +30,20 @@ export default function TimeKeeper() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
   const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
 
-  const stories = trpc.useQuery([
-    "story.getForTimekeeper",
-    {
-      projectId: projectId as string,
-      sprintId: sprintId as string,
-      assigneeId: userId as string,
-      startDate: currentDayRange[0]!,
-      endDate: currentDayRange[currentDayRange.length - 1]!,
-    },
-  ])
+  const stories = trpc.story.getForTimeKeeper.useQuery({
+    projectId: projectId as string,
+    sprintId: sprintId as string,
+    assigneeId: userId as string,
+    startDate: currentDayRange[0]!,
+    endDate: currentDayRange[currentDayRange.length - 1]!,
+  })
 
-  const capacities = trpc.useQuery([
-    "project.getUserCapacity",
-    {
-      projectId: projectId as string,
-      userId: userId as string,
-      startDate: currentDayRange[0]!,
-      endDate: currentDayRange[currentDayRange.length - 1]!,
-    },
-  ])
+  const capacities = trpc.project.getUserCapacity.useQuery({
+    projectId: projectId as string,
+    userId: userId as string,
+    startDate: currentDayRange[0]!,
+    endDate: currentDayRange[currentDayRange.length - 1]!,
+  })
 
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
@@ -294,7 +288,7 @@ const TimeKeeperCapacityCell: React.FC<{
 }> = ({ projectId, userId, capacity, onCapacityUpdate }) => {
   const { register, getValues } = useForm<ProjectSetUserCapacityInput>()
 
-  const setCapacityM = trpc.useMutation(["project.setUserCapacity"], {
+  const setCapacityM = trpc.project.setUserCapacity.useMutation({
     onSuccess: onCapacityUpdate,
   })
 

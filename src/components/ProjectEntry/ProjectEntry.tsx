@@ -1,7 +1,7 @@
 import { ArrElement, classNames } from "../../utils/aux"
 import { GiNotebook, GiPerson, GiSprint } from "react-icons/gi"
 
-import { ProjectGetByUserIdOutput } from "../../server/router/project"
+import { ProjectGetByUserIdOutput } from "../../server/trpc/router/project"
 import { useRouter } from "next/router"
 
 interface Props {

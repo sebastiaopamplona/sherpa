@@ -1,3 +1,4 @@
+import { RouterInputs, RouterOutputs } from "../../../utils/trpc"
 import { addBusinessDays, differenceInCalendarDays, isSameDay } from "date-fns"
 import { protectedProcedure, router } from "../trpc"
 
@@ -207,3 +208,7 @@ export const projectRouter = router({
       }
     }),
 })
+
+export type ProjectGetByUserIdOutput = RouterOutputs["project"]["getByUserId"]
+export type ProjectGetUserCapacityOutput = RouterOutputs["project"]["getUserCapacity"]
+export type ProjectSetUserCapacityInput = RouterInputs["project"]["setUserCapacity"]

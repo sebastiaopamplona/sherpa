@@ -1,7 +1,7 @@
 import { GiCube, GiEmptyHourglass, GiSprint } from "react-icons/gi"
 import { StoryStates, StoryTypes } from "../../server/data/data"
 
-import { StoryGetByIdOutput } from "../../server/router/story"
+import { StoryGetByIdOutput } from "../../server/trpc/router/story"
 import { StoryState as StoryStateEnum } from "@prisma/client"
 import { classNames } from "../../utils/aux"
 import { useMemo } from "react"

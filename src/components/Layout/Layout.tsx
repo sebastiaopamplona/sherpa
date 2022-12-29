@@ -12,12 +12,15 @@ import { Menu, Transition } from "@headlessui/react"
 
 import Image from "next/image"
 import Link from "next/link"
-import { ProjectGetByUserIdOutput } from "../../server/router/project"
+import { ProjectGetByUserIdOutput } from "../../server/trpc/router/project"
 import Select from "../Select/Select"
-import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
-import { UserGetByProjectIdOutput } from "../../server/router/user"
+import { SprintGetByProjectIdOutput } from "../../server/trpc/router/sprint"
+import { UserGetByProjectIdOutput } from "../../server/trpc/router/user"
 import { trpc } from "../../utils/trpc"
+// import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import { useRouter } from "next/router"
+// import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
+// import { UserGetByProjectIdOutput } from "../../server/router/user"
 import { useSession } from "next-auth/react"
 
 interface Props {
@@ -61,38 +64,47 @@ export default function Layout({ children }: Props) {
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>()
   const [selectedUser, setSelectedUser] = useState<ArrElement<UserGetByProjectIdOutput>>()
 
-  const projects = trpc.useQuery(["project.getByUserId", { userId: userId as string }], {
-    onSuccess: (data) => {
-      data.forEach((p) => {
-        if (p.id === projectId) {
-          setSelectedProject(p)
-          return
-        }
-      })
-    },
-  })
+  const projects = trpc.project.getByUserId.useQuery(
+    { userId: userId as string },
+    {
+      onSuccess: (data) => {
+        data.forEach((p) => {
+          if (p.id === projectId) {
+            setSelectedProject(p)
+            return
+          }
+        })
+      },
+    }
+  )
 
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {
-    onSuccess: (data) => {
-      data.forEach((s) => {
-        if (s.id === sprintId) {
-          setSelectedSprint(s)
-          return
-        }
-      })
-    },
-  })
+  const sprints = trpc.sprint.getByProjectId.useQuery(
+    { projectId: projectId as string },
+    {
+      onSuccess: (data) => {
+        data.forEach((s) => {
+          if (s.id === sprintId) {
+            setSelectedSprint(s)
+            return
+          }
+        })
+      },
+    }
+  )
 
-  const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {
-    onSuccess: (data) => {
-      data.forEach((u) => {
-        if (u.id === userId) {
-          setSelectedUser(u)
-          return
-        }
-      })
-    },
-  })
+  const users = trpc.user.getByProjectId.useQuery(
+    { projectId: projectId as string },
+    {
+      onSuccess: (data) => {
+        data.forEach((u) => {
+          if (u.id === userId) {
+            setSelectedUser(u)
+            return
+          }
+        })
+      },
+    }
+  )
 
   // FIXME(SP): this might lead to super awkward blinking of the layout
   if (projects.isLoading || sprints.isLoading || users.isLoading) return null

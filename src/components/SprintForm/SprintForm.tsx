@@ -23,7 +23,7 @@ export default function SprintForm({ onCreateOrUpdateSuccess, onCreateOrUpdateEr
   const [endAt, setEndAt] = useState<Date>(addDays(new Date(), 14))
 
   const { handleSubmit, register } = useForm<SprintInput>()
-  const createSprintMutation = trpc.useMutation(["sprint.create"], {
+  const createSprintMutation = trpc.sprint.create.useMutation({
     onSuccess: () => {
       onCreateOrUpdateSuccess()
     },

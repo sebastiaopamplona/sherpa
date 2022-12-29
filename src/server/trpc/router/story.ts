@@ -1,6 +1,7 @@
 import { NoSprint, NoUser } from "../../data/data"
 import { protectedProcedure, router } from "../trpc"
 
+import { RouterOutputs } from "../../../utils/trpc"
 import { Story } from "../../schemas/schemas"
 import { TRPCError } from "@trpc/server"
 import { prisma } from "../../db/client"
@@ -170,5 +171,5 @@ export const storyRouter = router({
   }),
 })
 
-// export type StoryGetByIdOutput = inferQueryOutput<"story.getById">
-// export type StoryGetForTimekeeperOutput = inferQueryOutput<"story.getForTimekeeper">
+export type StoryGetByIdOutput = RouterOutputs["story"]["getById"]
+export type StoryGetForTimekeeperOutput = RouterOutputs["story"]["getForTimeKeeper"]

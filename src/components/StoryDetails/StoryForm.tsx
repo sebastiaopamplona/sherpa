@@ -10,17 +10,17 @@ import {
   StoryTypesArray,
 } from "../../server/data/data"
 import { Story, StoryInput } from "../../server/schemas/schemas"
+import { useEffect, useState } from "react"
 
 import Input from "../Input/Input"
 import Select from "../Select/Select"
-import { SprintGetByProjectIdOutput } from "../../server/router/sprint"
+import { SprintGetByProjectIdOutput } from "../../server/trpc/router/sprint"
 import Textarea from "../Textarea/Textarea"
-import { UserGetByProjectIdOutput } from "../../server/router/user"
+import { UserGetByProjectIdOutput } from "../../server/trpc/router/user"
 import { trpc } from "../../utils/trpc"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
 
 interface Props {
   story?: StoryInput
@@ -40,17 +40,17 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
   const [selectedState, setSelectedState] = useState<StoryState>(storyState(story))
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(storySprint(story))
 
-  const users = trpc.useQuery(["user.getByProjectId", { projectId: projectId as string }], {})
-  const sprints = trpc.useQuery(["sprint.getByProjectId", { projectId: projectId as string }], {})
-  const createStoryM = trpc.useMutation(["story.create"], {
+  const users = trpc.user.getByProjectId.useQuery({ projectId: projectId as string }, {})
+  const sprints = trpc.sprint.getByProjectId.useQuery({ projectId: projectId as string }, {})
+  const createStoryM = trpc.story.create.useMutation({
     onSuccess: crudEventWrapper?.onCreate?.onSuccess,
     onError: crudEventWrapper?.onCreate?.onError,
   })
-  const updateStoryM = trpc.useMutation(["story.update"], {
+  const updateStoryM = trpc.story.update.useMutation({
     onSuccess: crudEventWrapper?.onUpdate?.onSuccess,
     onError: crudEventWrapper?.onUpdate?.onError,
   })
-  const deleteStoryM = trpc.useMutation(["story.deleteById"], {
+  const deleteStoryM = trpc.story.deleteById.useMutation({
     onSuccess: crudEventWrapper?.onDelete?.onSuccess,
     onError: crudEventWrapper?.onDelete?.onError,
   })
