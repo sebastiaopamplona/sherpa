@@ -52,9 +52,10 @@ export const authOptions: NextAuthOptions = {
       return token
     },
 
-    async session({ session, user }) {
-      if (user) {
-        session.userid = user.id
+    async session({ session, token }) {
+      if (token) {
+        // TODO(SP): this is a hack, we should be able to get the user id from the token
+        session.userid = token.userid as string
       }
 
       return session

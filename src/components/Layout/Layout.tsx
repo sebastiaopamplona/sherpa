@@ -16,6 +16,7 @@ import { ProjectGetByUserIdOutput } from "../../server/trpc/router/project"
 import Select from "../Select/Select"
 import { SprintGetByProjectIdOutput } from "../../server/trpc/router/sprint"
 import { UserGetByProjectIdOutput } from "../../server/trpc/router/user"
+import { env } from "../../env/client.mjs"
 import { trpc } from "../../utils/trpc"
 // import { ProjectGetByUserIdOutput } from "../../server/router/project"
 import { useRouter } from "next/router"
@@ -125,19 +126,21 @@ export default function Layout({ children }: Props) {
                     router.asPath.includes(item.href)
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "group flex min-w-fit items-center rounded-md px-2 py-2 text-sm font-medium"
+                    "group flex min-w-fit items-center rounded-md text-sm font-medium"
                   )}
                 >
-                  <item.icon
-                    className={classNames(
-                      router.asPath.includes(item.href) ? "text-gray-300" : "text-gray-400 group-hover:text-gray-300",
-                      "mr-3 h-7 w-7 flex-shrink-0"
-                    )}
-                    aria-hidden="true"
-                  />
-                  <Link href={pathWithProjSprintUser(item.href, projectId, sprintId, userId)}>
-                    {/* FIXME(SP): anchor inside Link? o.O */}
-                    <a className="w-full">{item.name}</a>
+                  <Link
+                    className="flex w-full px-2 py-2"
+                    href={pathWithProjSprintUser(item.href, projectId, sprintId, userId)}
+                  >
+                    <item.icon
+                      className={classNames(
+                        router.asPath.includes(item.href) ? "text-gray-300" : "text-gray-400 group-hover:text-gray-300",
+                        "mr-3 h-7 w-7 flex-shrink-0 "
+                      )}
+                      aria-hidden="true"
+                    />
+                    <span className="pt-1">{item.name}</span>
                   </Link>
                 </div>
               ))}
@@ -150,14 +153,13 @@ export default function Layout({ children }: Props) {
                   className="text-md cursor-pointer font-medium text-gray-300 group-hover:text-gray-200"
                   onClick={() => {
                     window.open(
-                      `https://github.com/sebastiaopamplona/sherpa/releases/tag/${process.env.NEXT_PUBLIC_SHERPA_VERSION}`,
+                      `https://github.com/sebastiaopamplona/sherpa/releases/tag/${env.NEXT_PUBLIC_APP_VERSION}`,
                       "_blank",
                       "noopener,noreferrer"
                     )
                   }}
                 >
-                  Version:{" "}
-                  {process.env.NEXT_PUBLIC_SHERPA_VERSION ? process.env.NEXT_PUBLIC_SHERPA_VERSION : "not sure"}
+                  Version: {env.NEXT_PUBLIC_APP_VERSION ? env.NEXT_PUBLIC_APP_VERSION : "not sure"}
                 </p>
               </div>
               <div className="py-2" />

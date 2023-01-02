@@ -9,12 +9,12 @@ import {
   StoryTypes,
   StoryTypesArray,
 } from "../../server/data/data"
-import { Story, StoryInput } from "../../server/schemas/schemas"
 import { useEffect, useState } from "react"
 
 import Input from "../Input/Input"
 import Select from "../Select/Select"
 import { SprintGetByProjectIdOutput } from "../../server/trpc/router/sprint"
+import { StoryInput } from "../../server/schemas/schemas"
 import Textarea from "../Textarea/Textarea"
 import { UserGetByProjectIdOutput } from "../../server/trpc/router/user"
 import { trpc } from "../../utils/trpc"
@@ -55,7 +55,7 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
     onError: crudEventWrapper?.onDelete?.onError,
   })
 
-  const { reset, register, getValues, setValue } = useForm<StoryInput>({
+  const { register, getValues, setValue } = useForm<StoryInput>({
     defaultValues: {
       estimate: isCreateMode ? 0 : story.estimate,
     },
@@ -185,7 +185,6 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
           className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           onClick={() => {
             onCancel()
-            reset(Story.default)
           }}
         >
           Cancel

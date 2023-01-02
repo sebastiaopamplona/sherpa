@@ -70,9 +70,9 @@ export default function TimeKeeper() {
                     ])
                   )}
                 >
-                  <a className="text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
+                  <span className="text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
                     sprints page
-                  </a>
+                  </span>
                 </Link>{" "}
                 and create one.
               </p>
@@ -94,9 +94,9 @@ export default function TimeKeeper() {
                     userId as string
                   )}
                 >
-                  <a className="px-1 text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
+                  <span className="px-1 text-purple-300 hover:cursor-pointer hover:text-purple-400 hover:underline">
                     backlog page
-                  </a>
+                  </span>
                 </Link>
                 and create one.
               </p>
