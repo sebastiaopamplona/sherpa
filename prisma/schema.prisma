@@ -133,8 +133,8 @@ model Story {
   id String @id @default(uuid())
 
   title       String
-  description String
-  estimate    Int
+  description String?
+  estimate    Int?       @default(0)
   state       StoryState @default(NEW)
   type        StoryType  @default(DEVELOPMENT)
   githubId    String?

@@ -67,7 +67,7 @@ export const Story: Zod.AnyZodObject = z.object({
   id: z.string().nullish(),
 
   title: z.string().default("").nullish(),
-  description: z.string().nullish(),
+  description: z.string().optional(),
   estimate: z.number().nullish(),
   state: z.enum(["NEW", "READY", "IN_PROGRESS", "DELIVERED", "IN_REVIEW", "DONE", "BLOCKED", "DELETED"]).nullish(),
   type: z.enum(["DEVELOPMENT", "DOCUMENTATION", "BUG_FIXING", "MAINTENANCE", "SUPPORT"]).nullish(),
