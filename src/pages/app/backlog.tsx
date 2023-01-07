@@ -11,10 +11,25 @@ import { trpc } from "../../utils/trpc"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
+type FilterObj = {
+  field: string
+  operator: string
+  value: string
+}
+
 export default function Backlog() {
   const router = useRouter()
   const { projectId } = router.query
-  const stories = trpc.useQuery(["story.getAll", { projectId: projectId as string }])
+
+  // keep state of current filter of tipe FilterObj
+
+  const stories = trpc.useQuery([
+    "story.getAll",
+    {
+      projectId: projectId as string,
+      filter: [] as FilterObj[],
+    },
+  ])
 
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isSlideOverOpen, setIsSlideOverOpen] = useState<boolean>(false)
@@ -29,6 +44,7 @@ export default function Backlog() {
         </div>
         <div className="grid grid-cols-3 gap-y-6 overflow-hidden bg-white pb-2">
           <div className="col-span-1 col-start-2 mt-1 flex items-center justify-center">
+            {/* Add filter bar */}
             <button
               className="s-btn-base s-btn-default"
               onClick={() => {

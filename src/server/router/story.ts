@@ -1,9 +1,9 @@
 import { NoSprint, NoUser } from "../data/data"
-import { inferQueryOutput } from "../../pages/_app"
 
 import { Story } from "../schemas/schemas"
 import { TRPCError } from "@trpc/server"
 import { createRouter } from "../context"
+import { inferQueryOutput } from "../../pages/_app"
 import { prisma } from "../db/client"
 import { updateSprintStateBreakdown } from "./sprint"
 import { z } from "zod"
@@ -49,6 +49,19 @@ export const storyRouter = createRouter()
   .query("getAll", {
     input: z.object({
       projectId: z.string(),
+      filter: z.array(
+        z.object({
+          field: z.string(),
+          operator: z.string(),
+          value: z.string(),
+        })
+      ),
+      paging: z.object({
+        offset: z.number(),
+        limit: z.number(),
+      }),
+      // add filters
+      // add paging
     }),
     async resolve({ ctx, input }) {
       // TODO(SP): implement paging + filtering
@@ -71,6 +84,8 @@ export const storyRouter = createRouter()
             },
           },
         },
+        // limit: input.paging.limit,
+        // offset: input.paging.offset,
       })
 
       return stories
@@ -199,5 +214,21 @@ export const storyRouter = createRouter()
     },
   })
 
+  .query("test", {
+    async resolve({ ctx, input }) {
+      return await prisma.user.findUnique({
+        where: {
+          email: "admin@sherpa.io",
+        },
+        select: {
+          id: true,
+          // name: true,
+          // email: true,
+        },
+      })
+    },
+  })
+
 export type StoryGetByIdOutput = inferQueryOutput<"story.getById">
 export type StoryGetForTimekeeperOutput = inferQueryOutput<"story.getForTimekeeper">
+export type StoryTestOutput = inferQueryOutput<"story.test">
