@@ -223,13 +223,13 @@ export const sprintRouter = router({
           let investedEffort: number = 0
           s.worklogs.forEach((w) => (investedEffort += w.effort))
 
-          let remainingEffort: number = s.estimate
+          let remainingEffort: number = s.estimate ? s.estimate : 0
           if (s.worklogs.length > 0) remainingEffort = s.worklogs[s.worklogs.length - 1]!.remainingEffort
 
           stories.push({
             id: s.id,
             title: s.title,
-            estimate: s.estimate,
+            estimate: s.estimate ? s.estimate : 0,
             investedEffort: investedEffort,
             remainingEffort: remainingEffort,
             totalEffort: investedEffort + remainingEffort,
