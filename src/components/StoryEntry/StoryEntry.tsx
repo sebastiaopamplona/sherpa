@@ -62,7 +62,7 @@ export default function StoryEntry({ story, showAssignee }: Props) {
           <div className="pr-3" />
           <p className="flex items-center text-gray-500">
             <GiEmptyHourglass className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-            {storyEffort}h / {story.estimate}h
+            {storyEffort}h / {story.remainingEffort}h
           </p>
 
           <>

@@ -18,6 +18,7 @@ export const storyRouter = router({
           title: input.title,
           description: input.description,
           estimate: input.estimate,
+          remainingEffort: input.estimate,
 
           projectId: input.projectId,
           creatorId: input.creatorId,

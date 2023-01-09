@@ -75,6 +75,7 @@ export default function WorklogForm({ storyId, worklog, worklogDay, crudEventWra
 
     values.id = worklog!.id
     values.date = dateWithHour()
+    values.storyId = storyId
 
     updateWorklogM.mutate(values)
   }

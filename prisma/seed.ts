@@ -337,6 +337,7 @@ async function seedStories() {
     title: string
     description: string
     estimate: number
+    remainingEffort: number
 
     projectId: string
     creatorEmail: string
@@ -385,6 +386,7 @@ async function seedStories() {
       title: "Story F",
       description: "Description (F)",
       estimate: 16,
+      remainingEffort: 1,
 
       state: StoryStateEnum.DONE,
       type: StoryTypeEnum.MAINTENANCE,
@@ -409,6 +411,7 @@ async function seedStories() {
       title: "Story E",
       description: "Description (E)",
       estimate: 8,
+      remainingEffort: 2,
 
       state: StoryStateEnum.IN_REVIEW,
       type: StoryTypeEnum.DOCUMENTATION,
@@ -433,6 +436,7 @@ async function seedStories() {
       title: "Story A",
       description: "Description (A)",
       estimate: 8,
+      remainingEffort: 0,
 
       state: StoryStateEnum.DELIVERED,
       type: StoryTypeEnum.DEVELOPMENT,
@@ -463,6 +467,7 @@ async function seedStories() {
       title: "Story B",
       description: "Description (B)",
       estimate: 24,
+      remainingEffort: 1,
 
       state: StoryStateEnum.IN_PROGRESS,
       type: StoryTypeEnum.DEVELOPMENT,
@@ -487,6 +492,7 @@ async function seedStories() {
       title: "Story C",
       description: "Description (C)",
       estimate: 4,
+      remainingEffort: 4,
 
       state: StoryStateEnum.READY,
       type: StoryTypeEnum.DEVELOPMENT,
@@ -498,6 +504,7 @@ async function seedStories() {
       title: "Story F",
       description: "Description (F)",
       estimate: 4,
+      remainingEffort: 4,
 
       state: StoryStateEnum.READY,
       type: StoryTypeEnum.BUG_FIXING,
@@ -509,6 +516,7 @@ async function seedStories() {
       title: "Story G",
       description: "Description (G)",
       estimate: 8,
+      remainingEffort: 8,
 
       state: StoryStateEnum.READY,
       type: StoryTypeEnum.SUPPORT,
@@ -533,6 +541,7 @@ async function seedStories() {
         title: s.title,
         description: s.description,
         estimate: s.estimate,
+        remainingEffort: s.remainingEffort,
 
         projectId: s.projectId,
         creatorId: creator!.id,

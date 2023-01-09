@@ -24,6 +24,15 @@ export const worklogRouter = router({
         },
       })
 
+      await prisma.story.update({
+        where: {
+          id: input.storyId,
+        },
+        data: {
+          remainingEffort: input.remainingEffort,
+        },
+      })
+
       return worklog
     }),
   getAll: protectedProcedure.query(async ({ ctx, input }) => {
@@ -95,6 +104,15 @@ export const worklogRouter = router({
           effort: input.effort,
           remainingEffort: input.remainingEffort,
           date: input.date,
+        },
+      })
+
+      await prisma.story.update({
+        where: {
+          id: input.storyId,
+        },
+        data: {
+          remainingEffort: input.remainingEffort,
         },
       })
 
