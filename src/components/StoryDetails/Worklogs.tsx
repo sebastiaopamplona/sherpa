@@ -81,6 +81,12 @@ export default function Worklogs({ story, crudEventWrapper, isAddingWorklog, wor
                         },
                         onError: crudEventWrapper?.onUpdate?.onError,
                       },
+                      onDelete: {
+                        onSuccess: (data) => {
+                          if (crudEventWrapper?.onDelete?.onSuccess) crudEventWrapper?.onDelete?.onSuccess(data)
+                          setWorklogs((current) => current.filter((worklog) => worklog.id !== data.id))
+                        },
+                      },
                     }}
                   />
                 </li>

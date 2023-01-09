@@ -39,6 +39,11 @@ export default function WorklogEntry({ worklog, showAssignee, crudEventWrapper }
                 setCurrWorklog(data as WorklogInput)
               },
             },
+            onDelete: {
+              onSuccess: (data) => {
+                if (crudEventWrapper?.onDelete?.onSuccess) crudEventWrapper?.onDelete?.onSuccess(data)
+              },
+            },
           }}
         />
       ) : (

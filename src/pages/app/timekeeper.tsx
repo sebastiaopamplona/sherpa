@@ -202,9 +202,10 @@ export default function TimeKeeper() {
             onSuccess: stories.refetch,
           },
           onUpdate: {
-            onSuccess: () => {
-              stories.refetch()
-            },
+            onSuccess: stories.refetch,
+          },
+          onDelete: {
+            onSuccess: stories.refetch,
           },
         }}
       />

@@ -124,5 +124,7 @@ export const worklogRouter = router({
         id: input.id,
       },
     })
+
+    return { id: input.id }
   }),
 })
