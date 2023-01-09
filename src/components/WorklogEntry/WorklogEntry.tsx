@@ -1,5 +1,6 @@
 import { CalendarIcon, ClockIcon } from "@heroicons/react/outline"
 
+import { CrudEventWrapper } from "../../utils/aux"
 import WorklogForm from "../StoryDetails/WorklogForm"
 import { WorklogInput } from "../../server/schemas/schemas"
 import { useState } from "react"
@@ -7,9 +8,10 @@ import { useState } from "react"
 interface Props {
   worklog: WorklogInput
   showAssignee?: boolean
+  crudEventWrapper: CrudEventWrapper
 }
 
-export default function WorklogEntry({ worklog, showAssignee }: Props) {
+export default function WorklogEntry({ worklog, showAssignee, crudEventWrapper }: Props) {
   const [currWorklog, setCurrWorklog] = useState<WorklogInput>(worklog)
 
   const dateAsString = `${currWorklog.date.getDate()}/${
@@ -32,6 +34,7 @@ export default function WorklogEntry({ worklog, showAssignee }: Props) {
           crudEventWrapper={{
             onUpdate: {
               onSuccess: (data) => {
+                if (crudEventWrapper?.onUpdate?.onSuccess) crudEventWrapper?.onUpdate?.onSuccess(data)
                 setIsEditing(false)
                 setCurrWorklog(data as WorklogInput)
               },

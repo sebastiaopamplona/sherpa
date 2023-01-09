@@ -32,6 +32,13 @@ export default function Worklogs({ story, crudEventWrapper, isAddingWorklog, wor
               },
               onError: crudEventWrapper?.onCreate?.onError,
             },
+            onUpdate: {
+              onSuccess: (data) => {
+                if (crudEventWrapper?.onUpdate?.onSuccess) crudEventWrapper?.onUpdate?.onSuccess(data)
+                setIsWrittingWorklog(false)
+              },
+              onError: crudEventWrapper?.onUpdate?.onError,
+            },
           }}
           onCancel={() => {
             setIsWrittingWorklog(false)
@@ -64,7 +71,18 @@ export default function Worklogs({ story, crudEventWrapper, isAddingWorklog, wor
             <ul role="list">
               {worklogs.map((worklog: WorklogInput, idx: number) => (
                 <li className="cursor-pointer py-1" key={worklog.id} onClick={() => {}}>
-                  <WorklogEntry worklog={worklog} />
+                  <WorklogEntry
+                    worklog={worklog}
+                    crudEventWrapper={{
+                      onUpdate: {
+                        onSuccess: (data) => {
+                          if (crudEventWrapper?.onUpdate?.onSuccess) crudEventWrapper?.onUpdate?.onSuccess(data)
+                          setIsWrittingWorklog(false)
+                        },
+                        onError: crudEventWrapper?.onUpdate?.onError,
+                      },
+                    }}
+                  />
                 </li>
               ))}
             </ul>
