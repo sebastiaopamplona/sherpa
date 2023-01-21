@@ -15,7 +15,7 @@ export default function StoryEntry({ story, showAssignee }: Props) {
   const storyEffort = useMemo(() => {
     if (story) {
       let worklogDaySum: number = 0
-      story.worklogs.forEach((w) => (worklogDaySum += w.effort))
+      story.worklogs?.forEach((w) => (worklogDaySum += w.effort))
       return worklogDaySum
     }
   }, [story])

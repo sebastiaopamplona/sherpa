@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "privateWorklogs" BOOLEAN NOT NULL DEFAULT false,
+ALTER COLUMN "name" SET DEFAULT '',
+ALTER COLUMN "image" SET DEFAULT '',
+ALTER COLUMN "password" SET DEFAULT '';

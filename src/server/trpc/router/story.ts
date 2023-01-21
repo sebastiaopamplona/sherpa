@@ -1,6 +1,7 @@
 import { NoSprint, NoUser } from "../../data/data"
 import { protectedProcedure, router } from "../trpc"
 
+import { Prisma } from "@prisma/client"
 import { RouterOutputs } from "../../../utils/trpc"
 import { Story } from "../../schemas/schemas"
 import { TRPCError } from "@trpc/server"
@@ -77,7 +78,12 @@ export const storyRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const stories = await prisma.story.findMany({
+      let includeWorklogs = false
+      if (ctx.session.userid === input.assigneeId) {
+        includeWorklogs = true
+      }
+
+      let args: Prisma.StoryFindManyArgs = {
         where: {
           projectId: input.projectId,
           sprintId: input.sprintId,
@@ -89,22 +95,21 @@ export const storyRouter = router({
           creator: true,
           project: true,
           sprint: true,
-          worklogs: {
-            orderBy: {
-              date: "desc",
-            },
-            // where: {
-            //   date: {
-            //     gte: input.startDate,
-            //     lte: input.endDate,
-            //   },
-            // },
-            include: {
-              creator: true,
-            },
-          },
         },
-      })
+      }
+
+      if (includeWorklogs) {
+        args.include!.worklogs = {
+          orderBy: {
+            date: "desc",
+          },
+          include: {
+            creator: true,
+          },
+        }
+      }
+
+      const stories = await prisma.story.findMany(args)
 
       return stories
     }),

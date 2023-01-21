@@ -14,6 +14,7 @@ async function seedUsers() {
     password: string
     name: string
     image: string
+    privateWorklogs?: boolean
   }
   const users: user[] = [
     {
@@ -21,34 +22,39 @@ async function seedUsers() {
       password: "secret",
       name: "Sherpa Admin",
       image: "https://avatars.githubusercontent.com/u/27507750?v=4",
+      privateWorklogs: false,
     },
     {
-      email: "dummyuser01@journdev.io",
+      email: "test01@sherpa.io",
       password: "secret",
       name: "Dummy User 01",
       image:
         "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      privateWorklogs: true,
     },
     {
-      email: "dummyuser02@journdev.io",
+      email: "test02@sherpa.io",
       password: "secret",
       name: "Dummy User 02",
       image:
         "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      privateWorklogs: false,
     },
     {
-      email: "dummyuser03@journdev.io",
+      email: "test03@sherpa.io",
       password: "secret",
       name: "Dummy User 03",
       image:
         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80'",
+      privateWorklogs: false,
     },
     {
-      email: "dummyuser04@journdev.io",
+      email: "test04@sherpa.io",
       password: "secret",
       name: "Dummy User 04",
       image:
         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      privateWorklogs: false,
     },
   ]
   const seed = users.map(async (u) => {
@@ -60,6 +66,7 @@ async function seedUsers() {
         password: passwordHash,
         name: u.name,
         image: u.image,
+        privateWorklogs: u.privateWorklogs,
       },
     })
   })
@@ -229,7 +236,7 @@ async function seedUsersInProjects() {
       ],
     },
     {
-      email: "dummyuser01@journdev.io",
+      email: "test01@sherpa.io",
       rolesInProjects: [
         {
           role: "editor",

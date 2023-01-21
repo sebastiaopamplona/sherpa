@@ -337,7 +337,7 @@ const TimeKeeperWorklogCell: React.FC<{
 }> = ({ story, day, onWorklogCellClick }) => {
   const dayEffort = useMemo(() => {
     let worklogDaySum: number = 0
-    story.worklogs.forEach((w) => {
+    story.worklogs?.forEach((w) => {
       if (isSameDay(w.date, day)) worklogDaySum += w.effort
     })
     return worklogDaySum
