@@ -1,26 +1,8 @@
-import {
-  ArrElement,
-  classNames,
-  pathWithParams,
-  pathWithProjSprintUser,
-} from "../../utils/aux"
+import { ArrElement, classNames, pathWithParams, pathWithProjSprintUser } from "../../utils/aux"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline"
-import {
-  ProjectGetUserCapacityOutput,
-  ProjectSetUserCapacityInput,
-} from "../../server/trpc/router/project"
+import { ProjectGetUserCapacityOutput, ProjectSetUserCapacityInput } from "../../server/trpc/router/project"
 import React, { useMemo, useState } from "react"
-import {
-  addDays,
-  format,
-  getWeek,
-  isSameDay,
-  isToday,
-  previousMonday,
-  setHours,
-  startOfWeek,
-  subDays,
-} from "date-fns"
+import { addDays, format, getWeek, isSameDay, isToday, previousMonday, setHours, startOfWeek, subDays } from "date-fns"
 
 import EmptyResourcesV2 from "../../components/EmptyResourcesv2/EmptyResourcesv2"
 import { GetServerSidePropsContext } from "next"
@@ -39,17 +21,14 @@ import { useForm } from "react-hook-form"
 import { useRouter } from "next/router"
 
 // TODO: move this to a module.css
-const timekeeperGridCell =
-  "col-span-1 border-2 flex items-center justify-center"
+const timekeeperGridCell = "col-span-1 border-2 flex items-center justify-center"
 
 export default function TimeKeeper() {
   const router = useRouter()
   const { projectId, sprintId, userId } = router.query
 
   const [currentDate, setCurrentDate] = useState<Date>(new Date())
-  const [currentDayRange, setCurrentDayRange] = useState<Date[]>(
-    getWeekBusinessDays(new Date())
-  )
+  const [currentDayRange, setCurrentDayRange] = useState<Date[]>(getWeekBusinessDays(new Date()))
 
   const stories = trpc.story.getForTimeKeeper.useQuery({
     projectId: projectId as string,
@@ -66,27 +45,19 @@ export default function TimeKeeper() {
     endDate: currentDayRange[currentDayRange.length - 1]!,
   })
 
-  const worklogDaySum = trpc.worklog.getDaySum.useQuery(
-    {
-      creatorId: userId as string,
-      sprintId: sprintId as string,
-      startDate: previousMonday(currentDate),
-      endDate: addDays(previousMonday(currentDate), 5),
-    },
-    {
-      onSuccess: (data) => {
-        console.log("worklogDaySum", data)
-      },
-    }
-  )
+  const worklogDaySum = trpc.worklog.getDaySum.useQuery({
+    creatorId: userId as string,
+    sprintId: sprintId as string,
+    startDate: previousMonday(currentDate),
+    endDate: addDays(previousMonday(currentDate), 5),
+  })
 
   const [currentStory, setCurrentStory] = useState<StoryInput>()
   const [isStoryDetailsOpen, setIsStoryDetailsOpen] = useState<boolean>(false)
   const [isAddingWorklog, setIsAddingWorklog] = useState<boolean>(false)
   const [worklogDay, setWorklogDay] = useState<Date>()
 
-  if (stories.isLoading || capacities.isLoading || worklogDaySum.isLoading)
-    return null
+  if (stories.isLoading || capacities.isLoading || worklogDaySum.isLoading) return null
 
   return (
     <section>
@@ -94,9 +65,7 @@ export default function TimeKeeper() {
         {typeof sprintId === "undefined" ? (
           <EmptyResourcesV2>
             <div className="grid grid-cols-1 content-center gap-1">
-              <p className="flex items-center justify-center">
-                The current project has no sprints.
-              </p>
+              <p className="flex items-center justify-center">The current project has no sprints.</p>
               <p>
                 Head over to the{" "}
                 <Link
@@ -141,11 +110,7 @@ export default function TimeKeeper() {
             </div>
           </EmptyResourcesV2>
         ) : (
-          <div
-            className={
-              "grid min-w-[1304px] grid-cols-11 content-center gap-[2px]"
-            }
-          >
+          <div className={"grid min-w-[1304px] grid-cols-11 content-center gap-[2px]"}>
             <div className="col-span-11 flex items-end justify-end py-2">
               <TimeKeeperNav
                 currentDate={currentDate}
@@ -176,20 +141,14 @@ export default function TimeKeeper() {
             {currentDayRange.map((d) => (
               <div
                 key={d.toUTCString()}
-                className={classNames(
-                  isToday(d) ? "bg-slate-200" : "",
-                  "text-sm font-semibold",
-                  timekeeperGridCell
-                )}
+                className={classNames(isToday(d) ? "bg-slate-200" : "", "text-sm font-semibold", timekeeperGridCell)}
               >
                 {`${format(d, "eeeeee")}, ${format(d, "d/M")}`}
               </div>
             ))}
 
             <div className="col-span-5 h-6 rounded-sm"></div>
-            <div className="col-span-1 flex items-center justify-end">
-              Capacity:
-            </div>
+            <div className="col-span-1 flex items-center justify-end">Capacity:</div>
             {capacities.data?.map((cap, i) => (
               <div key={cap.date.toString()}>
                 <TimeKeeperCapacityCell
@@ -223,13 +182,9 @@ export default function TimeKeeper() {
             ))}
 
             <div className="col-span-5 h-6 rounded-sm"></div>
-            <div className="col-span-1 flex items-center justify-end">
-              Total
-            </div>
+            <div className="col-span-1 flex items-center justify-end">Total</div>
             {worklogDaySum.data?.map((w, i) => (
-              <div
-                key={`${currentDate.toString}-${w.dayOfYear}-${w.effort}-${i}`}
-              >
+              <div key={`${currentDate.toString}-${w.dayOfYear}-${w.effort}-${i}`}>
                 <TimeKeeperDaySumCell daySum={w.effort} />
               </div>
             ))}
@@ -268,7 +223,6 @@ export default function TimeKeeper() {
         worklogCrudEventWrapper={{
           onCreate: {
             onSuccess: () => {
-              alert("Worklog created")
               stories.refetch()
               worklogDaySum.refetch()
             },
@@ -298,10 +252,7 @@ const TimeKeeperNav: React.FC<{
   onNextWeek: () => void
 }> = ({ currentDate, onToday, onPrevWeek, onNextWeek }) => {
   return (
-    <nav
-      className="relative z-0 inline-flex -space-x-px rounded-sm"
-      aria-label="Pagination"
-    >
+    <nav className="relative z-0 inline-flex -space-x-px rounded-sm" aria-label="Pagination">
       <div
         className="relative inline-flex items-center rounded-sm border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:cursor-pointer hover:bg-gray-50"
         onClick={onToday}
@@ -441,10 +392,7 @@ const TimeKeeperWorklogCell: React.FC<{
 
   return (
     <div
-      className={classNames(
-        "hover:cursor-pointer hover:bg-slate-100",
-        timekeeperGridCell
-      )}
+      className={classNames("hover:cursor-pointer hover:bg-slate-100", timekeeperGridCell)}
       onClick={() => {
         onWorklogCellClick(story)
       }}
@@ -473,11 +421,7 @@ const getWeekBusinessDays = (currentDate: Date): Date[] => {
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getJourndevAuthSession(ctx)
-  const redirect = await checkIfShouldRedirect(
-    "/app/timekeeper",
-    session!.userid as string,
-    ctx.query
-  )
+  const redirect = await checkIfShouldRedirect("/app/timekeeper", session!.userid as string, ctx.query)
   if (redirect !== null) return redirect
   return { props: {} }
 }

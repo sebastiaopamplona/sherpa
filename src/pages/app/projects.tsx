@@ -71,16 +71,12 @@ export default function Projects() {
             projects.refetch()
             setIsProjectDetailsOpen(false)
           }}
-          onCreateOrUpdateError={() => {
-            // alert("failed to create project")
-          }}
+          onCreateOrUpdateError={() => {}}
           onDeleteSuccess={() => {
             projects.refetch()
             setIsProjectDetailsOpen(false)
           }}
-          onDeleteError={() => {
-            // alert("failed to delete project")
-          }}
+          onDeleteError={() => {}}
         />
       </Modal>
     </section>
