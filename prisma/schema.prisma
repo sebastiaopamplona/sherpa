@@ -132,14 +132,14 @@ model Sprint {
 model Story {
   id String @id @default(uuid())
 
-  title             String
-  description       String
-  estimate          Float?     @default(0)
-  remainingEffort   Float?     @default(0)
-  state             StoryState @default(NEW)
-  type              StoryType  @default(DEVELOPMENT)
-  githubId          String?
-  jiraId            String?
+  title           String
+  description     String     @default("")
+  estimate        Float?     @default(0)
+  remainingEffort Float?     @default(0)
+  state           StoryState @default(NEW)
+  type            StoryType  @default(DEVELOPMENT)
+  githubId        String?
+  jiraId          String?
 
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -199,7 +199,7 @@ model SprintStateBreakdown {
 model UserProjectCapacity {
   id String @id @default(uuid())
 
-  capacity Float      @default(0)
+  capacity Float    @default(0)
   date     DateTime
 
   userId String
