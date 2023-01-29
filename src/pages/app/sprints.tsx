@@ -13,7 +13,6 @@ import {
   YAxis,
 } from "recharts"
 import { ArrElement, classNames } from "../../utils/aux"
-import { SprintGetUserBreakdownOutput, UserBreakdownStory } from "../../server/trpc/router/sprint"
 import { useMemo, useState } from "react"
 
 import EmptyResources from "../../components/EmptyResources/EmptyResources"
@@ -21,6 +20,7 @@ import { GetServerSidePropsContext } from "next"
 import Layout from "../../components/Layout/Layout"
 import Modal from "../../components/Modal/Modal"
 import SprintForm from "../../components/SprintForm/SprintForm"
+import { SprintGetUserBreakdownOutput } from "../../server/trpc/router/sprint"
 import { StoryStatesColors } from "../../server/data/data"
 import { checkIfShouldRedirect } from "../../server/aux"
 import { getJourndevAuthSession } from "../../server/session"
@@ -46,29 +46,6 @@ const hoverUnderCapStories = (props: any) => {
       </text>
       <Sector {...props} />
       <Sector {...props} innerRadius={innerRadius + 20} outerRadius={outerRadius + 9} />
-    </g>
-  )
-}
-
-const hoverOverCapStories = (props: any) => {
-  const { innerRadius, outerRadius, payload } = props
-  return (
-    <g>
-      <text x={150} y={165} textAnchor="middle">
-        {payload.title.length > 18 ? payload.title.substring(0, 18).concat("...") : payload.title}
-      </text>
-      <text
-        x={150}
-        y={185}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill={"#716f6f"}
-        className="text-sm font-semibold"
-      >
-        {payload.investedEffort}h / {payload.estimate}h (+{payload.remainingEffort}h)
-      </text>
-      <Sector {...props} />
-      <Sector {...props} innerRadius={innerRadius - 8} outerRadius={outerRadius - 13} />
     </g>
   )
 }
@@ -175,33 +152,22 @@ Dashboard.getLayout = function getLayout(page: React.ReactNode) {
 }
 
 const UserStoryBreakdown: React.FC<{ u: ArrElement<SprintGetUserBreakdownOutput> }> = ({ u }) => {
-  const [underCapStories, overCapStories, underCapEffort, overCapEffort, overCommitment] = useMemo(() => {
+  const [overCommitment] = useMemo(() => {
     let underCapEffort: number = 0
     let overCapEffort: number = 0
-    let underCapStories: Array<UserBreakdownStory> = []
-    let overCapStories: Array<UserBreakdownStory> = []
     for (const s of u.stories) {
       if (underCapEffort + s.totalEffort < u.user.capacity) {
-        underCapStories.push(s)
         underCapEffort += s.totalEffort
       } else {
-        overCapStories.push(s)
         overCapEffort += s.totalEffort
       }
     }
-    return [
-      underCapStories,
-      overCapStories,
-      underCapEffort,
-      overCapEffort,
-      underCapEffort + overCapEffort - u.user.capacity,
-    ]
-  }, [])
+    return [underCapEffort + overCapEffort - u.user.capacity]
+  }, [u.stories, u.user.capacity])
 
-  const [underCapIdx, setUnderCapIdx] = useState<number>(0)
-  const [overCapIdx, setOverCapIdx] = useState<number>(-1)
+  const [storyHoverIdx, setStoryHoverIdx] = useState<number>(0)
 
-  if (isNaN(underCapEffort)) return null
+  if (isNaN(overCommitment)) return null
 
   return (
     <div className="flex-col items-center justify-center">
@@ -235,44 +201,24 @@ const UserStoryBreakdown: React.FC<{ u: ArrElement<SprintGetUserBreakdownOutput>
             ➖
           </text>
           <Pie
-            data={underCapStories}
+            data={u.stories}
             dataKey="totalEffort"
-            activeIndex={underCapIdx}
+            activeIndex={storyHoverIdx}
             activeShape={hoverUnderCapStories}
             innerRadius="75%"
             outerRadius="88%"
             fill="#4ade80"
             startAngle={0}
-            endAngle={Math.min(360, Math.floor((360 * underCapEffort) / u.user.capacity))}
+            endAngle={360}
             cornerRadius={5}
             onMouseEnter={(_, idx: number) => {
-              setUnderCapIdx(idx)
-              setOverCapIdx(-1)
+              setStoryHoverIdx(idx)
             }}
           >
             {u.stories.map((story, idx) => (
               <Cell key={`cell-${idx}`} fill={StoryStatesColors.get(story.state)} />
             ))}
           </Pie>
-          <Pie
-            data={overCapStories}
-            dataKey="totalEffort"
-            activeIndex={overCapIdx}
-            activeShape={hoverOverCapStories}
-            innerRadius="65%"
-            outerRadius="73%"
-            fill="#ef4444"
-            startAngle={Math.min(360, Math.floor((360 * underCapEffort) / u.user.capacity))}
-            endAngle={
-              Math.min(360, Math.floor((360 * underCapEffort) / u.user.capacity)) +
-              Math.floor((360 * overCapEffort) / u.user.capacity)
-            }
-            cornerRadius={5}
-            onMouseEnter={(_, idx: number) => {
-              setOverCapIdx(idx)
-              setUnderCapIdx(-1)
-            }}
-          ></Pie>
         </PieChart>
       </div>
     </div>
