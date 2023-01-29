@@ -138,9 +138,7 @@ export default function Dashboard() {
           onCreateOrUpdateSuccess={() => {
             setIsSprintDetailsOpen(false)
           }}
-          onCreateOrUpdateError={() => {
-            alert("failed to create sprint")
-          }}
+          onCreateOrUpdateError={() => {}}
         />
       </Modal>
     </section>

@@ -49,52 +49,46 @@ export const worklogRouter = router({
       ...worklogs,
     }
   }),
-  getById: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const worklog = await prisma.worklog.findUnique({
-        where: {
-          id: input.id,
-        },
-      })
+  getById: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const worklog = await prisma.worklog.findUnique({
+      where: {
+        id: input.id,
+      },
+    })
 
-      return {
-        ...worklog,
-      }
-    }),
-  getByStoryId: protectedProcedure
-    .input(z.object({ storyId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const worklogs = await prisma.worklog.findMany({
-        orderBy: {
-          createdAt: "desc",
-        },
-        where: {
-          storyId: input.storyId,
-        },
-        include: {
-          creator: true,
-        },
-      })
+    return {
+      ...worklog,
+    }
+  }),
+  getByStoryId: protectedProcedure.input(z.object({ storyId: z.string() })).query(async ({ ctx, input }) => {
+    const worklogs = await prisma.worklog.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        storyId: input.storyId,
+      },
+      include: {
+        creator: true,
+      },
+    })
 
-      return worklogs
-    }),
-  getByCreatorId: protectedProcedure
-    .input(z.object({ creatorId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const worklogs = await prisma.worklog.findMany({
-        orderBy: {
-          createdAt: "desc",
-        },
-        where: {
-          creatorId: input.creatorId,
-        },
-      })
+    return worklogs
+  }),
+  getByCreatorId: protectedProcedure.input(z.object({ creatorId: z.string() })).query(async ({ ctx, input }) => {
+    const worklogs = await prisma.worklog.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        creatorId: input.creatorId,
+      },
+    })
 
-      return {
-        ...worklogs,
-      }
-    }),
+    return {
+      ...worklogs,
+    }
+  }),
   getDaySum: protectedProcedure
     .input(
       z.object({
@@ -129,21 +123,15 @@ export const worklogRouter = router({
         },
       })
 
-      console.log("worklogs", worklogs)
-
       let daySum = new Map<number, number>()
       for (let i = 0; i < 5; i++) {
         daySum.set(getDayOfYear(input.startDate) + i, 0)
       }
 
-      console.log("daySum", daySum)
-
       worklogs.forEach((worklog) => {
         const key: number = getDayOfYear(worklog.date)
         daySum.set(key, daySum.get(key)! + worklog.effort)
       })
-
-      console.log("daySum", daySum)
 
       return Array.from(daySum.entries()).map(([dayOfYear, effort]) => ({
         dayOfYear,
@@ -180,15 +168,13 @@ export const worklogRouter = router({
 
       return worklog
     }),
-  deleteById: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      await prisma.worklog.delete({
-        where: {
-          id: input.id,
-        },
-      })
+  deleteById: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    await prisma.worklog.delete({
+      where: {
+        id: input.id,
+      },
+    })
 
-      return { id: input.id }
-    }),
+    return { id: input.id }
+  }),
 })
