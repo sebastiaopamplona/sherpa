@@ -20,6 +20,7 @@ interface Props {
   worklogDay?: Date
   storyCrudEventWrapper?: CrudEventWrapper
   worklogCrudEventWrapper?: CrudEventWrapper
+  preview?: boolean
   onClose: () => void
 }
 
@@ -30,6 +31,7 @@ export default function StoryDetails({
   worklogDay,
   storyCrudEventWrapper,
   worklogCrudEventWrapper,
+  preview,
   onClose,
 }: Props) {
   const tabs = useMemo(
@@ -98,7 +100,7 @@ export default function StoryDetails({
         </div>
       </div>
       <div className={classNames(selectedTab.name === "Details" ? "" : "hidden")}>
-        <StoryForm story={story} crudEventWrapper={storyCrudEventWrapper} onCancel={onClose} />
+        <StoryForm story={story} crudEventWrapper={storyCrudEventWrapper} onCancel={onClose} preview={preview} />
       </div>
       <div className={classNames(selectedTab.name === "Worklogs" ? "" : "hidden")}>
         <Worklogs

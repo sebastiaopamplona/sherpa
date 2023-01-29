@@ -7,6 +7,7 @@ import { JourndevContext } from "../utils/reactContext"
 import { NextPage } from "next"
 import { SessionProvider } from "next-auth/react"
 import { trpc } from "../utils/trpc"
+import './index.css';
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
