@@ -176,6 +176,7 @@ export default function TimeKeeper() {
         isAddingWorklog={isAddingWorklog}
         worklogDay={worklogDay}
         isOpen={isStoryDetailsOpen}
+        preview={true}
         onClose={() => {
           setIsStoryDetailsOpen(false)
         }}

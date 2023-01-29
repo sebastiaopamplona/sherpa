@@ -10,6 +10,7 @@ import {
   StoryTypesArray,
 } from "../../server/data/data"
 import { useEffect, useState } from "react"
+import remarkGfm from "remark-gfm"
 
 import Input from "../Input/Input"
 import Select from "../Select/Select"
@@ -21,24 +22,28 @@ import { trpc } from "../../utils/trpc"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/router"
 import { useSession } from "next-auth/react"
+import ReactMarkdown from "react-markdown"
+import SegmentedButton from "../Buttons/SegmentedButton"
 
 interface Props {
   story?: StoryInput
   crudEventWrapper?: CrudEventWrapper
+  preview?: boolean
   onCancel: () => void
 }
 
-export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) {
+export default function StoryForm({ story, crudEventWrapper, onCancel, preview }: Props) {
   const session = useSession()
   const router = useRouter()
   const { projectId } = router.query
-
   const isCreateMode = typeof story === "undefined"
 
   const [selectedUser, setSelectedUser] = useState<ArrElement<UserGetByProjectIdOutput>>(storyUser(story))
   const [selectedType, setSelectedType] = useState<StoryType>(storyType(story))
   const [selectedState, setSelectedState] = useState<StoryState>(storyState(story))
   const [selectedSprint, setSelectedSprint] = useState<ArrElement<SprintGetByProjectIdOutput>>(storySprint(story))
+
+  const [showPreview, setShowPreview] = useState<boolean>(preview ?? false)
 
   const users = trpc.user.getByProjectId.useQuery({ projectId: projectId as string }, {})
   const sprints = trpc.sprint.getByProjectId.useQuery({ projectId: projectId as string }, {})
@@ -118,12 +123,20 @@ export default function StoryForm({ story, crudEventWrapper, onCancel }: Props) 
           <Input label="Title" register={register("title")} />
         </div>
         <div className="col-span-6">
-          <Textarea
-            label="Description"
-            register={register("description")}
-            note="(Markdown will be supported in the future)"
-            nRows={15}
+          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <SegmentedButton
+            key={"segmented-button"}
+            options={["Preview", "Editor"]}
+            selected={preview ? 0 : 1}
+            onClick={(btnIndex) => setShowPreview(btnIndex == 0)}
           />
+          {showPreview ? (
+            <ReactMarkdown className={"markdown story-description-area px-3"} remarkPlugins={[remarkGfm]}>
+              {getValues("description")}
+            </ReactMarkdown>
+          ) : (
+            <Textarea register={register("description")} nRows={10} />
+          )}
         </div>
         <div className="col-span-3">
           <Select
