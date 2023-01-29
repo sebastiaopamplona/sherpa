@@ -1,0 +1,12 @@
+/* Hack to avoid having tailwind overwrite css for the markdown component. */
+.markdown > * {
+    all: revert;
+}
+
+.story-description-area {
+    @apply block min-h-[200px] w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm;
+}
+
+.segmented-btn-base {
+    @apply px-4 py-2 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:text-blue-700;
+}
